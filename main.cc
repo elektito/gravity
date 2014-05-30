@@ -8,7 +8,33 @@ const int SCREEN_HEIGHT = 480;
 
 const int TIME_STEP = 15;
 
+const float32 ppm = 5.0;
+const float32 camerax = -50.0;
+const float32 cameray = -50.0;
+
 using namespace std;
+
+b2Vec2 WindowToWorldCoords(int x, int y, SDL_Window *window) {
+  int w, h;
+  SDL_GetWindowSize(window, &w, &h);
+  y = h - y;
+
+  b2Vec2 p(x / ppm, y / ppm);
+  p += b2Vec2(camerax, cameray);
+
+  return p;
+}
+
+b2Body *GetBodyFromPoint(b2Vec2 p, b2World *world) {
+  for (b2Body *b = world->GetBodyList(); b; b = b->GetNext()) {
+    for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
+      if (f->TestPoint(p))
+        return b;
+    }
+  }
+
+  return nullptr;
+}
 
 struct Entity {
   b2Body *body;
@@ -49,12 +75,14 @@ public:
   }
 
   void DrawDisk(b2Vec2 pos, float32 radius) {
-    const float32 ppm = 5.0;
-    const float32 camerax = -50.0;
-    const float32 cameray = -50.0;
     radius *= ppm;
     int x = (pos.x - camerax) * ppm;
-    int y = (-pos.y - cameray) * ppm;
+    int y = (pos.y - cameray) * ppm;
+
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    y = h - y;
+
     aacircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
     filledCircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
   }
@@ -98,12 +126,12 @@ int main(int argc, char *argv[]) {
 
   b2FixtureDef fd;
   fd.shape = &shape;
-  fd.friction = 0.5;
-  fd.restitution = 1.0;
+  fd.friction = 1.0;
+  fd.restitution = 0.0;
   fd.density = 1e10;
   b2Fixture *fixture = body->CreateFixture(&fd);
 
-  Entity *e = new Entity { body, true, 10.0 };
+  Entity *e = new Entity { body, true, 1000.0 };
   body->SetUserData(e);
 
   bd.type = b2_dynamicBody;
@@ -114,8 +142,8 @@ int main(int argc, char *argv[]) {
   shape.m_radius = 2.0;
 
   fd.shape = &shape;
-  fd.friction = 0.5;
-  fd.restitution = 1.0;
+  fd.friction = 1.0;
+  fd.restitution = 0.0;
   fd.density = 1.0;
   fixture = body->CreateFixture(&fd);
 
@@ -126,6 +154,11 @@ int main(int argc, char *argv[]) {
 
   bool paused = false;
   bool stepOnce = false;
+  int x, y;
+
+  b2Body *draggingBody = nullptr;
+  b2Vec2 draggingOffset;
+
   uint32_t lastTime = SDL_GetTicks();
 
   while (!quit) {
@@ -135,6 +168,32 @@ int main(int argc, char *argv[]) {
     while (SDL_PollEvent(&e)) {
       if (e.type == SDL_QUIT) {
         quit = true;
+      }
+      else if (e.type == SDL_MOUSEBUTTONDOWN) {
+        if (e.button.button == SDL_BUTTON_LEFT) {
+          SDL_GetMouseState(&x, &y);
+          b2Vec2 p = WindowToWorldCoords(x, y, window);
+          b2Body *b = GetBodyFromPoint(p, &world);
+          if (b) {
+            Entity *e = (Entity*) b->GetUserData();
+            if (e->isGravitySource) {
+              draggingBody = b;
+              draggingOffset = p - b->GetPosition();
+            }
+          }
+        }
+      }
+      else if (e.type == SDL_MOUSEMOTION) {
+        if (draggingBody) {
+          SDL_GetMouseState(&x, &y);
+          b2Vec2 p = WindowToWorldCoords(x, y, window);
+          draggingBody->SetTransform(p - draggingOffset, 0.0);
+        }
+      }
+      else if (e.type == SDL_MOUSEBUTTONUP) {
+        if (e.button.button == SDL_BUTTON_LEFT) {
+          draggingBody = nullptr;
+        }
       }
       else if (e.type == SDL_KEYDOWN) {
         switch (e.key.keysym.sym) {
@@ -166,7 +225,7 @@ int main(int argc, char *argv[]) {
           gravity += e->gravityCoeff * n;
         }
 
-        b->ApplyForce(gravity, b->GetWorldCenter(), false);
+        b->ApplyForce(gravity, b->GetWorldCenter(), true);
       }
     }
 
