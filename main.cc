@@ -14,6 +14,14 @@ const float32 cameray = -50.0;
 
 using namespace std;
 
+class ContactListener : public b2ContactListener {
+public:
+  virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
+    //float32 f = contact->GetFriction();
+    //cout << "hit " << f << endl;
+  }
+};
+
 b2Vec2 WindowToWorldCoords(int x, int y, SDL_Window *window) {
   int w, h;
   SDL_GetWindowSize(window, &w, &h);
@@ -126,12 +134,12 @@ int main(int argc, char *argv[]) {
 
   b2FixtureDef fd;
   fd.shape = &shape;
-  fd.friction = 1.0;
-  fd.restitution = 0.0;
-  fd.density = 1e10;
+  fd.friction = 0.5;
+  fd.restitution = 0.5;
+  fd.density = 1000;
   b2Fixture *fixture = body->CreateFixture(&fd);
 
-  Entity *e = new Entity { body, true, 1000.0 };
+  Entity *e = new Entity { body, true, 1000000.0 };
   body->SetUserData(e);
 
   bd.type = b2_dynamicBody;
@@ -142,13 +150,16 @@ int main(int argc, char *argv[]) {
   shape.m_radius = 2.0;
 
   fd.shape = &shape;
-  fd.friction = 1.0;
-  fd.restitution = 0.0;
+  fd.friction = 0.5;
+  fd.restitution = 0.5;
   fd.density = 1.0;
   fixture = body->CreateFixture(&fd);
 
   e = new Entity { body, false, 0.0 };
   body->SetUserData(e);
+
+  ContactListener contactListener;
+  world.SetContactListener(&contactListener);
 
   Renderer renderer(window, &world);
 
@@ -213,16 +224,16 @@ int main(int argc, char *argv[]) {
       }
     }
 
-
-
     for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
       b2Vec2 gravity;
       Entity *e = (Entity*) b->GetUserData();
       if (!e->isGravitySource) {
+        gravity.Set(0.0, 0.0);
         for (auto e : gravitySources) {
           b2Vec2 n = e->body->GetPosition() - b->GetPosition();
+          float32 r2 = n.LengthSquared();
           n.Normalize();
-          gravity += e->gravityCoeff * n;
+          gravity += e->gravityCoeff / r2 * n;
         }
 
         b->ApplyForce(gravity, b->GetWorldCenter(), true);
