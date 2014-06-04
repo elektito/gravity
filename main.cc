@@ -345,28 +345,30 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    vector<Entity*> gravitySources;
+    if (!paused || (paused && stepOnce)) {
+      vector<Entity*> gravitySources;
 
-    for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
-      Entity *e = (Entity*) b->GetUserData();
-      if (e->isGravitySource) {
-        gravitySources.push_back(e);
-      }
-    }
-
-    for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
-      b2Vec2 gravity;
-      Entity *e = (Entity*) b->GetUserData();
-      if (!e->isGravitySource) {
-        gravity.Set(0.0, 0.0);
-        for (auto e : gravitySources) {
-          b2Vec2 n = e->body->GetPosition() - b->GetPosition();
-          float32 r2 = n.LengthSquared();
-          n.Normalize();
-          gravity += e->gravityCoeff / r2 * n;
+      for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
+        Entity *e = (Entity*) b->GetUserData();
+        if (e->isGravitySource) {
+          gravitySources.push_back(e);
         }
+      }
 
-        b->ApplyForce(gravity, b->GetWorldCenter(), true);
+      for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
+        b2Vec2 gravity;
+        Entity *e = (Entity*) b->GetUserData();
+        if (!e->isGravitySource) {
+          gravity.Set(0.0, 0.0);
+          for (auto e : gravitySources) {
+            b2Vec2 n = e->body->GetPosition() - b->GetPosition();
+            float32 r2 = n.LengthSquared();
+            n.Normalize();
+            gravity += e->gravityCoeff / r2 * n;
+          }
+
+          b->ApplyForce(gravity, b->GetWorldCenter(), true);
+        }
       }
     }
 
