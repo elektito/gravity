@@ -8,11 +8,107 @@ const int SCREEN_HEIGHT = 480;
 
 const int TIME_STEP = 15;
 
-const float32 ppm = 5.0;
-const float32 camerax = -50.0;
-const float32 cameray = -50.0;
+float32 ppm = 5.0;
+float32 camerax = -50.0;
+float32 cameray = -50.0;
+
+const float32 min_width = 100;
+const float32 min_height = 50;
+const float32 max_width = 400;
+const float32 max_height = 200;
 
 using namespace std;
+
+#define max(x, y) ((x) > (y) ? (x) : (y))
+#define min(x, y) ((x) < (y) ? (x) : (y))
+#define abs(x) ((x) > 0 ? (x) : -(x))
+
+void FixCamera(SDL_Window *window, b2Body *body) {
+  int winw, winh;
+  SDL_GetWindowSize(window, &winw, &winh);
+  float32 ratio = ((float32) winw) / winh;
+
+  float32 width, height;
+
+  b2Vec2 upper(camerax + winw / ppm, cameray + winh / ppm);
+  b2Vec2 lower(camerax, cameray);
+
+  auto r = body->GetFixtureList()->GetShape()->m_radius;
+
+  auto pos = body->GetPosition();
+
+  float32 maxx, maxy, minx, miny;
+
+  if (pos.x + r + 2 > upper.x ||
+      pos.y + r + 2 > upper.y ||
+      pos.x - r - 2 < lower.x ||
+      pos.y - r - 2 < lower.y)
+  {
+    maxx = max(pos.x + r + 2, upper.x);
+    maxy = max(pos.y + r + 2, upper.y);
+    minx = min(pos.x - r - 2, lower.x);
+    miny = min(pos.y - r - 2, lower.y);
+  }
+  else {
+    maxx = min(pos.x + r + 2, upper.x);
+    maxy = min(pos.y + r + 2, upper.y);
+    minx = max(pos.x - r - 2, lower.x);
+    miny = max(pos.y - r - 2, lower.y);
+  }
+
+  auto halfx = max(abs(maxx), abs(minx));
+  auto halfy = max(abs(maxy), abs(miny));
+
+  auto width1 = 2 * halfx;
+  auto height1 = width1 / ratio;
+
+  auto height2 = 2 * halfy;
+  auto width2 = height2 * ratio;
+
+  if (width1 > width2) {
+    width = width1;
+    height = height1;
+  }
+  else {
+    width = width2;
+    height = height2;
+  }
+
+  if (width > max_width) {
+    width = max_width;
+    height = width / ratio;
+  }
+  if (width < min_width) {
+    width = min_width;
+    height = width / ratio;
+  }
+  if (height > max_height) {
+    height = max_height;
+    width = height * ratio;
+  }
+  if (height < min_height) {
+    height = min_height;
+    width = height * ratio;
+  }
+
+  camerax = - (width / 2);
+  cameray = - (height / 2);
+
+  ppm = winw / width;
+}
+
+void PointToScreen(SDL_Window *window, b2Vec2 p, int &x, int &y) {
+  x = (p.x - camerax) * ppm;
+  y = (p.y - cameray) * ppm;
+
+  int w, h;
+  SDL_GetWindowSize(window, &w, &h);
+  y = h - y;
+}
+
+float32 LengthToScreen(float32 length) {
+  return length * ppm;
+}
 
 class ContactListener : public b2ContactListener {
 public:
@@ -73,26 +169,47 @@ public:
     SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, 255);
     SDL_RenderClear(this->renderer);
 
+    // Draw grid.
+    int winw, winh;
+    SDL_GetWindowSize(window, &winw, &winh);
+
+    float32 upperx = camerax + winw / ppm;
+    float32 uppery = cameray + winh / ppm;
+    float32 x = camerax + fmod(camerax + 10, 10);
+    float32 y = camerax + fmod(cameray + 10, 10);
+    for (; x <= upperx; x += 10)
+      this->DrawLine(b2Vec2(x, cameray), b2Vec2(x, uppery), 32, 64, 64, 255);
+    for (; y <= uppery; y += 10)
+      this->DrawLine(b2Vec2(camerax, y), b2Vec2(upperx, y), 32, 64, 64, 255);
+
     for (b2Body *b = this->world->GetBodyList(); b; b = b->GetNext()) {
       for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
         this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius);
       }
     }
 
+    this->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
+    this->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
+
     SDL_RenderPresent(this->renderer);
   }
 
   void DrawDisk(b2Vec2 pos, float32 radius) {
-    radius *= ppm;
-    int x = (pos.x - camerax) * ppm;
-    int y = (pos.y - cameray) * ppm;
-
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
-    y = h - y;
+    int x, y;
+    radius = LengthToScreen(radius);
+    PointToScreen(this->window, pos, x, y);
 
     aacircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
     filledCircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
+  }
+
+  void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) {
+    int x1, y1, x2, y2;
+    PointToScreen(this->window, begin, x1, y1);
+    PointToScreen(this->window, end, x2, y2);
+
+    SDL_SetRenderDrawColor(this->renderer, r, g, b, a);
+    SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
   }
 };
 
@@ -130,7 +247,7 @@ int main(int argc, char *argv[]) {
 
   b2CircleShape shape;
   shape.m_p.Set(0.0, 0.0);
-  shape.m_radius = 10.0;
+  shape.m_radius = 7.0;
 
   b2FixtureDef fd;
   fd.shape = &shape;
@@ -139,7 +256,7 @@ int main(int argc, char *argv[]) {
   fd.density = 1000;
   b2Fixture *fixture = body->CreateFixture(&fd);
 
-  Entity *e = new Entity { body, true, 1000000.0 };
+  Entity *e = new Entity { body, true, 130000.0 };
   body->SetUserData(e);
 
   bd.type = b2_dynamicBody;
@@ -163,7 +280,7 @@ int main(int argc, char *argv[]) {
 
   Renderer renderer(window, &world);
 
-  bool paused = false;
+  bool paused = true;
   bool stepOnce = false;
   int x, y;
 
@@ -173,7 +290,7 @@ int main(int argc, char *argv[]) {
   uint32_t lastTime = SDL_GetTicks();
 
   while (!quit) {
-    renderer.Render();
+    FixCamera(window, world.GetBodyList());
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -210,6 +327,12 @@ int main(int argc, char *argv[]) {
         switch (e.key.keysym.sym) {
         case SDLK_q:
           quit = true;
+          break;
+        case SDLK_p:
+          paused = !paused;
+          break;
+        case SDLK_n:
+          stepOnce = true;
           break;
         }
       }
