@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
                             SDL_WINDOWPOS_UNDEFINED,
                             SCREEN_WIDTH,
                             SCREEN_HEIGHT,
-                            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+                            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
     cout << "Window could not be created. SDL_Error: "
          << SDL_GetError() << endl;
@@ -333,6 +333,13 @@ int main(int argc, char *argv[]) {
           break;
         case SDLK_n:
           stepOnce = true;
+          break;
+        case SDLK_f:
+          auto flags = SDL_GetWindowFlags(window);
+          if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+            SDL_SetWindowFullscreen(window, SDL_FALSE);
+          else
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
           break;
         }
       }
