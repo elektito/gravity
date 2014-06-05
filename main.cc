@@ -23,6 +23,30 @@ const float32 max_height = 150;
 
 using namespace std;
 
+struct TrailPoint {
+  b2Vec2 pos;
+  float32 time;
+};
+
+struct Trail {
+  b2Body *body;
+  int size;
+  float32 time;
+  vector<TrailPoint> points;
+} trail;
+
+void UpdateTrail(b2Body *b, Trail *t, float32 currentTime) {
+  // Remove all the points not in the desired time window.
+  t->points.erase(remove_if(t->points.begin(), t->points.end(),
+                            [=](const TrailPoint &p) -> bool {
+                              return p.time < currentTime - t->time;
+                            }),
+                  t->points.end());
+
+  // Add current position to the trail.
+  t->points.push_back(TrailPoint { b->GetPosition(), currentTime });
+}
+
 #define max(x, y) ((x) > (y) ? (x) : (y))
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define abs(x) ((x) > 0 ? (x) : -(x))
@@ -192,6 +216,8 @@ public:
     SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, 255);
     SDL_RenderClear(this->renderer);
 
+    this->DrawTrail(&trail);
+
     // Draw grid.
     int winw, winh;
     SDL_GetWindowSize(window, &winw, &winh);
@@ -207,7 +233,7 @@ public:
 
     for (b2Body *b = this->world->GetBodyList(); b; b = b->GetNext()) {
       for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
-        this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius);
+        this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius, 255, 255, 255, 255);
       }
     }
 
@@ -219,13 +245,13 @@ public:
     SDL_RenderPresent(this->renderer);
   }
 
-  void DrawDisk(b2Vec2 pos, float32 radius) {
+  void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) {
     int x, y;
     radius = LengthToScreen(radius);
     PointToScreen(this->window, pos, x, y);
 
-    aacircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
-    filledCircleRGBA(this->renderer, x, y, radius, 255, 255, 255, 255);
+    aacircleRGBA(this->renderer, x, y, radius, r, g, b, a);
+    filledCircleRGBA(this->renderer, x, y, radius, r, g, b, a);
   }
 
   void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) {
@@ -254,7 +280,6 @@ public:
     SDL_FreeSurface(textSurface);
 
     if (texture) {
-      //texture->render(10, 10);
       int winw, winh;
       SDL_GetWindowSize(this->window, &winw, &winh);
       SDL_Rect dest = {winw - textSurface->w - 10, 10, textSurface->w, textSurface->h};
@@ -266,7 +291,62 @@ public:
   void DrawScore() {
     stringstream ss;
     ss << setw(6) << setfill('0') << this->score;
-    this->DrawText(ss.str(), SDL_Color {0, 0, 0});
+    this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128});
+  }
+
+  void DrawTrail(Trail *t) {
+    vector<TrailPoint> points;
+
+    if (t->size < t->points.size()) {
+      // Choose 't->size' points in the 't->time' time-window.
+
+      // From the rest choose enough, as evenly timed as possible.
+      auto step = t->time / t->size;
+      auto time = t->points[0].time;
+      auto it = t->points.begin();
+      while (points.size() < t->size) {
+        time += step;
+
+        // Go forward among previous locations until we reach one after
+        // 'time'. Choose the point as close to the time we want as
+        // possible.
+        float32 leastDiff = FLT_MAX;
+        TrailPoint closestPoint;
+        for (; it != t->points.end(); ++it) {
+          if (abs(it->time - time) < leastDiff) {
+            leastDiff = abs(it->time - time);
+            closestPoint = *it;
+          }
+
+          if (it->time >= time)
+            break;
+        }
+
+        points.push_back(closestPoint);
+
+        // Continue from this point.
+        time = closestPoint.time;
+      }
+    }
+    else
+      points = t->points;
+
+    float32 r = t->body->GetFixtureList()->GetShape()->m_radius;
+    auto startr = r / 10.0;
+    auto endr = r / 2.0;
+    r = startr;
+    float32 a = 128;
+    float32 dr, da;
+    if (points.size() > 0) {
+      dr = (endr - startr) / points.size();
+      da = (255 - a) / points.size();
+    }
+
+    for (auto &p : points) {
+      this->DrawDisk(p.pos, r, 255, 0, 0, a);
+      r += dr;
+      a += da;
+    }
   }
 };
 
@@ -346,19 +426,12 @@ int main(int argc, char *argv[]) {
 
   uint32_t lastTime = SDL_GetTicks();
 
+  float32 startTime = SDL_GetTicks() / 1000.0;
+  trail.size = 30;
+  trail.time = 1.0;
+  trail.body = world.GetBodyList();
   while (!quit) {
     FixCamera(window, world.GetBodyList());
-
-    // Update score.
-    if (!paused) {
-      auto body = world.GetBodyList();
-      auto sun = body->GetNext();
-      auto v = body->GetLinearVelocityFromWorldPoint(body->GetPosition()).Length();
-      auto d = (body->GetPosition() - sun->GetPosition()).Length();
-      if (d > 100) d = 0;
-      int diff = v * d / 100;
-      renderer->score += diff;
-    }
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -413,6 +486,9 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    if (!paused || (paused && stepOnce))
+      UpdateTrail(world.GetBodyList(), &trail, SDL_GetTicks() / 1000.0 - startTime);
+
     if (!paused || (paused && stepOnce)) {
       vector<Entity*> gravitySources;
 
@@ -421,6 +497,17 @@ int main(int argc, char *argv[]) {
         if (e->isGravitySource) {
           gravitySources.push_back(e);
         }
+      }
+
+      // Update score.
+      if (!paused || (paused && stepOnce)) {
+        auto body = world.GetBodyList();
+        auto sun = body->GetNext();
+        auto v = body->GetLinearVelocityFromWorldPoint(body->GetPosition()).Length();
+        auto d = (body->GetPosition() - sun->GetPosition()).Length();
+        if (d > 100) d = 0;
+        int diff = v * d / 100;
+        renderer->score += diff;
       }
 
       for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {
