@@ -1,6 +1,10 @@
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_render.h>
 #include <Box2D/Box2D.h>
 
 const int SCREEN_WIDTH = 640;
@@ -151,17 +155,36 @@ protected:
   SDL_Window *window;
   b2World *world;
   SDL_Renderer *renderer;
+  TTF_Font *font;
 
 public:
+  uint32 score;
+
   Renderer(SDL_Window *window, b2World *world) :
     window(window),
-    world(world)
+    world(world),
+    score(0)
   {
     this->renderer = SDL_CreateRenderer(this->window, -1,
                                         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    // Initialize fonts
+    if (TTF_Init() == -1) {
+      cout << "Could not initialize SDL_ttf. SDL_ttf error: "
+           << TTF_GetError() << endl;
+      exit(3);
+    }
+
+    this->font = TTF_OpenFont("fonts/UbuntuMono-B.ttf", 72);
+    if (font == nullptr) {
+      cout << "Unable to load font. SDL_ttf error: "
+           << TTF_GetError() << endl;
+      exit(4);
+    }
   }
 
   virtual ~Renderer() {
+    TTF_CloseFont(this->font);
     SDL_DestroyRenderer(this->renderer);
   }
 
@@ -191,6 +214,8 @@ public:
     this->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
     this->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
 
+    this->DrawScore();
+
     SDL_RenderPresent(this->renderer);
   }
 
@@ -210,6 +235,38 @@ public:
 
     SDL_SetRenderDrawColor(this->renderer, r, g, b, a);
     SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
+  }
+
+  void DrawText(string text, SDL_Color color) {
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
+    if (textSurface == nullptr) {
+      cout << "Unable to render text surface. SDL_ttf error: "
+           << TTF_GetError() << endl;
+      return;
+    }
+
+    auto texture = SDL_CreateTextureFromSurface(this->renderer, textSurface);
+    if (texture == nullptr) {
+      cout << "Unable to create texture from rendered text. SDL error: "
+           << SDL_GetError() << endl;
+    }
+
+    SDL_FreeSurface(textSurface);
+
+    if (texture) {
+      //texture->render(10, 10);
+      int winw, winh;
+      SDL_GetWindowSize(this->window, &winw, &winh);
+      SDL_Rect dest = {winw - textSurface->w - 10, 10, textSurface->w, textSurface->h};
+      SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
+      SDL_DestroyTexture(texture);
+    }
+  }
+
+  void DrawScore() {
+    stringstream ss;
+    ss << setw(6) << setfill('0') << this->score;
+    this->DrawText(ss.str(), SDL_Color {0, 0, 0});
   }
 };
 
@@ -278,7 +335,7 @@ int main(int argc, char *argv[]) {
   ContactListener contactListener;
   world.SetContactListener(&contactListener);
 
-  Renderer renderer(window, &world);
+  Renderer *renderer = new Renderer(window, &world);
 
   bool paused = true;
   bool stepOnce = false;
@@ -291,6 +348,17 @@ int main(int argc, char *argv[]) {
 
   while (!quit) {
     FixCamera(window, world.GetBodyList());
+
+    // Update score.
+    if (!paused) {
+      auto body = world.GetBodyList();
+      auto sun = body->GetNext();
+      auto v = body->GetLinearVelocityFromWorldPoint(body->GetPosition()).Length();
+      auto d = (body->GetPosition() - sun->GetPosition()).Length();
+      if (d > 100) d = 0;
+      int diff = v * d / 100;
+      renderer->score += diff;
+    }
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -379,14 +447,17 @@ int main(int argc, char *argv[]) {
       world.Step(dt / 1000.0, 10, 10);
       stepOnce = false;
     }
-    renderer.Render();
+    renderer->Render();
     lastTime = SDL_GetTicks();
   }
+
+  delete renderer;
 
   // Destroy the window.
   SDL_DestroyWindow(window);
 
   //Quit SDL subsystems
+  TTF_Quit();
   SDL_Quit();
 
   return 0;

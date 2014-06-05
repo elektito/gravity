@@ -10,6 +10,7 @@ def configure(cfg):
     cfg.check_cfg(package='sdl2', args='--cflags --libs', uselib_store='SDL2')
     cfg.check_cxx(lib='Box2D', uselib_store='BOX2D')
     cfg.check_cxx(lib='SDL2_gfx', uselib_store='SDL2_GFX')
+    cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-g'])
 
@@ -20,5 +21,5 @@ def build(bld):
     bld.program(
         source=source,
         target='polygons',
-        use='SDL2 SDL2_GFX BOX2D'
+        use='SDL2 SDL2_GFX SDL2_TTF BOX2D'
     )
