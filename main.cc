@@ -12,10 +12,10 @@ float32 ppm = 5.0;
 float32 camerax = -50.0;
 float32 cameray = -50.0;
 
-const float32 min_width = 100;
-const float32 min_height = 50;
-const float32 max_width = 400;
-const float32 max_height = 200;
+const float32 min_width = 150;
+const float32 min_height = 75;
+const float32 max_width = 300;
+const float32 max_height = 150;
 
 using namespace std;
 
@@ -91,8 +91,8 @@ void FixCamera(SDL_Window *window, b2Body *body) {
     width = height * ratio;
   }
 
-  camerax = - (width / 2);
-  cameray = - (height / 2);
+  camerax = - (width / 2.0);
+  cameray = - (height / 2.0);
 
   ppm = winw / width;
 }
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 
   b2CircleShape shape;
   shape.m_p.Set(0.0, 0.0);
-  shape.m_radius = 7.0;
+  shape.m_radius = 6.0;
 
   b2FixtureDef fd;
   fd.shape = &shape;
