@@ -31,10 +31,13 @@ public:
   void Check();
   void Pause();
   void Unpause();
+  bool TogglePause();
+  bool IsPaused();
 
   static void CheckAll();
   static void PauseAll();
   static void UnpauseAll();
+  static void TogglePauseAll();
 };
 
 #endif /* _GRAVITY_TIMER_HH_ */

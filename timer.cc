@@ -53,6 +53,19 @@ void Timer::Unpause() {
   this->paused = false;
 }
 
+bool Timer::TogglePause() {
+  if (this->paused)
+    this->Unpause();
+  else
+    this->Pause();
+
+  return this->paused;
+}
+
+bool Timer::IsPaused() {
+  return this->paused;
+}
+
 void Timer::CheckAll() {
   for (auto t : timers)
     t->Check();
@@ -66,4 +79,9 @@ void Timer::PauseAll() {
 void Timer::UnpauseAll() {
   for (auto t : timers)
     t->Unpause();
+}
+
+void Timer::TogglePauseAll() {
+  for (auto t : timers)
+    t->TogglePause();
 }
