@@ -17,6 +17,8 @@ def configure(cfg):
 def build(bld):
     source = [
         'main.cc',
+        'sdl-renderer.cc',
+        'camera.cc'
     ]
     bld.program(
         source=source,

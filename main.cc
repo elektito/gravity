@@ -1,20 +1,16 @@
-#include <iostream>
-#include <sstream>
-#include <iomanip>
+#include "entity.hh"
+#include "sdl-renderer.hh"
+#include "camera.hh"
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_render.h>
 #include <Box2D/Box2D.h>
+
+#include <iostream>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 const int TIME_STEP = 15;
-
-float32 ppm = 5.0;
-float32 camerax = -50.0;
-float32 cameray = -50.0;
 
 const float32 min_width = 150;
 const float32 min_height = 75;
@@ -22,18 +18,6 @@ const float32 max_width = 300;
 const float32 max_height = 150;
 
 using namespace std;
-
-struct TrailPoint {
-  b2Vec2 pos;
-  float32 time;
-};
-
-struct Trail {
-  b2Body *body;
-  int size;
-  float32 time;
-  vector<TrailPoint> points;
-} trail;
 
 void UpdateTrail(b2Body *b, Trail *t, float32 currentTime) {
   // Remove all the points not in the desired time window.
@@ -47,19 +31,16 @@ void UpdateTrail(b2Body *b, Trail *t, float32 currentTime) {
   t->points.push_back(TrailPoint { b->GetPosition(), currentTime });
 }
 
-#define max(x, y) ((x) > (y) ? (x) : (y))
-#define min(x, y) ((x) < (y) ? (x) : (y))
-#define abs(x) ((x) > 0 ? (x) : -(x))
-
-void FixCamera(SDL_Window *window, b2Body *body) {
+void FixCamera(Camera *camera, SDL_Window *window, b2Body *body) {
   int winw, winh;
   SDL_GetWindowSize(window, &winw, &winh);
   float32 ratio = ((float32) winw) / winh;
 
   float32 width, height;
 
-  b2Vec2 upper(camerax + winw / ppm, cameray + winh / ppm);
-  b2Vec2 lower(camerax, cameray);
+  b2Vec2 upper(camera->pos.x + winw / camera->ppm,
+               camera->pos.y + winh / camera->ppm);
+  b2Vec2 lower(camera->pos.x, camera->pos.y);
 
   auto r = body->GetFixtureList()->GetShape()->m_radius;
 
@@ -119,23 +100,10 @@ void FixCamera(SDL_Window *window, b2Body *body) {
     width = height * ratio;
   }
 
-  camerax = - (width / 2.0);
-  cameray = - (height / 2.0);
+  camera->pos.x = - (width / 2.0);
+  camera->pos.y = - (height / 2.0);
 
-  ppm = winw / width;
-}
-
-void PointToScreen(SDL_Window *window, b2Vec2 p, int &x, int &y) {
-  x = (p.x - camerax) * ppm;
-  y = (p.y - cameray) * ppm;
-
-  int w, h;
-  SDL_GetWindowSize(window, &w, &h);
-  y = h - y;
-}
-
-float32 LengthToScreen(float32 length) {
-  return length * ppm;
+  camera->ppm = winw / width;
 }
 
 class ContactListener : public b2ContactListener {
@@ -145,17 +113,6 @@ public:
     //cout << "hit " << f << endl;
   }
 };
-
-b2Vec2 WindowToWorldCoords(int x, int y, SDL_Window *window) {
-  int w, h;
-  SDL_GetWindowSize(window, &w, &h);
-  y = h - y;
-
-  b2Vec2 p(x / ppm, y / ppm);
-  p += b2Vec2(camerax, cameray);
-
-  return p;
-}
 
 b2Body *GetBodyFromPoint(b2Vec2 p, b2World *world) {
   for (b2Body *b = world->GetBodyList(); b; b = b->GetNext()) {
@@ -167,188 +124,6 @@ b2Body *GetBodyFromPoint(b2Vec2 p, b2World *world) {
 
   return nullptr;
 }
-
-struct Entity {
-  b2Body *body;
-  bool isGravitySource;
-  float32 gravityCoeff;
-};
-
-class Renderer {
-protected:
-  SDL_Window *window;
-  b2World *world;
-  SDL_Renderer *renderer;
-  TTF_Font *font;
-
-public:
-  uint32 score;
-
-  Renderer(SDL_Window *window, b2World *world) :
-    window(window),
-    world(world),
-    score(0)
-  {
-    this->renderer = SDL_CreateRenderer(this->window, -1,
-                                        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    // Initialize fonts
-    if (TTF_Init() == -1) {
-      cout << "Could not initialize SDL_ttf. SDL_ttf error: "
-           << TTF_GetError() << endl;
-      exit(3);
-    }
-
-    this->font = TTF_OpenFont("fonts/UbuntuMono-B.ttf", 72);
-    if (font == nullptr) {
-      cout << "Unable to load font. SDL_ttf error: "
-           << TTF_GetError() << endl;
-      exit(4);
-    }
-  }
-
-  virtual ~Renderer() {
-    TTF_CloseFont(this->font);
-    SDL_DestroyRenderer(this->renderer);
-  }
-
-  void Render() {
-    SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, 255);
-    SDL_RenderClear(this->renderer);
-
-    this->DrawTrail(&trail);
-
-    // Draw grid.
-    int winw, winh;
-    SDL_GetWindowSize(window, &winw, &winh);
-
-    float32 upperx = camerax + winw / ppm;
-    float32 uppery = cameray + winh / ppm;
-    float32 x = camerax + fmod(camerax + 10, 10);
-    float32 y = camerax + fmod(cameray + 10, 10);
-    for (; x <= upperx; x += 10)
-      this->DrawLine(b2Vec2(x, cameray), b2Vec2(x, uppery), 32, 64, 64, 255);
-    for (; y <= uppery; y += 10)
-      this->DrawLine(b2Vec2(camerax, y), b2Vec2(upperx, y), 32, 64, 64, 255);
-
-    for (b2Body *b = this->world->GetBodyList(); b; b = b->GetNext()) {
-      for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
-        this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius, 255, 255, 255, 255);
-      }
-    }
-
-    this->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
-    this->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
-
-    this->DrawScore();
-
-    SDL_RenderPresent(this->renderer);
-  }
-
-  void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) {
-    int x, y;
-    radius = LengthToScreen(radius);
-    PointToScreen(this->window, pos, x, y);
-
-    aacircleRGBA(this->renderer, x, y, radius, r, g, b, a);
-    filledCircleRGBA(this->renderer, x, y, radius, r, g, b, a);
-  }
-
-  void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) {
-    int x1, y1, x2, y2;
-    PointToScreen(this->window, begin, x1, y1);
-    PointToScreen(this->window, end, x2, y2);
-
-    SDL_SetRenderDrawColor(this->renderer, r, g, b, a);
-    SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
-  }
-
-  void DrawText(string text, SDL_Color color) {
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
-    if (textSurface == nullptr) {
-      cout << "Unable to render text surface. SDL_ttf error: "
-           << TTF_GetError() << endl;
-      return;
-    }
-
-    auto texture = SDL_CreateTextureFromSurface(this->renderer, textSurface);
-    if (texture == nullptr) {
-      cout << "Unable to create texture from rendered text. SDL error: "
-           << SDL_GetError() << endl;
-    }
-
-    SDL_FreeSurface(textSurface);
-
-    if (texture) {
-      int winw, winh;
-      SDL_GetWindowSize(this->window, &winw, &winh);
-      SDL_Rect dest = {winw - textSurface->w - 10, 10, textSurface->w, textSurface->h};
-      SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
-      SDL_DestroyTexture(texture);
-    }
-  }
-
-  void DrawScore() {
-    stringstream ss;
-    ss << setw(6) << setfill('0') << this->score;
-    this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128});
-  }
-
-  void DrawTrail(Trail *t) {
-    vector<TrailPoint> points;
-
-    if (t->size < t->points.size()) {
-      // Choose 't->size' points in the 't->time' time-window.
-
-      // From the rest choose enough, as evenly timed as possible.
-      auto step = t->time / t->size;
-      auto time = t->points[0].time;
-      auto it = t->points.begin();
-      while (points.size() < t->size) {
-        time += step;
-
-        // Go forward among previous locations until we reach one after
-        // 'time'. Choose the point as close to the time we want as
-        // possible.
-        float32 leastDiff = FLT_MAX;
-        TrailPoint closestPoint;
-        for (; it != t->points.end(); ++it) {
-          if (abs(it->time - time) < leastDiff) {
-            leastDiff = abs(it->time - time);
-            closestPoint = *it;
-          }
-
-          if (it->time >= time)
-            break;
-        }
-
-        points.push_back(closestPoint);
-
-        // Continue from this point.
-        time = closestPoint.time;
-      }
-    }
-    else
-      points = t->points;
-
-    float32 r = t->body->GetFixtureList()->GetShape()->m_radius;
-    auto startr = r / 10.0;
-    auto endr = r / 2.0;
-    r = startr;
-    float32 a = 128;
-    float32 dr, da;
-    if (points.size() > 0) {
-      dr = (endr - startr) / points.size();
-      da = (255 - a) / points.size();
-    }
-
-    for (auto &p : points) {
-      this->DrawDisk(p.pos, r, 255, 0, 0, a);
-      r += dr;
-      a += da;
-    }
-  }
-};
 
 int main(int argc, char *argv[]) {
   bool quit = false;
@@ -415,7 +190,15 @@ int main(int argc, char *argv[]) {
   ContactListener contactListener;
   world.SetContactListener(&contactListener);
 
-  Renderer *renderer = new Renderer(window, &world);
+  Trail trail;
+  trail.size = 30;
+  trail.time = 1.0;
+  trail.body = world.GetBodyList();
+
+  Camera camera;
+  camera.pos.Set(-50.0, -50.0);
+  camera.ppm = 10.0;
+  Renderer *renderer = SdlRenderer::Create(window, &camera, &world, &trail);
 
   bool paused = true;
   bool stepOnce = false;
@@ -427,11 +210,8 @@ int main(int argc, char *argv[]) {
   uint32_t lastTime = SDL_GetTicks();
 
   float32 startTime = SDL_GetTicks() / 1000.0;
-  trail.size = 30;
-  trail.time = 1.0;
-  trail.body = world.GetBodyList();
   while (!quit) {
-    FixCamera(window, world.GetBodyList());
+    FixCamera(&camera, window, world.GetBodyList());
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -441,7 +221,7 @@ int main(int argc, char *argv[]) {
       else if (e.type == SDL_MOUSEBUTTONDOWN) {
         if (e.button.button == SDL_BUTTON_LEFT) {
           SDL_GetMouseState(&x, &y);
-          b2Vec2 p = WindowToWorldCoords(x, y, window);
+          b2Vec2 p = camera.PointToWorld(x, y, window);
           b2Body *b = GetBodyFromPoint(p, &world);
           if (b) {
             Entity *e = (Entity*) b->GetUserData();
@@ -455,7 +235,7 @@ int main(int argc, char *argv[]) {
       else if (e.type == SDL_MOUSEMOTION) {
         if (draggingBody) {
           SDL_GetMouseState(&x, &y);
-          b2Vec2 p = WindowToWorldCoords(x, y, window);
+          b2Vec2 p = camera.PointToWorld(x, y, window);
           draggingBody->SetTransform(p - draggingOffset, 0.0);
         }
       }
@@ -543,8 +323,7 @@ int main(int argc, char *argv[]) {
   // Destroy the window.
   SDL_DestroyWindow(window);
 
-  //Quit SDL subsystems
-  TTF_Quit();
+  // Quit SDL.
   SDL_Quit();
 
   return 0;
