@@ -57,3 +57,13 @@ void Timer::CheckAll() {
   for (auto t : timers)
     t->Check();
 }
+
+void Timer::PauseAll() {
+  for (auto t : timers)
+    t->Pause();
+}
+
+void Timer::UnpauseAll() {
+  for (auto t : timers)
+    t->Unpause();
+}

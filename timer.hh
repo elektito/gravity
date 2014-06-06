@@ -33,6 +33,8 @@ public:
   void Unpause();
 
   static void CheckAll();
+  static void PauseAll();
+  static void UnpauseAll();
 };
 
 #endif /* _GRAVITY_TIMER_HH_ */
