@@ -389,7 +389,7 @@ int main(int argc, char *argv[]) {
   b2FixtureDef fd;
   fd.shape = &shape;
   fd.friction = 0.5;
-  fd.restitution = 0.5;
+  fd.restitution = 0.7;
   fd.density = 1000;
   b2Fixture *fixture = body->CreateFixture(&fd);
 
@@ -405,7 +405,7 @@ int main(int argc, char *argv[]) {
 
   fd.shape = &shape;
   fd.friction = 0.5;
-  fd.restitution = 0.5;
+  fd.restitution = 0.7;
   fd.density = 1.0;
   fixture = body->CreateFixture(&fd);
 
