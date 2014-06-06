@@ -18,7 +18,8 @@ def build(bld):
     source = [
         'main.cc',
         'sdl-renderer.cc',
-        'camera.cc'
+        'camera.cc',
+        'timer.cc'
     ]
     bld.program(
         source=source,
