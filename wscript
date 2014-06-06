@@ -1,4 +1,4 @@
-APPNAME = 'polygons'
+APPNAME = 'gravity'
 VERSION = '0.1'
 
 def options(opt):
@@ -20,6 +20,6 @@ def build(bld):
     ]
     bld.program(
         source=source,
-        target='polygons',
+        target='gravity',
         use='SDL2 SDL2_GFX SDL2_TTF BOX2D'
     )
