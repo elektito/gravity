@@ -21,7 +21,7 @@ protected:
   TTF_Font *font;
   Trail *trail;
 
-  SdlRenderer(SDL_Window *window, Camera *camera, b2World *world, Trail *trail);
+SdlRenderer(SDL_Window *window, Camera *camera, b2World *world, Trail *trail, Game *game);
 
   virtual void DrawBackground();
   virtual void DrawGrid();
@@ -31,15 +31,26 @@ protected:
 
   void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a);
   void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a);
-  void DrawText(string text, SDL_Color color);
+  void DrawText(string text,
+                SDL_Color color,
+                int scrx,
+                int scry,
+                bool anchorLeft=true,
+                bool anchorTop=true);
   void DrawScore();
+  void DrawTime();
   void DrawTrail(Trail *t);
 
 public:
   virtual ~SdlRenderer();
 
-  static Renderer *Create(SDL_Window *window, Camera *camera, b2World *world, Trail *trail) {
-    return new SdlRenderer(window, camera, world, trail);
+  static Renderer *Create(SDL_Window *window,
+                          Camera *camera,
+                          b2World *world,
+                          Trail *trail,
+                          Game *game)
+  {
+return new SdlRenderer(window, camera, world, trail, game);
   }
 };
 

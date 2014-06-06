@@ -1,6 +1,8 @@
 #ifndef _GRAVITY_RENDERER_HH_
 #define _GRAVITY_RENDERER_HH_
 
+#include "game.hh"
+
 #include <Box2D/Box2D.h>
 
 #include <vector>
@@ -27,13 +29,14 @@ protected:
   virtual void DrawHud() = 0;
   virtual void PresentScreen() = 0;
 
-  Renderer() :
-    score(0)
+  Game *game;
+
+  Renderer(Game *game) :
+    game(game)
   {
   }
 
 public:
-  int score;
   void Render() {
     this->DrawBackground();
     this->DrawGrid();

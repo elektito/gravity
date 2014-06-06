@@ -1,6 +1,8 @@
 #include "entity.hh"
 #include "sdl-renderer.hh"
 #include "camera.hh"
+#include "timer.hh"
+#include "game.hh"
 
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
@@ -198,7 +200,15 @@ int main(int argc, char *argv[]) {
   Camera camera;
   camera.pos.Set(-50.0, -50.0);
   camera.ppm = 10.0;
-  Renderer *renderer = SdlRenderer::Create(window, &camera, &world, &trail);
+
+  Game game;
+  game.score = 0;
+  game.timeRemaining = 120;
+  Timer t([&](float elapsed) { if (game.timeRemaining > 0) game.timeRemaining -= 1; });
+  t.Set(1.0, true);
+  Timer::PauseAll();
+
+  Renderer *renderer = SdlRenderer::Create(window, &camera, &world, &trail, &game);
 
   bool paused = true;
   bool stepOnce = false;
@@ -251,6 +261,7 @@ int main(int argc, char *argv[]) {
           break;
         case SDLK_p:
           paused = !paused;
+          Timer::TogglePauseAll();
           break;
         case SDLK_n:
           stepOnce = true;
@@ -265,6 +276,8 @@ int main(int argc, char *argv[]) {
         }
       }
     }
+
+    Timer::CheckAll();
 
     if (!paused || (paused && stepOnce))
       UpdateTrail(world.GetBodyList(), &trail, SDL_GetTicks() / 1000.0 - startTime);
@@ -287,7 +300,7 @@ int main(int argc, char *argv[]) {
         auto d = (body->GetPosition() - sun->GetPosition()).Length();
         if (d > 100) d = 0;
         int diff = v * d / 100;
-        renderer->score += diff;
+        game.score += diff;
       }
 
       for (b2Body *b = world.GetBodyList(); b; b = b->GetNext()) {

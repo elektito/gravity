@@ -8,7 +8,12 @@
 
 using namespace std;
 
-SdlRenderer::SdlRenderer(SDL_Window *window, Camera *camera, b2World *world, Trail *trail) :
+SdlRenderer::SdlRenderer(SDL_Window *window,
+                         Camera *camera,
+                         b2World *world,
+                         Trail *trail,
+                         Game *game) :
+  Renderer(game),
   window(window),
   camera(camera),
   world(world),
@@ -77,6 +82,7 @@ void SdlRenderer::DrawHud() {
   this->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
 
   this->DrawScore();
+  this->DrawTime();
 }
 
 void SdlRenderer::PresentScreen() {
@@ -101,7 +107,12 @@ void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a)
   SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
 }
 
-void SdlRenderer::DrawText(string text, SDL_Color color) {
+void SdlRenderer::DrawText(string text,
+                           SDL_Color color,
+                           int scrx,
+                           int scry,
+                           bool anchorLeft,
+                           bool anchorTop) {
   SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
   if (textSurface == nullptr) {
     stringstream ss;
@@ -123,7 +134,10 @@ void SdlRenderer::DrawText(string text, SDL_Color color) {
   if (texture) {
     int winw, winh;
     SDL_GetWindowSize(this->window, &winw, &winh);
-    SDL_Rect dest = {winw - textSurface->w - 10, 10, textSurface->w, textSurface->h};
+    int x, y;
+    x = anchorLeft ? scrx : winw - textSurface->w - scrx;
+    y = anchorTop ? scry : winh - textSurface->h - scry;
+    SDL_Rect dest = {x, y, textSurface->w, textSurface->h};
     SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
     SDL_DestroyTexture(texture);
   }
@@ -131,8 +145,18 @@ void SdlRenderer::DrawText(string text, SDL_Color color) {
 
 void SdlRenderer::DrawScore() {
   stringstream ss;
-  ss << setw(6) << setfill('0') << this->score;
-  this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128});
+  ss << setw(6) << setfill('0') << this->game->score;
+  this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128}, 10, 10, false, true);
+}
+
+void SdlRenderer::DrawTime() {
+  int minutes = this->game->timeRemaining / 60;
+  int seconds = this->game->timeRemaining % 60;
+  stringstream ss;
+  ss << setw(2) << setfill('0') << minutes
+     << setw(0) << ":"
+     << setw(2) << setfill('0') << seconds;
+  this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128}, 10, 10);
 }
 
 void SdlRenderer::DrawTrail(Trail *t) {
