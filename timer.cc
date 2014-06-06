@@ -1,5 +1,6 @@
 #include "timer.hh"
 
+#include <iostream>
 #include <algorithm>
 
 vector<Timer*> Timer::timers;
@@ -23,7 +24,7 @@ void Timer::Set(float timeout, bool periodic) {
 }
 
 void Timer::Check() {
-  if (this->expired)
+  if (this->expired || this->paused)
     return;
 
   float elapsed = (SDL_GetTicks() - this->startTime) / 1000.0;
