@@ -4,7 +4,7 @@
 
 vector<Timer*> Timer::timers;
 
-Timer::Timer(function<void ()> callback) :
+Timer::Timer(timer_callback callback) :
   callback(callback),
   expired(true)
 {
@@ -26,11 +26,12 @@ void Timer::Check() {
   if (this->expired)
     return;
 
-  if ((SDL_GetTicks() - this->startTime) / 1000.0) {
+  float elapsed = (SDL_GetTicks() - this->startTime) / 1000.0;
+  if (elapsed >= this->timeout) {
     if (this->periodic)
       this->startTime = SDL_GetTicks();
 
-    this->callback();
+    this->callback(elapsed);
     this->expired = !this->periodic;
   }
 }

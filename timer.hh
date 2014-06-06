@@ -10,6 +10,8 @@ using namespace std;
 
 class Timer {
 protected:
+  typedef function<void (float elapsed)> timer_callback;
+
   Uint32 startTime;
   float timeout;
   bool periodic;
@@ -19,12 +21,12 @@ protected:
 
   bool expired;
 
-  function<void ()> callback;
+  timer_callback callback;
 
   static vector<Timer*> timers;
 
 public:
-  Timer(function<void ()> callback);
+  Timer(timer_callback callback);
   virtual ~Timer();
 
   void Set(float timeout, bool periodic=false);
