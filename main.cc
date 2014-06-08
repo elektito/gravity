@@ -109,7 +109,26 @@ void FixCamera(Camera *camera, SDL_Window *window, b2Body *body) {
 }
 
 class ContactListener : public b2ContactListener {
+protected:
+  Game *game;
+  bool inContact;
+
 public:
+  ContactListener(Game *game) :
+    game(game),
+    inContact(false)
+  {}
+
+  virtual void BeginContact(b2Contact *contact) {
+    if (!this->inContact)
+      this->game->timeRemaining -= 10;
+    this->inContact = true;
+  }
+
+  virtual void EndContact(b2Contact *contact) {
+    this->inContact = false;
+  }
+
   virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
     //float32 f = contact->GetFriction();
     //cout << "hit " << f << endl;
@@ -189,9 +208,6 @@ int main(int argc, char *argv[]) {
   e = new Entity { body, false, 0.0 };
   body->SetUserData(e);
 
-  ContactListener contactListener;
-  world.SetContactListener(&contactListener);
-
   Trail trail;
   trail.size = 30;
   trail.time = 1.0;
@@ -207,6 +223,9 @@ int main(int argc, char *argv[]) {
   Timer t([&](float elapsed) { if (game.timeRemaining > 0) game.timeRemaining -= 1; });
   t.Set(1.0, true);
   Timer::PauseAll();
+
+  ContactListener contactListener(&game);
+  world.SetContactListener(&contactListener);
 
   Renderer *renderer = SdlRenderer::Create(window, &camera, &world, &trail, &game);
 
