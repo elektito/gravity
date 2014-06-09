@@ -15,42 +15,31 @@ using namespace std;
 class SdlRenderer : public Renderer {
 protected:
   SDL_Window *window;
-  Camera *camera;
-  b2World *world;
   SDL_Renderer *renderer;
   TTF_Font *font;
-  Trail *trail;
 
-SdlRenderer(SDL_Window *window, Camera *camera, b2World *world, Trail *trail, Game *game);
+  SdlRenderer(SDL_Window *window);
 
-  virtual void DrawBackground();
-  virtual void DrawGrid();
-  virtual void DrawEntities();
-  virtual void DrawHud();
-  virtual void PresentScreen();
-
-  void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a);
-  void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a);
-  void DrawText(string text,
-                SDL_Color color,
-                int scrx,
-                int scry,
-                bool anchorLeft=true,
-                bool anchorTop=true);
-  void DrawScore();
-  void DrawTime();
-  void DrawTrail(Trail *t);
+  void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const;
 
 public:
   virtual ~SdlRenderer();
 
-  static Renderer *Create(SDL_Window *window,
-                          Camera *camera,
-                          b2World *world,
-                          Trail *trail,
-                          Game *game)
-  {
-return new SdlRenderer(window, camera, world, trail, game);
+  virtual void DrawBackground() const;
+  virtual void DrawGrid() const;
+  virtual void DrawEntity(const Entity *entity) const;
+  virtual void DrawTrail(const Trail *t) const;
+  virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const;
+  virtual void DrawText(string text,
+                        SDL_Color color,
+                        int scrx,
+                        int scry,
+                        bool anchorLeft=true,
+                        bool anchorTop=true) const;
+  virtual void PresentScreen();
+
+  static Renderer *Create(SDL_Window *window) {
+    return new SdlRenderer(window);
   }
 };
 

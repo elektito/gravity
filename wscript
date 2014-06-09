@@ -19,7 +19,8 @@ def build(bld):
         'main.cc',
         'sdl-renderer.cc',
         'camera.cc',
-        'timer.cc'
+        'timer.cc',
+        'game-screen.cc'
     ]
     bld.program(
         source=source,

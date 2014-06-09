@@ -8,16 +8,8 @@
 
 using namespace std;
 
-SdlRenderer::SdlRenderer(SDL_Window *window,
-                         Camera *camera,
-                         b2World *world,
-                         Trail *trail,
-                         Game *game) :
-  Renderer(game),
-  window(window),
-  camera(camera),
-  world(world),
-  trail(trail)
+SdlRenderer::SdlRenderer(SDL_Window *window) :
+  window(window)
 {
   this->renderer = SDL_CreateRenderer(window, -1,
                                       SDL_RENDERER_ACCELERATED |
@@ -47,61 +39,50 @@ SdlRenderer::~SdlRenderer() {
   SDL_DestroyRenderer(this->renderer);
 }
 
-void SdlRenderer::DrawBackground() {
+void SdlRenderer::DrawBackground() const {
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, 255);
   SDL_RenderClear(this->renderer);
 }
 
-void SdlRenderer::DrawGrid() {
+void SdlRenderer::DrawGrid() const {
   // Draw grid.
   int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
 
-  float32 upperx = camera->pos.x + winw / camera->ppm;
-  float32 uppery = camera->pos.y + winh / camera->ppm;
-  float32 x = camera->pos.x + fmod(camera->pos.x + 10, 10);
-  float32 y = camera->pos.x + fmod(camera->pos.y + 10, 10);
+  float32 upperx = this->camera.pos.x + winw / this->camera.ppm;
+  float32 uppery = this->camera.pos.y + winh / this->camera.ppm;
+  float32 x = this->camera.pos.x + fmod(this->camera.pos.x + 10, 10);
+  float32 y = this->camera.pos.x + fmod(this->camera.pos.y + 10, 10);
   for (; x <= upperx; x += 10)
-    this->DrawLine(b2Vec2(x, camera->pos.y), b2Vec2(x, uppery), 32, 64, 64, 255);
+    this->DrawLine(b2Vec2(x, this->camera.pos.y), b2Vec2(x, uppery), 32, 64, 64, 255);
   for (; y <= uppery; y += 10)
-    this->DrawLine(b2Vec2(camera->pos.x, y), b2Vec2(upperx, y), 32, 64, 64, 255);
+    this->DrawLine(b2Vec2(this->camera.pos.x, y), b2Vec2(upperx, y), 32, 64, 64, 255);
 }
 
-void SdlRenderer::DrawEntities() {
-  this->DrawTrail(this->trail);
-
-  for (b2Body *b = this->world->GetBodyList(); b; b = b->GetNext()) {
-    for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
-      this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius, 255, 255, 255, 255);
-    }
+void SdlRenderer::DrawEntity(const Entity *entity) const {
+  b2Body *b = entity->body;
+  for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
+    this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius, 255, 255, 255, 255);
   }
-}
-
-void SdlRenderer::DrawHud() {
-  this->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
-  this->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
-
-  this->DrawScore();
-  this->DrawTime();
 }
 
 void SdlRenderer::PresentScreen() {
   SDL_RenderPresent(this->renderer);
 }
 
-void SdlRenderer::DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) {
+void SdlRenderer::DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const {
   int x, y;
-  radius = this->camera->LengthToScreen(radius);
-  this->camera->PointToScreen(this->window, pos, x, y);
+  radius = this->camera.LengthToScreen(radius);
+  this->camera.PointToScreen(this->window, pos, x, y);
 
   aacircleRGBA(this->renderer, x, y, radius, r, g, b, a);
   filledCircleRGBA(this->renderer, x, y, radius, r, g, b, a);
 }
 
-void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) {
+void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const {
   int x1, y1, x2, y2;
-  this->camera->PointToScreen(this->window, begin, x1, y1);
-  this->camera->PointToScreen(this->window, end, x2, y2);
+  this->camera.PointToScreen(this->window, begin, x1, y1);
+  this->camera.PointToScreen(this->window, end, x2, y2);
 
   SDL_SetRenderDrawColor(this->renderer, r, g, b, a);
   SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
@@ -112,7 +93,8 @@ void SdlRenderer::DrawText(string text,
                            int scrx,
                            int scry,
                            bool anchorLeft,
-                           bool anchorTop) {
+                           bool anchorTop) const
+{
   SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
   if (textSurface == nullptr) {
     stringstream ss;
@@ -143,23 +125,7 @@ void SdlRenderer::DrawText(string text,
   }
 }
 
-void SdlRenderer::DrawScore() {
-  stringstream ss;
-  ss << setw(6) << setfill('0') << this->game->score;
-  this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128}, 10, 10, false, true);
-}
-
-void SdlRenderer::DrawTime() {
-  int minutes = this->game->timeRemaining / 60;
-  int seconds = this->game->timeRemaining % 60;
-  stringstream ss;
-  ss << setw(2) << setfill('0') << minutes
-     << setw(0) << ":"
-     << setw(2) << setfill('0') << seconds;
-  this->DrawText(ss.str(), SDL_Color {0, 0, 0, 128}, 10, 10);
-}
-
-void SdlRenderer::DrawTrail(Trail *t) {
+void SdlRenderer::DrawTrail(const Trail *t) const {
   vector<TrailPoint> points;
 
   if (t->size < t->points.size()) {

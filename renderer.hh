@@ -1,11 +1,13 @@
 #ifndef _GRAVITY_RENDERER_HH_
 #define _GRAVITY_RENDERER_HH_
 
-#include "game.hh"
+#include "camera.hh"
+#include "entity.hh"
 
 #include <Box2D/Box2D.h>
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -23,27 +25,28 @@ struct Trail {
 
 class Renderer {
 protected:
-  virtual void DrawBackground() = 0;
-  virtual void DrawGrid() = 0;
-  virtual void DrawEntities() = 0;
-  virtual void DrawHud() = 0;
-  virtual void PresentScreen() = 0;
-
-  Game *game;
-
-  Renderer(Game *game) :
-    game(game)
-  {
-  }
+  Camera camera;
 
 public:
-  void Render() {
-    this->DrawBackground();
-    this->DrawGrid();
-    this->DrawEntities();
-    this->DrawHud();
-    this->PresentScreen();
+  Renderer() = default;
+  virtual ~Renderer() = default;
+
+  void SetCamera(const Camera &camera) {
+    this->camera = camera;
   }
+
+  virtual void DrawBackground() const = 0;
+  virtual void DrawGrid() const = 0;
+  virtual void DrawEntity(const Entity *entity) const = 0;
+  virtual void DrawTrail(const Trail *t) const = 0;
+  virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const = 0;
+  virtual void DrawText(string text,
+                        SDL_Color color,
+                        int scrx,
+                        int scry,
+                        bool anchorLeft=true,
+                        bool anchorTop=true) const = 0;
+  virtual void PresentScreen() = 0;
 };
 
 #endif /* _GRAVITY_RENDERER_HH_ */
