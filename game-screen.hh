@@ -4,6 +4,7 @@
 #include "screen.hh"
 #include "camera.hh"
 #include "timer.hh"
+#include "entity.hh"
 
 #include <Box2D/Box2D.h>
 
@@ -29,8 +30,8 @@ protected:
   bool paused;
   float32 pauseTime;
   Camera camera;
-  Trail trail;
   float32 startTime;
+  vector<Entity*> entities;
 
   // non-state variables
   b2World world;
@@ -39,11 +40,13 @@ protected:
   bool stepOnce;
   Timer timer;
   ContactListener contactListener;
+  Entity *sun;
 
   // methods
-  void FixCamera(b2Body *body);
+  void FixCamera();
+  void FixCamera(Entity *e);
   void TimerCallback(float elapsed);
-  void UpdateTrail(b2Body *b, Trail *t, float32 currentTime);
+  void UpdateTrails(float32 currentTime);
 
   friend class ContactListener;
 

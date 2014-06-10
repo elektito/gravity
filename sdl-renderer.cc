@@ -125,17 +125,20 @@ void SdlRenderer::DrawText(string text,
   }
 }
 
-void SdlRenderer::DrawTrail(const Trail *t) const {
+void SdlRenderer::DrawTrail(const Entity *e) const {
   vector<TrailPoint> points;
 
-  if (t->size < t->points.size()) {
-    // Choose 't->size' points in the 't->time' time-window.
+  if (!e->hasTrail)
+    return;
+
+  if (e->trail.size < e->trail.points.size()) {
+    // Choose 'e->trail.size' points in the 'e->trail.time' time-window.
 
     // From the rest choose enough, as evenly timed as possible.
-    auto step = t->time / t->size;
-    auto time = t->points[0].time;
-    auto it = t->points.begin();
-    while (points.size() < t->size) {
+    auto step = e->trail.time / e->trail.size;
+    auto time = e->trail.points[0].time;
+    auto it = e->trail.points.begin();
+    while (points.size() < e->trail.size) {
       time += step;
 
       // Go forward among previous locations until we reach one after
@@ -143,7 +146,7 @@ void SdlRenderer::DrawTrail(const Trail *t) const {
       // possible.
       float32 leastDiff = FLT_MAX;
       TrailPoint closestPoint;
-      for (; it != t->points.end(); ++it) {
+      for (; it != e->trail.points.end(); ++it) {
         if (abs(it->time - time) < leastDiff) {
           leastDiff = abs(it->time - time);
           closestPoint = *it;
@@ -160,9 +163,9 @@ void SdlRenderer::DrawTrail(const Trail *t) const {
     }
   }
   else
-    points = t->points;
+    points = e->trail.points;
 
-  float32 r = t->body->GetFixtureList()->GetShape()->m_radius;
+  float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
   auto startr = r / 10.0;
   auto endr = r / 2.0;
   r = startr;

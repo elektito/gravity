@@ -43,46 +43,6 @@ GameScreen::GameScreen(SDL_Window *window) :
 {
   this->timer.Set(1.0, true);
 
-  b2BodyDef bd;
-  bd.type = b2_dynamicBody;
-  bd.position.Set(0.0, 0.0);
-  b2Body *body = world.CreateBody(&bd);
-
-  b2CircleShape shape;
-  shape.m_p.Set(0.0, 0.0);
-  shape.m_radius = 6.0;
-
-  b2FixtureDef fd;
-  fd.shape = &shape;
-  fd.friction = 0.5;
-  fd.restitution = 0.7;
-  fd.density = 1000;
-  b2Fixture *fixture = body->CreateFixture(&fd);
-
-  Entity *e = new Entity { body, true, 130000.0 };
-  body->SetUserData(e);
-
-  bd.type = b2_dynamicBody;
-  bd.position.Set(20.0, 20.0);
-  body = world.CreateBody(&bd);
-
-  shape.m_p.Set(0.0, 0.0);
-  shape.m_radius = 2.0;
-
-  fd.shape = &shape;
-  fd.friction = 0.5;
-  fd.restitution = 0.7;
-  fd.density = 1.0;
-  fixture = body->CreateFixture(&fd);
-
-  e = new Entity { body, false, 0.0 };
-  body->SetUserData(e);
-
-  // trail
-  this->trail.size = 30;
-  this->trail.time = 1.0;
-  this->trail.body = world.GetBodyList();
-
   this->world.SetContactListener(&contactListener);
 
   this->Reset();
@@ -102,7 +62,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       b2Body *b = GetBodyFromPoint(p, &this->world);
       if (b) {
         Entity *e = (Entity*) b->GetUserData();
-        if (e->isGravitySource) {
+        if (e->hasGravity) {
           this->draggingBody = b;
           this->draggingOffset = p - b->GetPosition();
         }
@@ -150,7 +110,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
   }
   else if (e.type == SDL_WINDOWEVENT) {
     if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-      this->FixCamera(this->world.GetBodyList());
+      this->FixCamera();
   }
 }
 
@@ -167,8 +127,20 @@ void GameScreen::Reset() {
   this->draggingBody = nullptr;
   this->stepOnce = false;
 
+  this->sun = Entity::CreateSun(&this->world,
+                                b2Vec2(0.0, 0.0),
+                                6.0,
+                                1000.0,
+                                130000.0);
+  this->entities.push_back(this->sun);
+
+  this->entities.push_back(Entity::CreatePlanet(&this->world,
+                                                b2Vec2(20.0, 20.0),
+                                                2.0,
+                                                1.0));
+
   Timer::PauseAll();
-  this->FixCamera(this->world.GetBodyList());
+  this->FixCamera();
 }
 
 void GameScreen::Save(ostream &s) const {
@@ -204,49 +176,46 @@ void GameScreen::Advance(float dt) {
 
   Timer::CheckAll();
 
-  this->FixCamera(this->world.GetBodyList());
+  this->FixCamera();
 
   // Update the trails.
-  UpdateTrail(world.GetBodyList(), &this->trail, SDL_GetTicks() / 1000.0 - this->startTime);
+  UpdateTrails(SDL_GetTicks() / 1000.0 - this->startTime);
 
   // Update score.
-  auto body = this->world.GetBodyList();
-  auto sun = body->GetNext();
-  auto v = body->GetLinearVelocityFromWorldPoint(body->GetPosition()).Length();
-  auto d = (body->GetPosition() - sun->GetPosition()).Length();
-  if (d > 100) d = 0;
-  int diff = v * d / 100;
-  this->score += diff;
+  for (auto e : this->entities)
+    if (!e->hasGravity) {
+      auto v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
+      auto d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
+      if (d > 100) d = 0;
+      int diff = v * d / 100;
+      this->score += diff;
+    }
 
   // Apply forces.
   vector<Entity*> gravitySources;
 
-  for (b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
-    Entity *e = (Entity*) b->GetUserData();
-    if (e->isGravitySource) {
+  for (auto e : this->entities)
+    if (e->hasGravity)
       gravitySources.push_back(e);
-    }
-  }
 
-  for (b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
-    b2Vec2 gravity;
-    Entity *e = (Entity*) b->GetUserData();
-    if (!e->isGravitySource) {
+  b2Vec2 gravity;
+  for (auto e : this->entities) {
+    if (!e->hasGravity) {
       gravity.Set(0.0, 0.0);
-      for (auto e : gravitySources) {
-        b2Vec2 n = e->body->GetPosition() - b->GetPosition();
+      for (auto s : gravitySources) {
+        b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
         float32 r2 = n.LengthSquared();
         n.Normalize();
-        gravity += e->gravityCoeff / r2 * n;
+        gravity += s->gravityCoeff / r2 * n;
       }
 
-      b->ApplyForce(gravity, b->GetWorldCenter(), true);
+      e->body->ApplyForce(gravity, e->body->GetWorldCenter(), true);
     }
-
-    // Advance physics.
-    this->world.Step(dt, 10, 10);
-    this->stepOnce = false;
   }
+
+  // Advance physics.
+  this->world.Step(dt, 10, 10);
+  this->stepOnce = false;
 }
 
 void GameScreen::Render(Renderer *renderer) const {
@@ -255,7 +224,9 @@ void GameScreen::Render(Renderer *renderer) const {
   renderer->DrawBackground();
   renderer->DrawGrid();
 
-  renderer->DrawTrail(&this->trail);
+  for (auto e : this->entities)
+    if (e->hasTrail)
+      renderer->DrawTrail(e);
 
   for (const b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
     renderer->DrawEntity((Entity*) b->GetUserData());
@@ -284,7 +255,12 @@ void GameScreen::Render(Renderer *renderer) const {
   renderer->PresentScreen();
 }
 
-void GameScreen::FixCamera(b2Body *body) {
+void GameScreen::FixCamera() {
+  for (auto e : this->entities)
+    this->FixCamera(e);
+}
+
+void GameScreen::FixCamera(Entity *e) {
   const float32 min_width = 150;
   const float32 min_height = 75;
   const float32 max_width = 300;
@@ -300,9 +276,9 @@ void GameScreen::FixCamera(b2Body *body) {
                this->camera.pos.y + winh / this->camera.ppm);
   b2Vec2 lower(this->camera.pos.x, this->camera.pos.y);
 
-  auto r = body->GetFixtureList()->GetShape()->m_radius;
+  auto r = e->body->GetFixtureList()->GetShape()->m_radius;
 
-  auto pos = body->GetPosition();
+  auto pos = e->body->GetPosition();
 
   float32 maxx, maxy, minx, miny;
 
@@ -364,16 +340,19 @@ void GameScreen::FixCamera(b2Body *body) {
   this->camera.ppm = winw / width;
 }
 
-void GameScreen::UpdateTrail(b2Body *b, Trail *t, float32 currentTime) {
-  // Remove all the points not in the desired time window.
-  t->points.erase(remove_if(t->points.begin(), t->points.end(),
-                            [=](const TrailPoint &p) -> bool {
-                              return p.time < currentTime - t->time;
-                            }),
-                  t->points.end());
+void GameScreen::UpdateTrails(float32 currentTime) {
+  for (auto e : this->entities)
+    if (e->hasTrail) {
+      // Remove all the points not in the desired time window.
+      e->trail.points.erase(remove_if(e->trail.points.begin(), e->trail.points.end(),
+                                      [=](const TrailPoint &p) -> bool {
+                                        return p.time < currentTime - e->trail.time;
+                                      }),
+                            e->trail.points.end());
 
-  // Add current position to the trail.
-  t->points.push_back(TrailPoint { b->GetPosition(), currentTime });
+      // Add current position to the trail.
+      e->trail.points.push_back(TrailPoint { e->body->GetPosition(), currentTime });
+    }
 }
 
 void GameScreen::TimerCallback(float elapsed) {

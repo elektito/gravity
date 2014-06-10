@@ -28,7 +28,7 @@ public:
   virtual void DrawBackground() const;
   virtual void DrawGrid() const;
   virtual void DrawEntity(const Entity *entity) const;
-  virtual void DrawTrail(const Trail *t) const;
+  virtual void DrawTrail(const Entity *entity) const;
   virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const;
   virtual void DrawText(string text,
                         SDL_Color color,
