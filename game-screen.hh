@@ -27,6 +27,7 @@ protected:
   int score;
   int timeRemaining;
   bool paused;
+  float32 pauseTime;
   Camera camera;
   Trail trail;
   float32 startTime;

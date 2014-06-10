@@ -131,6 +131,10 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     case SDLK_p:
       this->paused = !this->paused;
       Timer::TogglePauseAll();
+      if (this->paused)
+        this->pauseTime = SDL_GetTicks() / 1000.0;
+      else
+        this->startTime += SDL_GetTicks() / 1000.0 - this->pauseTime;
       break;
     case SDLK_n:
       this->stepOnce = true;
@@ -154,6 +158,7 @@ void GameScreen::Reset() {
   this->score = 0;
   this->timeRemaining = 120;
   this->paused = true;
+  this->pauseTime = SDL_GetTicks() / 1000.0;
   this->startTime = SDL_GetTicks() / 1000.0;
 
   this->camera.pos.Set(-50.0, -50.0);
@@ -170,6 +175,7 @@ void GameScreen::Save(ostream &s) const {
   s << this->score
     << this->timeRemaining
     << this->paused
+    << this->pauseTime
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm;
@@ -179,6 +185,7 @@ void GameScreen::Load(istream &s) {
   s >> this->score
     >> this->timeRemaining
     >> this->paused
+    >> this->pauseTime
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm;
