@@ -19,6 +19,15 @@ struct Trail {
 };
 
 struct Entity {
+protected:
+  void SaveBody(const b2Body *b, ostream &s) const;
+  void SaveTrail(const Trail &t, ostream &s) const;
+  b2Body *LoadBody(istream &s, b2World *world);
+  Trail LoadTrail(istream &s);
+
+public:
+  Entity();
+
   bool hasPhysics;
   b2Body *body;
 
@@ -31,6 +40,9 @@ struct Entity {
   bool isAffectedByGravity;
   bool isSun;
   bool isPlanet;
+
+  void Save(ostream &s) const;
+  void Load(istream &s, b2World *world);
 
   static Entity *CreatePlanet(b2World *world,
                               b2Vec2 pos,

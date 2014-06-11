@@ -146,6 +146,10 @@ void GameScreen::Save(ostream &s) const {
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm;
+
+  s << this->entities.size();
+  for (auto e : this->entities)
+    e->Save(s);
 }
 
 void GameScreen::Load(istream &s) {
@@ -156,6 +160,20 @@ void GameScreen::Load(istream &s) {
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm;
+
+  this->entities.clear();
+  this->world = b2World(b2Vec2(0.0, 0.0));
+  Entity *e;
+  size_t entityCount;
+  s >> entityCount;
+  for (int i = 0; i < entityCount; ++i) {
+    e = new Entity;
+    e->Load(s, &this->world);
+    this->entities.push_back(e);
+
+    if (e->isSun)
+      this->sun = e;
+  }
 
   if (this->paused)
     Timer::PauseAll();
