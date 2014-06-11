@@ -25,12 +25,11 @@ public:
 class GameScreen : public Screen {
 protected:
   // state variables
+  float32 time;
   int score;
   int timeRemaining;
   bool paused;
-  float32 pauseTime;
   Camera camera;
-  float32 startTime;
   vector<Entity*> entities;
 
   // non-state variables
@@ -46,7 +45,7 @@ protected:
   void FixCamera();
   void FixCamera(Entity *e);
   void TimerCallback(float elapsed);
-  void UpdateTrails(float32 currentTime);
+  void UpdateTrails();
 
   friend class ContactListener;
 

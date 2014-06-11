@@ -91,10 +91,6 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     case SDLK_p:
       this->paused = !this->paused;
       Timer::TogglePauseAll();
-      if (this->paused)
-        this->pauseTime = SDL_GetTicks() / 1000.0;
-      else
-        this->startTime += SDL_GetTicks() / 1000.0 - this->pauseTime;
       break;
     case SDLK_n:
       this->stepOnce = true;
@@ -118,8 +114,7 @@ void GameScreen::Reset() {
   this->score = 0;
   this->timeRemaining = 120;
   this->paused = true;
-  this->pauseTime = SDL_GetTicks() / 1000.0;
-  this->startTime = SDL_GetTicks() / 1000.0;
+  this->time = 0.0;
 
   this->camera.pos.Set(-50.0, -50.0);
   this->camera.ppm = 10.0;
@@ -144,25 +139,23 @@ void GameScreen::Reset() {
 }
 
 void GameScreen::Save(ostream &s) const {
-  s << this->score
+  s << this->time
+    << this->score
     << this->timeRemaining
     << this->paused
-    << this->pauseTime
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm;
 }
 
 void GameScreen::Load(istream &s) {
-  s >> this->score
+  s >> this->time
+    >> this->score
     >> this->timeRemaining
     >> this->paused
-    >> this->pauseTime
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm;
-
-  this->startTime = SDL_GetTicks() / 1000.0;
 
   if (this->paused)
     Timer::PauseAll();
@@ -174,12 +167,14 @@ void GameScreen::Advance(float dt) {
   if (this->paused && !this->stepOnce)
     return;
 
+  this->time += dt;
+
   Timer::CheckAll();
 
   this->FixCamera();
 
   // Update the trails.
-  UpdateTrails(SDL_GetTicks() / 1000.0 - this->startTime);
+  UpdateTrails();
 
   // Update score.
   for (auto e : this->entities)
@@ -340,18 +335,18 @@ void GameScreen::FixCamera(Entity *e) {
   this->camera.ppm = winw / width;
 }
 
-void GameScreen::UpdateTrails(float32 currentTime) {
+void GameScreen::UpdateTrails() {
   for (auto e : this->entities)
     if (e->hasTrail) {
       // Remove all the points not in the desired time window.
       e->trail.points.erase(remove_if(e->trail.points.begin(), e->trail.points.end(),
                                       [=](const TrailPoint &p) -> bool {
-                                        return p.time < currentTime - e->trail.time;
+                                        return p.time < this->time - e->trail.time;
                                       }),
                             e->trail.points.end());
 
       // Add current position to the trail.
-      e->trail.points.push_back(TrailPoint { e->body->GetPosition(), currentTime });
+      e->trail.points.push_back(TrailPoint { e->body->GetPosition(), this->time });
     }
 }
 

@@ -136,23 +136,23 @@ void SdlRenderer::DrawTrail(const Entity *e) const {
 
     // From the rest choose enough, as evenly timed as possible.
     auto step = e->trail.time / e->trail.size;
-    auto time = e->trail.points[0].time;
-    auto it = e->trail.points.begin();
+    auto time = e->trail.points.back().time;
+    auto it = e->trail.points.rbegin();
     while (points.size() < e->trail.size) {
-      time += step;
+      time -= step;
 
       // Go forward among previous locations until we reach one after
       // 'time'. Choose the point as close to the time we want as
       // possible.
       float32 leastDiff = FLT_MAX;
       TrailPoint closestPoint;
-      for (; it != e->trail.points.end(); ++it) {
+      for (; it != e->trail.points.rend(); ++it) {
         if (abs(it->time - time) < leastDiff) {
           leastDiff = abs(it->time - time);
           closestPoint = *it;
         }
 
-        if (it->time >= time)
+        if (it->time <= time)
           break;
       }
 
@@ -161,6 +161,10 @@ void SdlRenderer::DrawTrail(const Entity *e) const {
       // Continue from this point.
       time = closestPoint.time;
     }
+
+    // We have chosen the trail points from the last to the first, so
+    // reverse them.
+    std::reverse(points.begin(), points.end());
   }
   else
     points = e->trail.points;

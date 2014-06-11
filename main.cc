@@ -50,9 +50,9 @@ int main(int argc, char *argv[]) {
         quit = true;
     }
 
-    float32 dt = (SDL_GetTicks() - lastTime);
-    SDL_Delay(abs(TIME_STEP - dt));
-    dt = (SDL_GetTicks() - lastTime);
+    int dt = SDL_GetTicks() - lastTime;
+    SDL_Delay(TIME_STEP > dt ? TIME_STEP - dt : 0);
+    dt = SDL_GetTicks() - lastTime;
     currentScreen->Advance(dt / 1000.0);
     currentScreen->Render(renderer);
     lastTime = SDL_GetTicks();
