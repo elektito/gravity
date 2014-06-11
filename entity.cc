@@ -29,6 +29,8 @@ Entity *Entity::CreatePlanet(b2World *world,
 
   e->hasGravity = false;
   e->isAffectedByGravity = true;
+  e->isPlanet = true;
+  e->isSun = false;
   e->body->SetUserData(e);
 
   return e;
@@ -61,6 +63,8 @@ Entity *Entity::CreateSun(b2World *world,
   e->hasGravity = true;
   e->gravityCoeff = gravityCoeff;
   e->isAffectedByGravity = false;
+  e->isSun = true;
+  e->isPlanet = false;
   e->body->SetUserData(e);
 
   return e;

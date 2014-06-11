@@ -62,7 +62,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       b2Body *b = GetBodyFromPoint(p, &this->world);
       if (b) {
         Entity *e = (Entity*) b->GetUserData();
-        if (e->hasGravity) {
+        if (e->isSun) {
           this->draggingBody = b;
           this->draggingOffset = p - b->GetPosition();
         }
@@ -183,7 +183,7 @@ void GameScreen::Advance(float dt) {
 
   // Update score.
   for (auto e : this->entities)
-    if (!e->hasGravity) {
+    if (e->isPlanet) {
       auto v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
       auto d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
       if (d > 100) d = 0;
@@ -200,7 +200,7 @@ void GameScreen::Advance(float dt) {
 
   b2Vec2 gravity;
   for (auto e : this->entities) {
-    if (!e->hasGravity) {
+    if (e->isAffectedByGravity) {
       gravity.Set(0.0, 0.0);
       for (auto s : gravitySources) {
         b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();

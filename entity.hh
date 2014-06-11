@@ -29,6 +29,8 @@ struct Entity {
   Trail trail;
 
   bool isAffectedByGravity;
+  bool isSun;
+  bool isPlanet;
 
   static Entity *CreatePlanet(b2World *world,
                               b2Vec2 pos,
