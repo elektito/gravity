@@ -1,4 +1,5 @@
 #include "entity.hh"
+#include "streams.hh"
 
 #include <exception>
 #include <iostream>
@@ -8,14 +9,6 @@ using namespace std;
 Entity::Entity() :
   body(nullptr)
 {
-}
-
-ostream &operator<<(ostream &s, const b2Vec2 &v) {
-  return s << v.x << v.y;
-}
-
-istream &operator>>(istream &s, b2Vec2 &v) {
-  return s >> v.x >> v.y;
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
