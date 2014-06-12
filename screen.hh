@@ -12,13 +12,19 @@ using namespace std;
 class Screen {
 protected:
   SDL_Window *window;
+  bool done;
 
 public:
   Screen(SDL_Window *window) :
-    window(window)
+    window(window),
+    done(false)
   {}
 
   virtual ~Screen() = default;
+
+  bool isDone() const {
+    return this->done;
+  }
 
   virtual void HandleEvent(const SDL_Event &e) = 0;
 

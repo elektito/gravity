@@ -17,6 +17,8 @@ ContactListener::ContactListener(GameScreen *screen) :
 void ContactListener::BeginContact(b2Contact *contact) {
   if (!this->inContact)
     this->screen->timeRemaining -= 10;
+  if (this->screen->timeRemaining < 0)
+    this->screen->timeRemaining = 0;
   this->inContact = true;
 }
 
@@ -121,6 +123,8 @@ void GameScreen::Reset() {
   this->camera.pos.Set(-50.0, -50.0);
   this->camera.ppm = 10.0;
 
+  this->done = false;
+
   this->draggingBody = nullptr;
   this->stepOnce = false;
 
@@ -147,7 +151,8 @@ void GameScreen::Save(ostream &s) const {
     << this->paused
     << this->camera.pos.x
     << this->camera.pos.y
-    << this->camera.ppm;
+    << this->camera.ppm
+    << this->done;
 
   s << this->entities.size();
   for (auto e : this->entities)
@@ -161,7 +166,8 @@ void GameScreen::Load(istream &s) {
     >> this->paused
     >> this->camera.pos.x
     >> this->camera.pos.y
-    >> this->camera.ppm;
+    >> this->camera.ppm
+    >> this->done;
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
@@ -184,6 +190,9 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
+  if (this->isDone())
+    return;
+
   if (this->paused && !this->stepOnce)
     return;
 
@@ -380,11 +389,17 @@ void GameScreen::UpdateTrails() {
 }
 
 void GameScreen::TimerCallback(float elapsed) {
-  // Decrement remaining time.
-  if (this->timeRemaining > 0)
-    this->timeRemaining--;
-
   // Update FPS counter.
   this->fps = this->frameCount;
   this->frameCount = 0;
+
+  // Check for game over.
+  if (this->timeRemaining == 0) {
+    this->done = true;
+    return;
+  }
+
+  // Decrement remaining time.
+  if (this->timeRemaining > 0)
+    this->timeRemaining--;
 }
