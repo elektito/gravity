@@ -40,6 +40,8 @@ protected:
   Timer timer;
   ContactListener contactListener;
   Entity *sun;
+  int frameCount;
+  int fps;
 
   // methods
   void FixCamera();
@@ -60,7 +62,7 @@ public:
   virtual void Load(istream &s);
 
   virtual void Advance(float dt);
-  virtual void Render(Renderer *renderer) const;
+  virtual void Render(Renderer *renderer);
 };
 
 #endif /* _GRAVITY_GAME_SCREEN_HH_ */

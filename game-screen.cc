@@ -39,7 +39,9 @@ GameScreen::GameScreen(SDL_Window *window) :
   Screen(window),
   world(b2Vec2(0.0, 0.0)),
   timer(bind(&GameScreen::TimerCallback, this, _1)),
-  contactListener(this)
+  contactListener(this),
+  frameCount(0),
+  fps(0)
 {
   this->timer.Set(1.0, true);
 
@@ -231,7 +233,7 @@ void GameScreen::Advance(float dt) {
   this->stepOnce = false;
 }
 
-void GameScreen::Render(Renderer *renderer) const {
+void GameScreen::Render(Renderer *renderer) {
   renderer->SetCamera(this->camera);
 
   renderer->DrawBackground();
@@ -264,6 +266,15 @@ void GameScreen::Render(Renderer *renderer) const {
       << setw(0) << ":"
       << setw(2) << setfill('0') << seconds;
   renderer->DrawText(ss2.str(), SDL_Color {0, 0, 0, 128}, 10, 10);
+
+  // Draw FPS Counter.
+  if (!this->paused) {
+    stringstream ss3;
+    ss3 << "FPS: " << this->fps;
+    renderer->DrawText(ss3.str(), SDL_Color {0, 0, 0, 128}, 10, 10, true, false);
+
+    this->frameCount++;
+  }
 
   renderer->PresentScreen();
 }
@@ -369,6 +380,11 @@ void GameScreen::UpdateTrails() {
 }
 
 void GameScreen::TimerCallback(float elapsed) {
+  // Decrement remaining time.
   if (this->timeRemaining > 0)
     this->timeRemaining--;
+
+  // Update FPS counter.
+  this->fps = this->frameCount;
+  this->frameCount = 0;
 }

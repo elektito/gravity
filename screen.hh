@@ -27,7 +27,7 @@ public:
   virtual void Load(istream &s) = 0;
 
   virtual void Advance(float dt) = 0;
-  virtual void Render(Renderer *renderer) const = 0;
+  virtual void Render(Renderer *renderer) = 0;
 };
 
 #endif /* _GRAVITY_SCREEN_HH_ */
