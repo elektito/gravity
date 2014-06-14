@@ -8,6 +8,14 @@
 
 using namespace std;
 
+b2Vec2 RotatePoint(b2Vec2 point, float32 theta, b2Vec2 center) {
+  b2Vec2 np;
+  point = point - center;
+  np.x = point.x * cos(theta) - point.y * sin(theta);
+  np.y = point.x * sin(theta) + point.y * cos(theta);
+  return np + center;
+}
+
 SdlRenderer::SdlRenderer(SDL_Window *window) :
   window(window)
 {
@@ -62,7 +70,22 @@ void SdlRenderer::DrawGrid() const {
 void SdlRenderer::DrawEntity(const Entity *entity) const {
   b2Body *b = entity->body;
   for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
-    this->DrawDisk(b->GetPosition(), f->GetShape()->m_radius, 255, 255, 255, 255);
+    b2Shape *shape = f->GetShape();
+    if (shape->GetType() == b2Shape::e_circle)
+      this->DrawDisk(b->GetPosition(), shape->m_radius, 255, 255, 255, 255);
+    else if (shape->GetType() == b2Shape::e_polygon) {
+      b2Vec2 pos = b->GetPosition();
+      float32 angle = b->GetAngle();
+      b2PolygonShape *polygon = (b2PolygonShape*) shape;
+      int count = polygon->GetVertexCount();
+      b2Vec2 vertices[count];
+      for (int i = 0; i < count; ++i) {
+        vertices[i] = pos + polygon->m_vertices[i];
+        vertices[i] = RotatePoint(vertices[i], angle, pos);
+      }
+
+      this->DrawPolygon(vertices, count);
+    }
   }
 }
 
@@ -77,6 +100,19 @@ void SdlRenderer::DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int 
 
   aacircleRGBA(this->renderer, x, y, radius, r, g, b, a);
   filledCircleRGBA(this->renderer, x, y, radius, r, g, b, a);
+}
+
+void SdlRenderer::DrawPolygon(b2Vec2 vertices[], int count) const {
+  Sint16 vx[count];
+  Sint16 vy[count];
+  int x, y;
+  for (int i = 0; i < count; ++i) {
+    this->camera.PointToScreen(this->window, vertices[i], x, y);
+    vx[i] = x;
+    vy[i] = y;
+  }
+
+  filledPolygonRGBA(this->renderer, vx, vy, count, 255, 255, 255, 255);
 }
 
 void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const {

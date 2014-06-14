@@ -7,7 +7,17 @@
 using namespace std;
 
 Entity::Entity() :
-  body(nullptr)
+  hasPhysics(false),
+  body(nullptr),
+  hasGravity(false),
+  gravityCoeff(0.0),
+  hasTrail(false),
+  isAffectedByGravity(false),
+  isSun(false),
+  isPlanet(false),
+  isCollectible(false),
+  hasScore(false),
+  score(0.0)
 {
 }
 
@@ -184,6 +194,30 @@ Entity *Entity::CreateSun(b2World *world,
   e->isAffectedByGravity = false;
   e->isSun = true;
   e->isPlanet = false;
+  e->body->SetUserData(e);
+
+  return e;
+}
+
+Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
+  Entity *e = new Entity;
+  e->hasPhysics = true;
+  b2BodyDef bd;
+  bd.type = b2_dynamicBody;
+  bd.position = pos;
+  e->body = world->CreateBody(&bd);
+
+  b2PolygonShape shape;
+  shape.SetAsBox(0.5, 0.5);
+
+  b2FixtureDef fd;
+  fd.shape = &shape;
+  e->body->CreateFixture(&fd);
+
+  e->isCollectible = true;
+  e->hasScore = true;
+  e->score = 100;
+
   e->body->SetUserData(e);
 
   return e;

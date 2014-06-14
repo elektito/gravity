@@ -21,6 +21,7 @@ protected:
   SdlRenderer(SDL_Window *window);
 
   void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const;
+  void DrawPolygon(b2Vec2 vertices[], int count) const;
 
 public:
   virtual ~SdlRenderer();

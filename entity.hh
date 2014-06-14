@@ -8,11 +8,25 @@
 using namespace std;
 
 struct TrailPoint {
+  TrailPoint() :
+    time(0.0)
+  {}
+
+  TrailPoint(b2Vec2 pos, float32 time) :
+    pos(pos),
+    time(time)
+  {}
+
   b2Vec2 pos;
   float32 time;
 };
 
 struct Trail {
+  Trail() :
+    size(0),
+    time(0.0)
+  {}
+
   int size;
   float32 time;
   vector<TrailPoint> points;
@@ -41,6 +55,10 @@ public:
   bool isSun;
   bool isPlanet;
 
+  bool isCollectible;
+  bool hasScore;
+  int score;
+
   void Save(ostream &s) const;
   void Load(istream &s, b2World *world);
 
@@ -53,6 +71,8 @@ public:
                            float32 radius,
                            float32 density,
                            float32 gravityCoeff);
+  static Entity *CreateScoreCollectible(b2World *world,
+                                        b2Vec2 pos);
 };
 
 #endif /* _GRAVITY_ENTITY_HH_ */

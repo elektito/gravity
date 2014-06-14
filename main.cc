@@ -16,6 +16,9 @@ int main(int argc, char *argv[]) {
   bool quit = false;
   SDL_Window *window = nullptr;
 
+  // Seed the pseudo-random number generator with time.
+  srand(time(0));
+
   // Initialize SDL.
   if(SDL_Init(SDL_INIT_VIDEO) < 0) {
     cout << "SDL could not be initialized! SDL_Error: "

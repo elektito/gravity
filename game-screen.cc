@@ -15,6 +15,33 @@ ContactListener::ContactListener(GameScreen *screen) :
 {}
 
 void ContactListener::BeginContact(b2Contact *contact) {
+  Entity *collectible = nullptr;
+  Entity *other = nullptr;
+
+  if (((Entity*) contact->GetFixtureA()->GetBody()->GetUserData())->isCollectible) {
+    collectible = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
+    other = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+  }
+
+  if (((Entity*) contact->GetFixtureB()->GetBody()->GetUserData())->isCollectible) {
+    collectible = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+    other = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
+  }
+
+  if (collectible != nullptr) {
+    if (collectible->hasScore) {
+      if (other->isSun)
+        this->screen->score += collectible->score;
+      else if (other->isPlanet)
+        this->screen->score += 10 * collectible->score;
+
+      if (other->isSun || other->isPlanet)
+        this->screen->toBeRemoved.push_back(collectible);
+    }
+
+    return;
+  }
+
   if (!this->inContact)
     this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
@@ -240,6 +267,15 @@ void GameScreen::Advance(float dt) {
   // Advance physics.
   this->world.Step(dt, 10, 10);
   this->stepOnce = false;
+
+  // Remove and properly destroy entities marked to be removed.
+  for (auto e : this->toBeRemoved) {
+    this->world.DestroyBody(e->body);
+    this->entities.erase(find(this->entities.begin(),
+                              this->entities.end(),
+                              e));
+  }
+  this->toBeRemoved.clear();
 }
 
 void GameScreen::Render(Renderer *renderer) {
@@ -290,7 +326,8 @@ void GameScreen::Render(Renderer *renderer) {
 
 void GameScreen::FixCamera() {
   for (auto e : this->entities)
-    this->FixCamera(e);
+    if (e->isPlanet)
+      this->FixCamera(e);
 }
 
 void GameScreen::FixCamera(Entity *e) {
@@ -384,8 +421,21 @@ void GameScreen::UpdateTrails() {
                             e->trail.points.end());
 
       // Add current position to the trail.
-      e->trail.points.push_back(TrailPoint { e->body->GetPosition(), this->time });
+      e->trail.points.push_back(TrailPoint(e->body->GetPosition(), this->time));
     }
+}
+
+void GameScreen::AddRandomCollectible() {
+  int wpixels, hpixels;
+  SDL_GetWindowSize(this->window, &wpixels, &hpixels);
+  float32 width = wpixels / this->camera.ppm;
+  float32 height = hpixels / this->camera.ppm;
+
+  b2Vec2 pos;
+  pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
+  pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
+  this->entities.push_back(Entity::CreateScoreCollectible(&this->world,
+                                                          pos));
 }
 
 void GameScreen::TimerCallback(float elapsed) {
@@ -402,4 +452,8 @@ void GameScreen::TimerCallback(float elapsed) {
     this->state = "game-over";
     return;
   }
+
+  // Occasionally add collectibles.
+  if (rand() % 5 == 0)
+    this->AddRandomCollectible();
 }

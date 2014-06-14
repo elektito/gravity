@@ -42,12 +42,14 @@ protected:
   Entity *sun;
   int frameCount;
   int fps;
+  vector<Entity*> toBeRemoved;
 
   // methods
   void FixCamera();
   void FixCamera(Entity *e);
   void TimerCallback(float elapsed);
   void UpdateTrails();
+  void AddRandomCollectible();
 
   friend class ContactListener;
 
