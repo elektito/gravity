@@ -426,14 +426,35 @@ void GameScreen::UpdateTrails() {
 }
 
 void GameScreen::AddRandomCollectible() {
+  const float32 MIN_DISTANCE = 5;
+
   int wpixels, hpixels;
   SDL_GetWindowSize(this->window, &wpixels, &hpixels);
+
+  // Get window dimensions in meters.
   float32 width = wpixels / this->camera.ppm;
   float32 height = hpixels / this->camera.ppm;
 
   b2Vec2 pos;
-  pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
-  pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
+  while (true) {
+    // Choose a random position for the collectible.
+    pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
+    pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
+
+    // Retry if the chosen position is to close to a sun or a planet.
+    for (auto e : this->entities)
+      if (e->isSun || e->isPlanet) {
+        // Get sun/planet radius.
+        float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
+
+        // If distance from the surface (indicated by the '+r') is
+        // less than minimum distance, retry.
+        if ((e->body->GetPosition() - pos).Length() + r < MIN_DISTANCE);
+          continue;
+      }
+
+    break;
+  }
   this->entities.push_back(Entity::CreateScoreCollectible(&this->world,
                                                           pos));
 }
