@@ -123,7 +123,7 @@ void GameScreen::Reset() {
   this->camera.pos.Set(-50.0, -50.0);
   this->camera.ppm = 10.0;
 
-  this->done = false;
+  this->state = "playing";
 
   this->draggingBody = nullptr;
   this->stepOnce = false;
@@ -152,7 +152,7 @@ void GameScreen::Save(ostream &s) const {
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm
-    << this->done;
+    << this->state;
 
   s << this->entities.size();
   for (auto e : this->entities)
@@ -167,7 +167,7 @@ void GameScreen::Load(istream &s) {
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm
-    >> this->done;
+    >> this->state;
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
@@ -190,7 +190,7 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
-  if (this->isDone())
+  if (this->state == "game-over")
     return;
 
   if (this->paused && !this->stepOnce)
@@ -393,13 +393,13 @@ void GameScreen::TimerCallback(float elapsed) {
   this->fps = this->frameCount;
   this->frameCount = 0;
 
-  // Check for game over.
-  if (this->timeRemaining == 0) {
-    this->done = true;
-    return;
-  }
-
   // Decrement remaining time.
   if (this->timeRemaining > 0)
     this->timeRemaining--;
+
+  // Check for game over.
+  if (this->timeRemaining == 0) {
+    this->state = "game-over";
+    return;
+  }
 }
