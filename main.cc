@@ -8,7 +8,7 @@
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-const int TIME_STEP = 15;
+const int TIME_STEP = 5;
 
 using namespace std;
 
@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
     int dt = SDL_GetTicks() - lastTime;
     SDL_Delay(TIME_STEP > dt ? TIME_STEP - dt : 0);
     dt = SDL_GetTicks() - lastTime;
+    lastTime = SDL_GetTicks();
     currentScreen->Advance(dt / 1000.0);
     currentScreen->Render(renderer);
-    lastTime = SDL_GetTicks();
   }
 
   delete renderer;

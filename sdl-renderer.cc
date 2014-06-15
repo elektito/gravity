@@ -1,4 +1,5 @@
 #include "sdl-renderer.hh"
+#include "config.hh"
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
@@ -19,9 +20,12 @@ b2Vec2 RotatePoint(b2Vec2 point, float32 theta, b2Vec2 center) {
 SdlRenderer::SdlRenderer(SDL_Window *window) :
   window(window)
 {
-  this->renderer = SDL_CreateRenderer(window, -1,
-                                      SDL_RENDERER_ACCELERATED |
-                                      SDL_RENDERER_PRESENTVSYNC);
+  Uint32 flags = 0;
+  if (Config::HardwareAcceleration)
+    flags |= SDL_RENDERER_ACCELERATED;
+  if (Config::VSync)
+    flags |= SDL_RENDERER_PRESENTVSYNC;
+  this->renderer = SDL_CreateRenderer(window, -1, flags);
 
   // Initialize fonts.
   if (TTF_Init() == -1) {

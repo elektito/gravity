@@ -22,7 +22,8 @@ def build(bld):
         'timer.cc',
         'game-screen.cc',
         'entity.cc',
-        'streams.cc'
+        'streams.cc',
+        'config.cc'
     ]
     bld.program(
         source=source,

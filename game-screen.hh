@@ -30,6 +30,7 @@ protected:
   int timeRemaining;
   bool paused;
   Camera camera;
+  float32 physicsTimeAccumulator;
   vector<Entity*> entities;
 
   // non-state variables

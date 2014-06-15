@@ -9,6 +9,8 @@ using std::placeholders::_1;
 
 using namespace std;
 
+const float32 PHYSICS_TIME_STEP = 0.005;
+
 ContactListener::ContactListener(GameScreen *screen) :
   screen(screen),
   inContact(false)
@@ -154,6 +156,7 @@ void GameScreen::Reset() {
 
   this->draggingBody = nullptr;
   this->stepOnce = false;
+  this->physicsTimeAccumulator = 0.0;
 
   this->sun = Entity::CreateSun(&this->world,
                                 b2Vec2(0.0, 0.0),
@@ -179,7 +182,8 @@ void GameScreen::Save(ostream &s) const {
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm
-    << this->state;
+    << this->state
+    << this->physicsTimeAccumulator;
 
   s << this->entities.size();
   for (auto e : this->entities)
@@ -194,7 +198,8 @@ void GameScreen::Load(istream &s) {
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm
-    >> this->state;
+    >> this->state
+    >> this->physicsTimeAccumulator;
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
@@ -223,59 +228,64 @@ void GameScreen::Advance(float dt) {
   if (this->paused && !this->stepOnce)
     return;
 
-  this->time += dt;
-
   Timer::CheckAll();
 
-  this->FixCamera();
-
-  // Update the trails.
-  UpdateTrails();
-
-  // Update score.
-  for (auto e : this->entities)
-    if (e->isPlanet) {
-      auto v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
-      auto d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
-      if (d > 100) d = 0;
-      int diff = v * d / 100;
-      this->score += diff;
-    }
-
-  // Apply forces.
-  vector<Entity*> gravitySources;
-
-  for (auto e : this->entities)
-    if (e->hasGravity)
-      gravitySources.push_back(e);
-
-  b2Vec2 gravity;
-  for (auto e : this->entities) {
-    if (e->isAffectedByGravity) {
-      gravity.Set(0.0, 0.0);
-      for (auto s : gravitySources) {
-        b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
-        float32 r2 = n.LengthSquared();
-        n.Normalize();
-        gravity += s->gravityCoeff / r2 * n;
+  // Advance physics.
+  this->physicsTimeAccumulator += dt;
+  while (this->physicsTimeAccumulator >= PHYSICS_TIME_STEP) {
+    // Update score.
+    for (auto e : this->entities)
+      if (e->isPlanet) {
+        auto v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
+        auto d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
+        if (d > 100) d = 0;
+        int diff = v * d / 100;
+        this->score += diff;
       }
 
-      e->body->ApplyForce(gravity, e->body->GetWorldCenter(), true);
+    // Apply forces.
+    vector<Entity*> gravitySources;
+
+    for (auto e : this->entities)
+      if (e->hasGravity)
+        gravitySources.push_back(e);
+
+    b2Vec2 gravity;
+    for (auto e : this->entities) {
+      if (e->isAffectedByGravity) {
+        gravity.Set(0.0, 0.0);
+        for (auto s : gravitySources) {
+          b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
+          float32 r2 = n.LengthSquared();
+          n.Normalize();
+          gravity += s->gravityCoeff / r2 * n;
+        }
+
+        e->body->ApplyForce(gravity, e->body->GetWorldCenter(), true);
+      }
     }
+
+    this->world.Step(PHYSICS_TIME_STEP, 10, 10);
+    this->time += PHYSICS_TIME_STEP;
+
+    this->FixCamera();
+
+    // Remove and properly destroy entities marked to be removed.
+    for (auto e : this->toBeRemoved) {
+      this->world.DestroyBody(e->body);
+      this->entities.erase(find(this->entities.begin(),
+                                this->entities.end(),
+                                e));
+    }
+
+    // Update the trails.
+    UpdateTrails();
+
+    this->toBeRemoved.clear();
+    this->physicsTimeAccumulator -= PHYSICS_TIME_STEP;
   }
 
-  // Advance physics.
-  this->world.Step(dt, 10, 10);
   this->stepOnce = false;
-
-  // Remove and properly destroy entities marked to be removed.
-  for (auto e : this->toBeRemoved) {
-    this->world.DestroyBody(e->body);
-    this->entities.erase(find(this->entities.begin(),
-                              this->entities.end(),
-                              e));
-  }
-  this->toBeRemoved.clear();
 }
 
 void GameScreen::Render(Renderer *renderer) {
