@@ -31,6 +31,7 @@ protected:
   bool paused;
   Camera camera;
   float32 physicsTimeAccumulator;
+  float32 scoreAccumulator;
   vector<Entity*> entities;
 
   // non-state variables

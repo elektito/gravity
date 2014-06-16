@@ -157,6 +157,7 @@ void GameScreen::Reset() {
   this->draggingBody = nullptr;
   this->stepOnce = false;
   this->physicsTimeAccumulator = 0.0;
+  this->scoreAccumulator = 0;
 
   this->sun = Entity::CreateSun(&this->world,
                                 b2Vec2(0.0, 0.0),
@@ -183,7 +184,8 @@ void GameScreen::Save(ostream &s) const {
     << this->camera.pos.y
     << this->camera.ppm
     << this->state
-    << this->physicsTimeAccumulator;
+    << this->physicsTimeAccumulator
+    << this->scoreAccumulator;
 
   s << this->entities.size();
   for (auto e : this->entities)
@@ -199,7 +201,8 @@ void GameScreen::Load(istream &s) {
     >> this->camera.pos.y
     >> this->camera.ppm
     >> this->state
-    >> this->physicsTimeAccumulator;
+    >> this->physicsTimeAccumulator
+    >> this->scoreAccumulator;
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
@@ -236,11 +239,15 @@ void GameScreen::Advance(float dt) {
     // Update score.
     for (auto e : this->entities)
       if (e->isPlanet) {
-        auto v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
-        auto d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
-        if (d > 100) d = 0;
-        int diff = v * d / 100;
-        this->score += diff;
+        float32 v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
+        float32 d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
+        if (d > 100) d = 0.0;
+        float32 diff = v / d;
+        this->scoreAccumulator += diff * 50 * PHYSICS_TIME_STEP;
+        if (this->scoreAccumulator >= 100) {
+          this->score += 100;
+          this->scoreAccumulator -= 100;
+        }
       }
 
     // Apply forces.
