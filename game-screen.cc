@@ -241,8 +241,8 @@ void GameScreen::Advance(float dt) {
       if (e->isPlanet) {
         float32 v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
         float32 d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
-        if (d > 100) d = 0.0;
         float32 diff = v / d;
+        if (d > 100) d = 0.0;
         this->scoreAccumulator += diff * 50 * PHYSICS_TIME_STEP;
         if (this->scoreAccumulator >= 100) {
           this->score += 100;
