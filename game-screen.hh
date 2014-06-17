@@ -20,6 +20,17 @@ public:
 
   virtual void BeginContact(b2Contact *contact);
   virtual void EndContact(b2Contact *contact);
+
+  void EnemySunContact(Entity *enemy, Entity *sun);
+  void EnemyPlanetContact(Entity *enemy, Entity *sun);
+  void PlanetSunContact(Entity *planet, Entity *sun);
+  void CollectibleSunContact(Entity *collectible, Entity *sun);
+  void CollectiblePlanetContact(Entity *collectible, Entity *planet);
+};
+
+class ContactFilter : public b2ContactFilter {
+public:
+  bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB);
 };
 
 class GameScreen : public Screen {
@@ -41,6 +52,7 @@ protected:
   bool stepOnce;
   Timer timer;
   ContactListener contactListener;
+  ContactFilter contactFilter;
   Entity *sun;
   int frameCount;
   int fps;
@@ -52,6 +64,7 @@ protected:
   void TimerCallback(float elapsed);
   void UpdateTrails();
   void AddRandomCollectible();
+  void AddRandomEnemy();
 
   friend class ContactListener;
 

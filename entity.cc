@@ -15,6 +15,7 @@ Entity::Entity() :
   isAffectedByGravity(false),
   isSun(false),
   isPlanet(false),
+  isEnemy(false),
   isCollectible(false),
   hasScore(false),
   score(0.0)
@@ -217,6 +218,36 @@ Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
   e->isCollectible = true;
   e->hasScore = true;
   e->score = 100;
+
+  e->body->SetUserData(e);
+
+  return e;
+}
+
+Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, float32 angle) {
+  Entity *e = new Entity;
+  e->hasPhysics = true;
+  b2BodyDef bd;
+  bd.type = b2_dynamicBody;
+  bd.position = pos;
+  bd.linearVelocity = velocity;
+  bd.angle = angle;
+  e->body = world->CreateBody(&bd);
+
+  b2PolygonShape shape;
+  b2Vec2 vertices[5];
+  vertices[0].Set(-2, -2);
+  vertices[1].Set(-2, 0);
+  vertices[2].Set(0, 2);
+  vertices[3].Set(2, 0);
+  vertices[4].Set(2, -2);
+  shape.Set(vertices, 5);
+
+  b2FixtureDef fd;
+  fd.shape = &shape;
+  e->body->CreateFixture(&fd);
+
+  e->isEnemy = true;
 
   e->body->SetUserData(e);
 

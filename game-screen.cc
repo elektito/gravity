@@ -17,33 +17,52 @@ ContactListener::ContactListener(GameScreen *screen) :
 {}
 
 void ContactListener::BeginContact(b2Contact *contact) {
-  Entity *collectible = nullptr;
-  Entity *other = nullptr;
+  Entity *e1 = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
+  Entity *e2 = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
 
-  if (((Entity*) contact->GetFixtureA()->GetBody()->GetUserData())->isCollectible) {
-    collectible = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
-    other = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
-  }
+  if (e1->isSun && e2->isPlanet)
+    this->PlanetSunContact(e2, e1);
+  if (e2->isSun && e1->isPlanet)
+    this->PlanetSunContact(e1, e2);
 
-  if (((Entity*) contact->GetFixtureB()->GetBody()->GetUserData())->isCollectible) {
-    collectible = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
-    other = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
-  }
+  if (e1->isCollectible && e2->isSun)
+    this->CollectibleSunContact(e1, e2);
+  if (e2->isCollectible && e1->isSun)
+    this->CollectibleSunContact(e2, e1);
 
-  if (collectible != nullptr) {
-    if (collectible->hasScore) {
-      if (other->isSun)
-        this->screen->score += collectible->score;
-      else if (other->isPlanet)
-        this->screen->score += 10 * collectible->score;
+  if (e1->isCollectible && e2->isPlanet)
+    this->CollectiblePlanetContact(e1, e2);
+  if (e2->isCollectible && e1->isPlanet)
+    this->CollectiblePlanetContact(e2, e1);
 
-      if (other->isSun || other->isPlanet)
-        this->screen->toBeRemoved.push_back(collectible);
-    }
+  if (e1->isEnemy && e2->isSun)
+    this->EnemySunContact(e1, e2);
+  if (e2->isEnemy && e1->isSun)
+    this->EnemySunContact(e2, e1);
 
-    return;
-  }
+  if (e1->isEnemy && e2->isPlanet)
+    this->EnemyPlanetContact(e1, e2);
+  if (e2->isEnemy && e1->isPlanet)
+    this->EnemyPlanetContact(e2, e1);
+}
 
+void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
+  this->screen->timeRemaining -= 10;
+  if (this->screen->timeRemaining < 0)
+    this->screen->timeRemaining = 0;
+
+  this->screen->toBeRemoved.push_back(enemy);
+}
+
+void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
+  this->screen->timeRemaining -= 10;
+  if (this->screen->timeRemaining < 0)
+    this->screen->timeRemaining = 0;
+
+  this->screen->toBeRemoved.push_back(enemy);
+}
+
+void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
   if (!this->inContact)
     this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
@@ -51,8 +70,40 @@ void ContactListener::BeginContact(b2Contact *contact) {
   this->inContact = true;
 }
 
+void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
+  if (collectible->hasScore)
+    this->screen->score += collectible->score;
+
+  this->screen->toBeRemoved.push_back(collectible);
+}
+
+void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *planet) {
+  if (collectible->hasScore)
+    this->screen->score += 10 * collectible->score;
+
+  this->screen->toBeRemoved.push_back(collectible);
+}
+
 void ContactListener::EndContact(b2Contact *contact) {
   this->inContact = false;
+}
+
+bool ContactFilter::ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
+  Entity *e1 = (Entity*) fixtureA->GetBody()->GetUserData();
+  Entity *e2 = (Entity*) fixtureB->GetBody()->GetUserData();
+
+  if (e1->isEnemy && e2->isEnemy)
+    return false;
+  if (e1->isEnemy && e2->isCollectible)
+    return false;
+  if (e2->isEnemy && e1->isCollectible)
+    return false;
+
+  return true;
+}
+
+float32 frand() {
+  return rand() / (float32) RAND_MAX;
 }
 
 b2Body *GetBodyFromPoint(b2Vec2 p, b2World *world) {
@@ -76,7 +127,8 @@ GameScreen::GameScreen(SDL_Window *window) :
 {
   this->timer.Set(1.0, true);
 
-  this->world.SetContactListener(&contactListener);
+  this->world.SetContactListener(&this->contactListener);
+  this->world.SetContactFilter(&this->contactFilter);
 
   this->Reset();
 }
@@ -476,6 +528,45 @@ void GameScreen::AddRandomCollectible() {
                                                           pos));
 }
 
+void GameScreen::AddRandomEnemy() {
+  int winw, winh;
+  SDL_GetWindowSize(this->window, &winw, &winh);
+
+  float32 dx = frand() * 2.0;
+  float32 dy = frand() * 2.0;
+
+  float32 x1 = this->camera.pos.x;
+  float32 y1 = this->camera.pos.y;
+  float32 x2 = this->camera.pos.x + winw / this->camera.ppm;
+  float32 y2 = this->camera.pos.y + winh / this->camera.ppm;
+  float32 w = x2 - x1;
+  float32 h = y2 - y1;
+
+  float32 randomx = x1 + w * frand();
+  float32 randomy = y1 + h * frand();
+
+  b2Vec2 pos;
+  int r = rand() % 4;
+  if (r == 0)
+    pos.Set(randomx, y1 - dy);
+  else if (r == 1)
+    pos.Set(randomx, y2 + dy);
+  else if (r == 2)
+    pos.Set(x1 - dx, randomy);
+  else
+    pos.Set(x2 + dx, randomy);
+
+  b2Vec2 v = this->sun->body->GetPosition() - pos;
+  v.Normalize();
+  v *= 20.0;
+
+  float32 angle = atan2(v.y, v.x) - M_PI / 2.0;
+  this->entities.push_back(Entity::CreateEnemyShip(&this->world,
+                                                   pos,
+                                                   v,
+                                                   angle));
+}
+
 void GameScreen::TimerCallback(float elapsed) {
   // Update FPS counter.
   this->fps = this->frameCount;
@@ -494,4 +585,8 @@ void GameScreen::TimerCallback(float elapsed) {
   // Occasionally add collectibles.
   if (rand() % 5 == 0)
     this->AddRandomCollectible();
+
+  // Occasionally add enemy ships.
+  if (rand() % 10 == 0)
+    this->AddRandomEnemy();
 }

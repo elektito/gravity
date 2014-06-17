@@ -54,6 +54,7 @@ public:
   bool isAffectedByGravity;
   bool isSun;
   bool isPlanet;
+  bool isEnemy;
 
   bool isCollectible;
   bool hasScore;
@@ -73,6 +74,10 @@ public:
                            float32 gravityCoeff);
   static Entity *CreateScoreCollectible(b2World *world,
                                         b2Vec2 pos);
+  static Entity *CreateEnemyShip(b2World *world,
+                                 b2Vec2 pos,
+                                 b2Vec2 velocity,
+                                 float32 angle);
 };
 
 #endif /* _GRAVITY_ENTITY_HH_ */
