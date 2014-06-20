@@ -139,6 +139,21 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->world.SetContactListener(&this->contactListener);
   this->world.SetContactFilter(&this->contactFilter);
 
+  // Load sounds.
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    cout << "Could not initialize SDL_mixer. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  this->scoreTickSound = Mix_LoadWAV("resources/sound/score-tik.wav");
+  if (this->scoreTickSound == nullptr) {
+    cout << "Failed to load sound data. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  // Reset all state data.
   this->Reset();
 }
 
@@ -312,6 +327,7 @@ void GameScreen::Advance(float dt) {
         if (this->scoreAccumulator >= 100) {
           this->score += 100;
           this->scoreAccumulator -= 100;
+          Mix_PlayChannel(-1, this->scoreTickSound, 0);
         }
       }
 

@@ -15,6 +15,7 @@ def configure(cfg):
     cfg.check_cxx(lib='Box2D', uselib_store='BOX2D')
     cfg.check_cxx(lib='SDL2_gfx', uselib_store='SDL2_GFX')
     cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
+    cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11'])
 
@@ -41,5 +42,5 @@ def build(bld):
     bld.program(
         source=source,
         target='gravity',
-        use='SDL2 SDL2_GFX SDL2_TTF BOX2D'
+        use='SDL2 SDL2_GFX SDL2_TTF SDL2_MIXER BOX2D'
     )

@@ -6,6 +6,7 @@
 #include "timer.hh"
 #include "entity.hh"
 
+#include <SDL2/SDL_mixer.h>
 #include <Box2D/Box2D.h>
 
 class GameScreen;
@@ -26,6 +27,7 @@ public:
   void PlanetSunContact(Entity *planet, Entity *sun);
   void CollectibleSunContact(Entity *collectible, Entity *sun);
   void CollectiblePlanetContact(Entity *collectible, Entity *planet);
+
 };
 
 class ContactFilter : public b2ContactFilter {
@@ -57,6 +59,9 @@ protected:
   int frameCount;
   int fps;
   vector<Entity*> toBeRemoved;
+
+  // sounds
+  Mix_Chunk *scoreTickSound;
 
   // methods
   void FixCamera();
