@@ -1,5 +1,6 @@
 #include "game-screen.hh"
 #include "entity.hh"
+#include "helpers.hh"
 
 #include <sstream>
 #include <iomanip>
@@ -145,6 +146,10 @@ GameScreen::~GameScreen() {
 
 }
 
+void GameScreen::SwitchScreen(const map<string, string> &lastState) {
+
+}
+
 void GameScreen::HandleEvent(const SDL_Event &e) {
   int x, y;
 
@@ -192,6 +197,9 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
 }
 
 void GameScreen::Reset() {
+  this->state.clear();
+  this->state["name"] = "playing";
+
   this->score = 0;
   this->timeRemaining = 120;
   this->paused = true;
@@ -199,8 +207,6 @@ void GameScreen::Reset() {
 
   this->camera.pos.Set(-50.0, -50.0);
   this->camera.ppm = 10.0;
-
-  this->state = "playing";
 
   this->draggingBody = nullptr;
   this->stepOnce = false;
@@ -224,6 +230,8 @@ void GameScreen::Reset() {
 }
 
 void GameScreen::Save(ostream &s) const {
+  SaveMap(this->state, s);
+
   s << this->time
     << this->score
     << this->timeRemaining
@@ -231,7 +239,6 @@ void GameScreen::Save(ostream &s) const {
     << this->camera.pos.x
     << this->camera.pos.y
     << this->camera.ppm
-    << this->state
     << this->physicsTimeAccumulator
     << this->scoreAccumulator;
 
@@ -241,6 +248,8 @@ void GameScreen::Save(ostream &s) const {
 }
 
 void GameScreen::Load(istream &s) {
+  LoadMap(this->state, s);
+
   s >> this->time
     >> this->score
     >> this->timeRemaining
@@ -248,7 +257,6 @@ void GameScreen::Load(istream &s) {
     >> this->camera.pos.x
     >> this->camera.pos.y
     >> this->camera.ppm
-    >> this->state
     >> this->physicsTimeAccumulator
     >> this->scoreAccumulator;
 
@@ -273,7 +281,7 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
-  if (this->state == "game-over")
+  if (this->state["name"] == "game-over")
     return;
 
   if (this->paused && !this->stepOnce)
@@ -574,7 +582,8 @@ void GameScreen::TimerCallback(float elapsed) {
 
   // Check for game over.
   if (this->timeRemaining == 0) {
-    this->state = "game-over";
+    this->state["name"] = "game-over";
+    this->state["score"] = to_string(this->score);
     return;
   }
 

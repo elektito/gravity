@@ -1,5 +1,5 @@
 #include "entity.hh"
-#include "streams.hh"
+#include "helpers.hh"
 
 #include <exception>
 #include <iostream>

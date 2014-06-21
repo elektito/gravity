@@ -5,6 +5,7 @@ class Config {
 public:
   static bool HardwareAcceleration;
   static bool VSync;
+  static int HighScores;
 };
 
 #endif /* _GRAVITY_CONFIG_HH_ */

@@ -77,6 +77,7 @@ public:
   GameScreen(SDL_Window *window);
   virtual ~GameScreen();
 
+  virtual void SwitchScreen(const map<string, string> &lastState);
   virtual void HandleEvent(const SDL_Event &e);
 
   virtual void Reset();

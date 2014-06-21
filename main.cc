@@ -1,5 +1,6 @@
 #include "sdl-renderer.hh"
 #include "game-screen.hh"
+#include "high-scores-screen.hh"
 
 #include <SDL2/SDL.h>
 
@@ -40,7 +41,10 @@ int main(int argc, char *argv[]) {
   }
 
   Renderer *renderer = SdlRenderer::Create(window);
-  Screen *currentScreen = new GameScreen(window);
+
+  Screen *gameScreen = new GameScreen(window);
+  Screen *highScoresScreen = new HighScoresScreen(window);
+  Screen *currentScreen = gameScreen;
 
   uint32_t lastTime = SDL_GetTicks();
 
@@ -75,6 +79,11 @@ int main(int argc, char *argv[]) {
     lastTime = SDL_GetTicks();
     currentScreen->Advance(dt / 1000.0);
     currentScreen->Render(renderer);
+
+    if (currentScreen->state["name"] == "game-over") {
+      highScoresScreen->SwitchScreen(currentScreen->state);
+      currentScreen = highScoresScreen;
+    }
   }
 
   delete renderer;

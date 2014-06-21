@@ -21,9 +21,10 @@ def build(bld):
         'camera.cc',
         'timer.cc',
         'game-screen.cc',
+        'high-scores-screen.cc',
         'entity.cc',
-        'streams.cc',
         'font-cache.cc',
+        'helpers.cc',
         'config.cc'
     ]
     bld.program(

@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -20,8 +21,9 @@ public:
 
   virtual ~Screen() = default;
 
-  string state;
+  map<string, string> state;
 
+  virtual void SwitchScreen(const map<string, string> &lastState) = 0;
   virtual void HandleEvent(const SDL_Event &e) = 0;
 
   virtual void Reset() = 0;
