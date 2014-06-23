@@ -20,16 +20,12 @@ protected:
 
   SdlRenderer(SDL_Window *window);
 
-  void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const;
-  void DrawPolygon(b2Vec2 vertices[], int count) const;
-
 public:
   virtual ~SdlRenderer();
 
-  virtual void DrawBackground() const;
-  virtual void DrawGrid() const;
-  virtual void DrawEntity(const Entity *entity) const;
-  virtual void DrawTrail(const Entity *entity) const;
+  virtual void ClearScreen(int r, int g, int b) const;
+  virtual void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const;
+  virtual void DrawPolygon(b2Vec2 vertices[], int count) const;
   virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const;
   virtual void DrawText(string text,
                         SDL_Color color,
@@ -37,6 +33,7 @@ public:
                         int scry,
                         bool anchorLeft=true,
                         bool anchorTop=true) const;
+
   virtual void PresentScreen();
 
   static Renderer *Create(SDL_Window *window) {

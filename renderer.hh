@@ -23,10 +23,9 @@ public:
     this->camera = camera;
   }
 
-  virtual void DrawBackground() const = 0;
-  virtual void DrawGrid() const = 0;
-  virtual void DrawEntity(const Entity *entity) const = 0;
-  virtual void DrawTrail(const Entity *entity) const = 0;
+  virtual void ClearScreen(int r, int g, int b) const = 0;
+  virtual void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const = 0;
+  virtual void DrawPolygon(b2Vec2 vertices[], int count) const = 0;
   virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const = 0;
   virtual void DrawText(string text,
                         SDL_Color color,
@@ -34,6 +33,7 @@ public:
                         int scry,
                         bool anchorLeft=true,
                         bool anchorTop=true) const = 0;
+
   virtual void PresentScreen() = 0;
 };
 
