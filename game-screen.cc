@@ -191,7 +191,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     }
   }
   else if (e.type == SDL_WINDOWEVENT) {
-    if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+    if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
       this->FixCamera();
   }
 }
