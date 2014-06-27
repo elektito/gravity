@@ -51,6 +51,22 @@ int main(int argc, char *argv[]) {
 
       if (e.type == SDL_QUIT)
         quit = true;
+      else if (e.type == SDL_KEYDOWN) {
+        switch (e.key.keysym.sym) {
+        case SDLK_q:
+          SDL_Event quitEvent;
+          quitEvent.type = SDL_QUIT;
+          SDL_PushEvent(&quitEvent);
+          break;
+        case SDLK_f:
+          auto flags = SDL_GetWindowFlags(window);
+          if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+            SDL_SetWindowFullscreen(window, SDL_FALSE);
+          else
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+          break;
+        }
+      }
     }
 
     int dt = SDL_GetTicks() - lastTime;
