@@ -25,7 +25,8 @@ def build(bld):
         'entity.cc',
         'font-cache.cc',
         'helpers.cc',
-        'config.cc'
+        'config.cc',
+        'button-widget.cc'
     ]
     bld.program(
         source=source,

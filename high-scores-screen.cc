@@ -1,5 +1,6 @@
 #include "high-scores-screen.hh"
 #include "config.hh"
+#include "button-widget.hh"
 
 #include <iomanip>
 #include <sstream>
@@ -7,6 +8,12 @@
 HighScoresScreen::HighScoresScreen(SDL_Window *window) :
   Screen(window)
 {
+  this->widgets.push_back(new ButtonWidget(this,
+                                           "Main Menu",
+                                           0.02, 0.02, 0.1,
+                                           TextAnchor::RIGHT, TextAnchor::BOTTOM,
+                                           {255, 0, 0},
+                                           {255, 255, 255}));
   this->Reset();
 }
 
@@ -23,7 +30,8 @@ void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
 }
 
 void HighScoresScreen::HandleEvent(const SDL_Event &e) {
-
+  for (auto w : this->widgets)
+    w->HandleEvent(e);
 }
 
 void HighScoresScreen::Reset() {
@@ -47,7 +55,8 @@ void HighScoresScreen::Load(istream &s) {
 }
 
 void HighScoresScreen::Advance(float dt) {
-
+  for (auto w : this->widgets)
+    w->Advance(dt);
 }
 
 void HighScoresScreen::Render(Renderer *renderer) {
@@ -64,6 +73,9 @@ void HighScoresScreen::Render(Renderer *renderer) {
                         {255, 255, 255},
                         TextAnchor::CENTER, TextAnchor::TOP);
   }
+
+  for (auto w : this->widgets)
+    w->Render(renderer);
 
   renderer->PresentScreen();
 }

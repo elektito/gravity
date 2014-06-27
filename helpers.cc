@@ -1,3 +1,5 @@
+#include "font-cache.hh"
+
 #include <Box2D/Box2D.h>
 
 #include <iostream>
@@ -32,4 +34,16 @@ void LoadMap(map<string, string> &m, istream &s) {
     s >> k >> v;
     m[k] = v;
   }
+}
+
+void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp) {
+  int winw, winh;
+  SDL_GetWindowSize(window, &winw, &winh);
+
+  int height_pixels = hp * winh;
+  TTF_Font *font = FontCache::GetFont(height_pixels);
+
+  int w, h;
+  TTF_SizeText(font, text.data(), &w, &h);
+  wp = (float32) w / winw;
 }

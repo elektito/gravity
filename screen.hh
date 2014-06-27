@@ -1,6 +1,7 @@
 #ifndef _GRAVITY_SCREEN_HH_
 #define _GRAVITY_SCREEN_HH_
 
+#include "widget.hh"
 #include "renderer.hh"
 
 #include <SDL2/SDL.h>
@@ -12,7 +13,7 @@ using namespace std;
 
 class Screen {
 protected:
-  SDL_Window *window;
+  vector<Widget*> widgets;
 
 public:
   Screen(SDL_Window *window) :
@@ -21,6 +22,7 @@ public:
 
   virtual ~Screen() = default;
 
+  SDL_Window *window;
   map<string, string> state;
 
   virtual void SwitchScreen(const map<string, string> &lastState) = 0;
