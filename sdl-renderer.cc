@@ -1,5 +1,6 @@
 #include "sdl-renderer.hh"
 #include "config.hh"
+#include "font-cache.hh"
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
@@ -19,26 +20,11 @@ SdlRenderer::SdlRenderer(SDL_Window *window) :
     flags |= SDL_RENDERER_PRESENTVSYNC;
   this->renderer = SDL_CreateRenderer(window, -1, flags);
 
-  // Initialize fonts.
-  if (TTF_Init() == -1) {
-    stringstream ss;
-    ss << "Could not initialize SDL_ttf. SDL_ttf error: "
-       << TTF_GetError();
-    throw runtime_error(ss.str());
-  }
-
-  // Load fonts.
-  this->font = TTF_OpenFont("fonts/UbuntuMono-B.ttf", 72);
-  if (font == nullptr) {
-    stringstream ss;
-    ss << "Unable to load font. SDL_ttf error: " << TTF_GetError();
-    throw runtime_error(ss.str());
-  }
+  FontCache::Init();
 }
 
 SdlRenderer::~SdlRenderer() {
-  TTF_CloseFont(this->font);
-  TTF_Quit();
+  FontCache::Finalize();
 
   SDL_DestroyRenderer(this->renderer);
 }
@@ -83,13 +69,10 @@ void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a)
   SDL_RenderDrawLine(this->renderer, x1, y1, x2, y2);
 }
 
-void SdlRenderer::DrawText(string text,
-                           SDL_Color color,
-                           int scrx,
-                           int scry,
-                           bool anchorLeft,
-                           bool anchorTop) const
-{
+void SdlRenderer::DrawTextM(string text, b2Vec2 pos, float32 height, SDL_Color color) const {
+  int height_pixels = this->camera.LengthToScreen(height);
+
+  TTF_Font *font = FontCache::GetFont(height_pixels);
   SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
   if (textSurface == nullptr) {
     stringstream ss;
@@ -106,16 +89,68 @@ void SdlRenderer::DrawText(string text,
     throw runtime_error(ss.str());
   }
 
-  SDL_FreeSurface(textSurface);
-
   if (texture) {
-    int winw, winh;
-    SDL_GetWindowSize(this->window, &winw, &winh);
     int x, y;
-    x = anchorLeft ? scrx : winw - textSurface->w - scrx;
-    y = anchorTop ? scry : winh - textSurface->h - scry;
-    SDL_Rect dest = {x, y, textSurface->w, textSurface->h};
+    this->camera.PointToScreen(this->window, pos, x, y);
+
+    SDL_Rect dest {x, y, textSurface->w, textSurface->h};
     SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
     SDL_DestroyTexture(texture);
   }
+
+  SDL_FreeSurface(textSurface);
+}
+
+void SdlRenderer::DrawTextP(string text,
+                            float32 x,
+                            float32 y,
+                            float32 height,
+                            SDL_Color color,
+                            TextAnchor xanchor,
+                            TextAnchor yanchor) const
+{
+  int winw, winh;
+  SDL_GetWindowSize(this->window, &winw, &winh);
+  int height_pixels = height * winh;
+
+  TTF_Font *font = FontCache::GetFont(height_pixels);
+  SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
+  if (textSurface == nullptr) {
+    stringstream ss;
+    ss << "Unable to render text surface. SDL_ttf error: "
+       << TTF_GetError();
+    throw runtime_error(ss.str());
+  }
+
+  auto texture = SDL_CreateTextureFromSurface(this->renderer, textSurface);
+  if (texture == nullptr) {
+    stringstream ss;
+    ss << "Unable to create texture from rendered text. SDL error: "
+       << SDL_GetError();
+    throw runtime_error(ss.str());
+  }
+
+  if (texture) {
+    int xp, yp;
+
+    if (xanchor == TextAnchor::LEFT)
+      xp = x * winw;
+    else if (xanchor == TextAnchor::RIGHT)
+      xp = winw - x * winw - textSurface->w;
+    else if (xanchor == TextAnchor::CENTER)
+      xp = winw / 2 + x * winw - textSurface->w / 2;
+
+    if (yanchor == TextAnchor::TOP)
+      yp = y * winh;
+    else if (yanchor == TextAnchor::BOTTOM)
+      yp = winh - y * winh - textSurface->h;
+    else if (yanchor == TextAnchor::CENTER)
+      yp = winh - (winh / 2 + y * winh + textSurface->h / 2);
+
+    SDL_Rect dest {xp, yp, textSurface->w, textSurface->h};
+    SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
+    SDL_DestroyTexture(texture);
+  }
+
+  SDL_FreeSurface(textSurface);
 }

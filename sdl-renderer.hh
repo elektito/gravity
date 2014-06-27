@@ -27,12 +27,14 @@ public:
   virtual void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const;
   virtual void DrawPolygon(b2Vec2 vertices[], int count) const;
   virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const;
-  virtual void DrawText(string text,
-                        SDL_Color color,
-                        int scrx,
-                        int scry,
-                        bool anchorLeft=true,
-                        bool anchorTop=true) const;
+  virtual void DrawTextM(string text, b2Vec2 pos, float32 height, SDL_Color c) const;
+  virtual void DrawTextP(string text,
+                         float32 x,
+                         float32 y,
+                         float32 height,
+                         SDL_Color c,
+                         TextAnchor xanchor,
+                         TextAnchor yanchor) const;
 
   virtual void PresentScreen();
 

@@ -11,6 +11,14 @@
 
 using namespace std;
 
+enum class TextAnchor {
+  LEFT,
+  RIGHT,
+  TOP,
+  BOTTOM,
+  CENTER
+};
+
 class Renderer {
 protected:
   Camera camera;
@@ -27,12 +35,20 @@ public:
   virtual void DrawDisk(b2Vec2 pos, float32 radius, int r, int g, int b, int a) const = 0;
   virtual void DrawPolygon(b2Vec2 vertices[], int count) const = 0;
   virtual void DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a) const = 0;
-  virtual void DrawText(string text,
-                        SDL_Color color,
-                        int scrx,
-                        int scry,
-                        bool anchorLeft=true,
-                        bool anchorTop=true) const = 0;
+
+  /// Draws text at the given position, with the given height, both in
+  /// world coordinates and units.
+  virtual void DrawTextM(string text, b2Vec2 pos, float32 height, SDL_Color c) const = 0;
+
+  /// Draws text at the given position, with the given height, both
+  /// given as window size ratios (numbers in range [0.0, 1.0]).
+  virtual void DrawTextP(string text,
+                         float32 x,
+                         float32 y,
+                         float32 height,
+                         SDL_Color c,
+                         TextAnchor xanchor,
+                         TextAnchor yanchor) const = 0;
 
   virtual void PresentScreen() = 0;
 };

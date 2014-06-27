@@ -378,7 +378,7 @@ void GameScreen::Render(Renderer *renderer) {
   // Draw score.
   stringstream ss;
   ss << setw(6) << setfill('0') << this->score;
-  renderer->DrawText(ss.str(), SDL_Color {0, 0, 0, 128}, 10, 10, false, true);
+  renderer->DrawTextP(ss.str(), 0.02, 0.0, 0.1, {0, 0, 0, 128}, TextAnchor::RIGHT, TextAnchor::TOP);
 
   // Draw time.
   int minutes = this->timeRemaining / 60;
@@ -387,13 +387,13 @@ void GameScreen::Render(Renderer *renderer) {
   ss2 << setw(2) << setfill('0') << minutes
       << setw(0) << ":"
       << setw(2) << setfill('0') << seconds;
-  renderer->DrawText(ss2.str(), SDL_Color {0, 0, 0, 128}, 10, 10);
+  renderer->DrawTextP(ss2.str(), 0.02, 0.0, 0.1, {0, 0, 0, 128}, TextAnchor::LEFT, TextAnchor::TOP);
 
   // Draw FPS Counter.
   if (!this->paused) {
     stringstream ss3;
     ss3 << "FPS: " << this->fps;
-    renderer->DrawText(ss3.str(), SDL_Color {0, 0, 0, 128}, 10, 10, true, false);
+    renderer->DrawTextP(ss3.str(), 0.02, 0.0, 0.1, {0, 0, 0, 128}, TextAnchor::LEFT, TextAnchor::BOTTOM);
 
     this->frameCount++;
   }

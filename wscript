@@ -23,6 +23,7 @@ def build(bld):
         'game-screen.cc',
         'entity.cc',
         'streams.cc',
+        'font-cache.cc',
         'config.cc'
     ]
     bld.program(
