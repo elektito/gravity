@@ -1,15 +1,12 @@
-#ifndef _GRAVITY_HIGH_SCORES_SCREEN_HH_
-#define _GRAVITY_HIGH_SCORES_SCREEN_HH_
+#ifndef _GRAVITY_MAIN_MENU_SCREEN_HH_
+#define _GRAVITY_MAIN_MENU_SCREEN_HH_
 
 #include "screen.hh"
 
-class HighScoresScreen : public Screen {
-protected:
-  vector<int> scores;
-
+class MainMenuScreen : public Screen {
 public:
-  HighScoresScreen(SDL_Window *window);
-  virtual ~HighScoresScreen();
+  MainMenuScreen(SDL_Window *window);
+  virtual ~MainMenuScreen();
 
   virtual void SwitchScreen(const map<string, string> &lastState);
   virtual void HandleEvent(const SDL_Event &e);
@@ -24,4 +21,4 @@ public:
 };
 
 
-#endif /* _GRAVITY_HIGH_SCORES_SCREEN_HH_ */
+#endif /* _GRAVITY_MAIN_MENU_SCREEN_HH_ */

@@ -45,7 +45,17 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
   int x, y;
   float32 xp, yp;
 
-  if (e.type == SDL_MOUSEMOTION) {
+  if (e.type == SDL_MOUSEBUTTONDOWN) {
+    this->mouseDown = this->isActive;
+  }
+  else if (e.type == SDL_MOUSEBUTTONUP) {
+    if (this->isActive && this->mouseDown) {
+      this->screen->HandleWidgetEvent(BUTTON_CLICK, this);
+    }
+
+    this->mouseDown = false;
+  }
+  else if (e.type == SDL_MOUSEMOTION) {
     SDL_GetMouseState(&x, &y);
     GetRelativeCoords(x, y, this->screen->window, this->xanchor, this->yanchor, xp, yp);
 

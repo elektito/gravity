@@ -27,6 +27,7 @@ public:
 
   virtual void SwitchScreen(const map<string, string> &lastState) = 0;
   virtual void HandleEvent(const SDL_Event &e) = 0;
+  virtual void HandleWidgetEvent(int event_type, Widget *widget) {}
 
   virtual void Reset() = 0;
   virtual void Save(ostream &s) const = 0;

@@ -21,6 +21,7 @@ def build(bld):
         'camera.cc',
         'timer.cc',
         'game-screen.cc',
+        'main-menu-screen.cc',
         'high-scores-screen.cc',
         'entity.cc',
         'font-cache.cc',

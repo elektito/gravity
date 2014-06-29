@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define BUTTON_CLICK 1000
+
 class ButtonWidget : public Widget {
 protected:
   string text;
@@ -20,6 +22,7 @@ protected:
 
   bool isActive;
   float32 width;
+  bool mouseDown;
 
   void CalculateWidth();
 
@@ -41,7 +44,8 @@ public:
     yanchor(yanchor),
     activeColor(activeColor),
     inactiveColor(inactiveColor),
-    isActive(false)
+    isActive(false),
+    mouseDown(false)
   {
     this->SetText(text);
   }

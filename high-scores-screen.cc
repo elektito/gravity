@@ -34,7 +34,20 @@ void HighScoresScreen::HandleEvent(const SDL_Event &e) {
     w->HandleEvent(e);
 }
 
+void HighScoresScreen::HandleWidgetEvent(int event_type, Widget *widget) {
+  switch (event_type) {
+  case BUTTON_CLICK:
+    if (widget == this->widgets[0]) { // Main Menu
+      this->state["name"] = "highscores-manu-selected";
+    }
+
+    break;
+  }
+}
+
 void HighScoresScreen::Reset() {
+  this->state.clear();
+  this->state["name"] = "highscores-ongoing";
   this->scores.clear();
 }
 

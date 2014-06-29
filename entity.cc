@@ -22,6 +22,10 @@ Entity::Entity() :
 {
 }
 
+Entity::~Entity() {
+
+}
+
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
   s << (b ? 1 : 0)
     << b->GetType()

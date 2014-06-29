@@ -41,6 +41,7 @@ protected:
 
 public:
   Entity();
+  ~Entity();
 
   bool hasPhysics;
   b2Body *body;

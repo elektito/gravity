@@ -1,6 +1,7 @@
 #include "sdl-renderer.hh"
 #include "game-screen.hh"
 #include "high-scores-screen.hh"
+#include "main-menu-screen.hh"
 
 #include <SDL2/SDL.h>
 
@@ -42,9 +43,10 @@ int main(int argc, char *argv[]) {
 
   Renderer *renderer = SdlRenderer::Create(window);
 
+  Screen *mainMenuScreen = new MainMenuScreen(window);
   Screen *gameScreen = new GameScreen(window);
   Screen *highScoresScreen = new HighScoresScreen(window);
-  Screen *currentScreen = gameScreen;
+  Screen *currentScreen = mainMenuScreen;
 
   uint32_t lastTime = SDL_GetTicks();
 
@@ -81,8 +83,25 @@ int main(int argc, char *argv[]) {
     currentScreen->Render(renderer);
 
     if (currentScreen->state["name"] == "game-over") {
+      highScoresScreen->Reset();
       highScoresScreen->SwitchScreen(currentScreen->state);
       currentScreen = highScoresScreen;
+    }
+    else if (currentScreen->state["name"] == "menu-new-game-selected") {
+      gameScreen->Reset();
+      gameScreen->SwitchScreen(currentScreen->state);
+      currentScreen = gameScreen;
+    }
+    else if (currentScreen->state["name"] == "menu-exit-selected") {
+      SDL_Event quitEvent;
+      quitEvent.type = SDL_QUIT;
+      SDL_PushEvent(&quitEvent);
+      break;
+    }
+    else if (currentScreen->state["name"] == "highscores-manu-selected") {
+      mainMenuScreen->Reset();
+      mainMenuScreen->SwitchScreen(currentScreen->state);
+      currentScreen = mainMenuScreen;
     }
   }
 

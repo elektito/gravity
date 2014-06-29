@@ -213,6 +213,14 @@ void GameScreen::Reset() {
   this->physicsTimeAccumulator = 0.0;
   this->scoreAccumulator = 0;
 
+  // Remove existing entities.
+  for (auto e : this->entities) {
+    if (e->hasPhysics)
+      this->world.DestroyBody(e->body);
+    delete e;
+  }
+  this->entities.clear();
+
   this->sun = Entity::CreateSun(&this->world,
                                 b2Vec2(0.0, 0.0),
                                 6.0,
