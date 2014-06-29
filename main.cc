@@ -92,6 +92,11 @@ int main(int argc, char *argv[]) {
       gameScreen->SwitchScreen(currentScreen->state);
       currentScreen = gameScreen;
     }
+    else if (currentScreen->state["name"] == "menu-highscores-selected") {
+      highScoresScreen->Reset();
+      highScoresScreen->SwitchScreen(currentScreen->state);
+      currentScreen = highScoresScreen;
+    }
     else if (currentScreen->state["name"] == "menu-exit-selected") {
       SDL_Event quitEvent;
       quitEvent.type = SDL_QUIT;

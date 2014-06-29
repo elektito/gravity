@@ -22,11 +22,13 @@ HighScoresScreen::~HighScoresScreen() {
 }
 
 void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
-  int score = std::stoi(lastState.at("score"));
-  this->scores.push_back(score);
-  std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
-  if (this->scores.size() > Config::HighScores)
-    this->scores.resize(Config::HighScores);
+  if (lastState.at("name") == "game-over") {
+    int score = std::stoi(lastState.at("score"));
+    this->scores.push_back(score);
+    std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
+    if (this->scores.size() > Config::HighScores)
+      this->scores.resize(Config::HighScores);
+  }
 }
 
 void HighScoresScreen::HandleEvent(const SDL_Event &e) {

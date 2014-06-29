@@ -11,8 +11,14 @@ MainMenuScreen::MainMenuScreen(SDL_Window *window) :
                                            {255, 0, 0},
                                            {255, 255, 255}));
   this->widgets.push_back(new ButtonWidget(this,
-                                           "Exit",
+                                           "High Scores",
                                            0.0, 0.55, 0.1,
+                                           TextAnchor::CENTER, TextAnchor::TOP,
+                                           {255, 0, 0},
+                                           {255, 255, 255}));
+  this->widgets.push_back(new ButtonWidget(this,
+                                           "Exit",
+                                           0.0, 0.65, 0.1,
                                            TextAnchor::CENTER, TextAnchor::TOP,
                                            {255, 0, 0},
                                            {255, 255, 255}));
@@ -39,7 +45,10 @@ void MainMenuScreen::HandleWidgetEvent(int event_type, Widget *widget) {
     if (widget == this->widgets[0]) { // New Game
       this->state["name"] = "menu-new-game-selected";
     }
-    else if (widget == this->widgets[1]) { // Exit
+    if (widget == this->widgets[1]) { // High Scores
+      this->state["name"] = "menu-highscores-selected";
+    }
+    else if (widget == this->widgets[2]) { // Exit
       this->state["name"] = "menu-exit-selected";
     }
 
