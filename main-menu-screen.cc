@@ -31,7 +31,8 @@ MainMenuScreen::~MainMenuScreen() {
 }
 
 void MainMenuScreen::SwitchScreen(const map<string, string> &lastState) {
-
+  this->state.clear();
+  this->state["name"] = "menu-ongoing";
 }
 
 void MainMenuScreen::HandleEvent(const SDL_Event &e) {

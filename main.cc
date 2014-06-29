@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include <iostream>
+#include <fstream>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -46,6 +47,15 @@ int main(int argc, char *argv[]) {
   Screen *mainMenuScreen = new MainMenuScreen(window);
   Screen *gameScreen = new GameScreen(window);
   Screen *highScoresScreen = new HighScoresScreen(window);
+
+  ifstream input("gravity.save", ifstream::in | ifstream::binary);
+  if (input) {
+    highScoresScreen->Load(input);
+  }
+  else
+    cout << "No save file." << endl;
+  input.close();
+
   Screen *currentScreen = mainMenuScreen;
 
   uint32_t lastTime = SDL_GetTicks();
@@ -83,7 +93,6 @@ int main(int argc, char *argv[]) {
     currentScreen->Render(renderer);
 
     if (currentScreen->state["name"] == "game-over") {
-      highScoresScreen->Reset();
       highScoresScreen->SwitchScreen(currentScreen->state);
       currentScreen = highScoresScreen;
     }
@@ -93,7 +102,6 @@ int main(int argc, char *argv[]) {
       currentScreen = gameScreen;
     }
     else if (currentScreen->state["name"] == "menu-highscores-selected") {
-      highScoresScreen->Reset();
       highScoresScreen->SwitchScreen(currentScreen->state);
       currentScreen = highScoresScreen;
     }
@@ -104,10 +112,17 @@ int main(int argc, char *argv[]) {
       break;
     }
     else if (currentScreen->state["name"] == "highscores-manu-selected") {
-      mainMenuScreen->Reset();
       mainMenuScreen->SwitchScreen(currentScreen->state);
       currentScreen = mainMenuScreen;
     }
+  }
+
+  ofstream output("gravity.save", ofstream::out | ofstream::binary);
+  if (output) {
+    highScoresScreen->Save(output);
+  }
+  else {
+    cout << "Could not write to save file." << endl;
   }
 
   delete renderer;

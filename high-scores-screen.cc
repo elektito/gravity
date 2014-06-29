@@ -29,6 +29,9 @@ void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
     if (this->scores.size() > Config::HighScores)
       this->scores.resize(Config::HighScores);
   }
+
+  this->state.clear();
+  this->state["name"] = "highscores-ongoing";
 }
 
 void HighScoresScreen::HandleEvent(const SDL_Event &e) {
@@ -54,17 +57,19 @@ void HighScoresScreen::Reset() {
 }
 
 void HighScoresScreen::Save(ostream &s) const {
-  s << this->scores.size();
+  size_t size = this->scores.size();
+  s.write((const char*) &size, sizeof(size));
   for (auto score : this->scores)
-    s << score;
+    s.write((const char*) &score, sizeof(score));
 }
 
 void HighScoresScreen::Load(istream &s) {
   size_t size;
-  s >> size;
+  s.read((char*) &size, sizeof(size));
+  this->scores.clear();
   for (size_t i = 0; i < size; ++i) {
     int score;
-    s >> score;
+    s.read((char*) &score, sizeof(score));
     this->scores.push_back(score);
   }
 }
