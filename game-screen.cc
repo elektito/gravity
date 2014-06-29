@@ -240,17 +240,18 @@ void GameScreen::Reset() {
 void GameScreen::Save(ostream &s) const {
   SaveMap(this->state, s);
 
-  s << this->time
-    << this->score
-    << this->timeRemaining
-    << this->paused
-    << this->camera.pos.x
-    << this->camera.pos.y
-    << this->camera.ppm
-    << this->physicsTimeAccumulator
-    << this->scoreAccumulator;
+  WRITE(this->time, s);
+  WRITE(this->score, s);
+  WRITE(this->timeRemaining, s);
+  WRITE(this->paused, s);
+  WRITE(this->camera.pos.x, s);
+  WRITE(this->camera.pos.y, s);
+  WRITE(this->camera.ppm, s);
+  WRITE(this->physicsTimeAccumulator, s);
+  WRITE(this->scoreAccumulator, s);
 
-  s << this->entities.size();
+  size_t size = this->entities.size();
+  WRITE(size, s);
   for (auto e : this->entities)
     e->Save(s);
 }
@@ -258,21 +259,21 @@ void GameScreen::Save(ostream &s) const {
 void GameScreen::Load(istream &s) {
   LoadMap(this->state, s);
 
-  s >> this->time
-    >> this->score
-    >> this->timeRemaining
-    >> this->paused
-    >> this->camera.pos.x
-    >> this->camera.pos.y
-    >> this->camera.ppm
-    >> this->physicsTimeAccumulator
-    >> this->scoreAccumulator;
+  READ(this->time, s);
+  READ(this->score, s);
+  READ(this->timeRemaining, s);
+  READ(this->paused, s);
+  READ(this->camera.pos.x, s);
+  READ(this->camera.pos.y, s);
+  READ(this->camera.ppm, s);
+  READ(this->physicsTimeAccumulator, s);
+  READ(this->scoreAccumulator, s);
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
   Entity *e;
   size_t entityCount;
-  s >> entityCount;
+  READ(entityCount, s);
   for (int i = 0; i < entityCount; ++i) {
     e = new Entity;
     e->Load(s, &this->world);

@@ -27,64 +27,86 @@ Entity::~Entity() {
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
-  s << (b ? 1 : 0)
-    << b->GetType()
-    << b->GetPosition()
-    << b->GetAngle()
-    << b->GetLinearVelocity()
-    << b->GetAngularVelocity();
+  int hasBody = b ? 1 : 0;
+  WRITE(hasBody, s);
+
+  auto bType = b->GetType();
+  WRITE(bType, s);
+
+  auto bPos = b->GetPosition();
+  WRITE(bPos, s);
+
+  auto bAngle = b->GetAngle();
+  WRITE(bAngle, s);
+
+  auto bLinVel = b->GetLinearVelocity();
+  WRITE(bLinVel, s);
+
+  auto bAngVel = b->GetAngularVelocity();
+  WRITE(bAngVel, s);
 
   int fixtureCount = 0;
   for (auto f = b->GetFixtureList(); f; f = f->GetNext())
     fixtureCount++;
 
-  s << fixtureCount;
+  WRITE(fixtureCount, s);
   for (auto f = b->GetFixtureList(); f; f = f->GetNext()) {
-    s << f->GetFriction()
-      << f->GetDensity()
-      << f->GetRestitution();
+    auto fFriction = f->GetFriction();
+    WRITE(fFriction, s);
+
+    auto fDensity = f->GetDensity();
+    WRITE(fDensity, s);
+
+    auto fRestitution = f->GetRestitution();
+    WRITE(fRestitution, s);
 
     b2CircleShape *shape = (b2CircleShape*) f->GetShape();
     if (shape->GetType() != b2Shape::e_circle)
       throw runtime_error("Only circle shapes are currently supported.");
-    s << shape->m_p << shape->m_radius;
+    WRITE(shape->m_p, s);
+    WRITE(shape->m_radius, s);
   }
 }
 
 void Entity::SaveTrail(const Trail &t, ostream &s) const {
-  s << t.size << t.time;
-  s << t.points.size();
+  WRITE(t.size, s);
+  WRITE(t.time, s);
+
+  size_t pointCount = t.points.size();
+  WRITE(pointCount, s);
   for (auto it = t.points.begin(); it != t.points.end(); ++it) {
-    s << it->pos << it->time;
+    WRITE(it->pos, s);
+    WRITE(it->time, s);
   }
 }
 
 b2Body *Entity::LoadBody(istream &s, b2World *world) {
   int bodyExists;
-  s >> bodyExists;
+  READ(bodyExists, s);
   if (!bodyExists)
     return nullptr;
 
   b2BodyDef bd;
   int bdtype;
-  s >> bdtype
-    >> bd.position
-    >> bd.angle
-    >> bd.linearVelocity
-    >> bd.angularVelocity;
+  READ(bdtype, s);
+  READ(bd.position, s);
+  READ(bd.angle, s);
+  READ(bd.linearVelocity, s);
+  READ(bd.angularVelocity, s);
   bd.type = (b2BodyType) bdtype;
   this->body = world->CreateBody(&bd);
 
   int fixtureCount;
-  s >> fixtureCount;
+  READ(fixtureCount, s);
   for (int i = 0; i < fixtureCount; ++i) {
     b2FixtureDef fd;
-    s >> fd.friction
-      >> fd.density
-      >> fd.restitution;
+    READ(fd.friction, s);
+    READ(fd.density, s);
+    READ(fd.restitution, s);
 
     b2CircleShape shape;
-    s >> shape.m_p >> shape.m_radius;
+    READ(shape.m_p, s);
+    READ(shape.m_radius, s);
     fd.shape = &shape;
 
     this->body->CreateFixture(&fd);
@@ -95,43 +117,52 @@ b2Body *Entity::LoadBody(istream &s, b2World *world) {
 
 Trail Entity::LoadTrail(istream &s) {
   Trail t;
-  s >> t.size >> t.time;
+  READ(t.size, s);
+  READ(t.time, s);
+
   size_t pointCount;
-  s >> pointCount;
+  READ(pointCount, s);
   for (int i = 0; i < pointCount; ++i) {
     TrailPoint tp;
-    s >> tp.pos >> tp.time;
+    READ(tp.pos, s);
+    READ(tp.time, s);
     t.points.push_back(tp);
   }
   return t;
 }
 
 void Entity::Save(ostream &s) const {
-  s << hasPhysics;
-  this->SaveBody(this->body, s);
+  WRITE(this->hasPhysics, s);
+  if (this->hasPhysics)
+    this->SaveBody(this->body, s);
 
-  s << this->hasGravity << this->gravityCoeff;
+  WRITE(this->hasGravity, s);
+  WRITE(this->gravityCoeff, s);
 
-  s << this->hasTrail;
-  this->SaveTrail(this->trail, s);
+  WRITE(this->hasTrail, s);
+  if (this->hasTrail)
+    this->SaveTrail(this->trail, s);
 
-  s << this->isAffectedByGravity
-    << this->isSun
-    << this->isPlanet;
+  WRITE(this->isAffectedByGravity, s);
+  WRITE(this->isSun, s);
+  WRITE(this->isPlanet, s);
 }
 
 void Entity::Load(istream &s, b2World *world) {
-  s >> this->hasPhysics;
-  this->body = this->LoadBody(s, world);
+  READ(this->hasPhysics, s);
+  if (this->hasPhysics)
+    this->body = this->LoadBody(s, world);
 
-  s >> this->hasGravity >> this->gravityCoeff;
+  READ(this->hasGravity, s);
+  READ(this->gravityCoeff, s);
 
-  s >> this->hasTrail;
-  this->trail = this->LoadTrail(s);
+  READ(this->hasTrail, s);
+  if (this->hasTrail)
+    this->trail = this->LoadTrail(s);
 
-  s >> this->isAffectedByGravity
-    >> this->isSun
-    >> this->isPlanet;
+  READ(this->isAffectedByGravity, s);
+  READ(this->isSun, s);
+  READ(this->isPlanet, s);
 }
 
 Entity *Entity::CreatePlanet(b2World *world,

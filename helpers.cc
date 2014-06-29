@@ -1,3 +1,4 @@
+#include "helpers.hh"
 #include "font-cache.hh"
 
 #include <Box2D/Box2D.h>
@@ -7,19 +8,35 @@
 
 using namespace std;
 
-ostream &operator<<(ostream &s, const b2Vec2 &v) {
-  return s << v.x << v.y;
+void SaveVec2(const b2Vec2 &v, ostream &s) {
+  WRITE(v.x, s);
+  WRITE(v.y, s);
 }
 
-istream &operator>>(istream &s, b2Vec2 &v) {
-  return s >> v.x >> v.y;
+void LoadVec2(b2Vec2 &v, istream &s) {
+  READ(v.x, s);
+  READ(v.y, s);
+}
+
+void SaveString(const string &str, ostream &s) {
+  size_t size = str.size();
+  WRITE(size, s);
+  s.write((const char*) str.data(), size);
+}
+
+void LoadString(string &str, istream &s) {
+  size_t size;
+  READ(size, s);
+  str.resize(size);
+  s.read((char*) str.data(), size);
 }
 
 void SaveMap(const map<string, string> &m, ostream &s) {
-  s << m.size();
+  size_t size = m.size();
+  WRITE(size, s);
   for (auto &p : m) {
-    s << p.first;
-    s << p.second;
+    SaveString(p.first, s);
+    SaveString(p.second, s);
   }
 }
 
@@ -29,9 +46,10 @@ void LoadMap(map<string, string> &m, istream &s) {
 
   m.clear();
 
-  s >> n;
+  READ(n, s);
   for (int i = 0; i < n; ++i) {
-    s >> k >> v;
+    LoadString(k, s);
+    LoadString(v, s);
     m[k] = v;
   }
 }
