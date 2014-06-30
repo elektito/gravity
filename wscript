@@ -4,6 +4,10 @@ VERSION = '0.1'
 def options(opt):
     opt.load('compiler_cxx')
 
+    opt.add_option(
+        '--release', action='store_true', default=False, dest='release_build',
+        help='Build a release build.')
+
 def configure(cfg):
     cfg.load('compiler_cxx')
 
@@ -12,7 +16,12 @@ def configure(cfg):
     cfg.check_cxx(lib='SDL2_gfx', uselib_store='SDL2_GFX')
     cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
 
-    cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-g'])
+    cfg.env.append_value('CXXFLAGS', ['-std=c++11'])
+
+    if cfg.options.release_build:
+        cfg.env.append_value('CXXFLAGS', ['-O3'])
+    else:
+        cfg.env.append_value('CXXFLAGS', ['-g'])
 
 def build(bld):
     source = [
