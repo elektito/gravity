@@ -56,6 +56,8 @@ void ContactListener::BeginContact(b2Contact *contact) {
 }
 
 void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
+  Mix_PlayChannel(-1, this->screen->enemyCollisionSound, 0);
+
   this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
     this->screen->timeRemaining = 0;
@@ -64,6 +66,8 @@ void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
 }
 
 void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
+  Mix_PlayChannel(-1, this->screen->enemyCollisionSound, 0);
+
   this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
     this->screen->timeRemaining = 0;
@@ -72,6 +76,8 @@ void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
 }
 
 void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
+  Mix_PlayChannel(-1, this->screen->planetSunCollisionSound, 0);
+
   if (!this->inContact)
     this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
@@ -80,6 +86,8 @@ void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
 }
 
 void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
+  Mix_PlayChannel(-1, this->screen->sunPowerupSound, 0);
+
   if (collectible->hasScore)
     this->screen->score += collectible->score;
 
@@ -87,6 +95,8 @@ void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
 }
 
 void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *planet) {
+  Mix_PlayChannel(-1, this->screen->planetPowerupSound, 0);
+
   if (collectible->hasScore)
     this->screen->score += 10 * collectible->score;
 
@@ -147,6 +157,34 @@ GameScreen::GameScreen(SDL_Window *window) :
   }
 
   this->scoreTickSound = Mix_LoadWAV("resources/sound/score-tik.wav");
+  if (this->scoreTickSound == nullptr) {
+    cout << "Failed to load sound data. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  this->sunPowerupSound = Mix_LoadWAV("resources/sound/sun-powerup.wav");
+  if (this->scoreTickSound == nullptr) {
+    cout << "Failed to load sound data. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  this->planetPowerupSound = Mix_LoadWAV("resources/sound/planet-powerup.wav");
+  if (this->scoreTickSound == nullptr) {
+    cout << "Failed to load sound data. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  this->enemyCollisionSound = Mix_LoadWAV("resources/sound/enemy-collision.wav");
+  if (this->scoreTickSound == nullptr) {
+    cout << "Failed to load sound data. SDL_mixer error: "
+         << Mix_GetError() << endl;
+    exit(1);
+  }
+
+  this->planetSunCollisionSound = Mix_LoadWAV("resources/sound/planet-sun-collision.wav");
   if (this->scoreTickSound == nullptr) {
     cout << "Failed to load sound data. SDL_mixer error: "
          << Mix_GetError() << endl;
