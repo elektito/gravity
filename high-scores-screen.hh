@@ -6,6 +6,7 @@
 class HighScoresScreen : public Screen {
 protected:
   vector<int> scores;
+  int currentScoreIndex;
 
 public:
   HighScoresScreen(SDL_Window *window);

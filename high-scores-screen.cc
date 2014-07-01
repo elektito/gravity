@@ -6,7 +6,8 @@
 #include <sstream>
 
 HighScoresScreen::HighScoresScreen(SDL_Window *window) :
-  Screen(window)
+  Screen(window),
+  currentScoreIndex(-1)
 {
   this->widgets.push_back(new ButtonWidget(this,
                                            "Main Menu",
@@ -22,12 +23,21 @@ HighScoresScreen::~HighScoresScreen() {
 }
 
 void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
+  this->currentScoreIndex = -1;
+
   if (lastState.at("name") == "game-over") {
     int score = std::stoi(lastState.at("score"));
+
     this->scores.push_back(score);
     std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
     if (this->scores.size() > Config::HighScores)
       this->scores.resize(Config::HighScores);
+
+    // See if the current score made it into the high scores.
+    for (int i = 0; i < this->scores.size(); ++i)
+      if (score == this->scores[i])
+        if (i != this->scores.size() - 1 || score > this->scores[i])
+          this->currentScoreIndex = i;
   }
 
   this->state.clear();
@@ -88,9 +98,14 @@ void HighScoresScreen::Render(Renderer *renderer) {
     ss.str("");
     ss.clear();
     ss << setw(6) << setfill('0') << this->scores[i];
+    SDL_Color c;
+    if (i == this->currentScoreIndex)
+      c = {255, 255, 0};
+    else
+      c = {255, 255, 255};
     renderer->DrawTextP(ss.str(),
                         0.0, 0.1 + 0.2 + i * 0.1, 0.1,
-                        {255, 255, 255},
+                        c,
                         TextAnchor::CENTER, TextAnchor::TOP);
   }
 
