@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace FontCache {
+namespace ResourceCache {
 
 struct FontDescriptor {
   string path;
@@ -56,4 +56,4 @@ TTF_Font *GetFont(int height_pixels) {
   return font;
 }
 
-} // namespace FontCache
+} // namespace ResourceCache

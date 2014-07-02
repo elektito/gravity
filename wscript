@@ -34,7 +34,7 @@ def build(bld):
         'main-menu-screen.cc',
         'high-scores-screen.cc',
         'entity.cc',
-        'font-cache.cc',
+        'resource-cache.cc',
         'helpers.cc',
         'config.cc',
         'button-widget.cc'

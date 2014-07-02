@@ -1,5 +1,5 @@
 #include "helpers.hh"
-#include "font-cache.hh"
+#include "resource-cache.hh"
 
 #include <Box2D/Box2D.h>
 
@@ -59,7 +59,7 @@ void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp) {
   SDL_GetWindowSize(window, &winw, &winh);
 
   int height_pixels = hp * winh;
-  TTF_Font *font = FontCache::GetFont(height_pixels);
+  TTF_Font *font = ResourceCache::GetFont(height_pixels);
 
   int w, h;
   TTF_SizeText(font, text.data(), &w, &h);

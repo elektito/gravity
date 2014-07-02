@@ -1,6 +1,6 @@
 #include "sdl-renderer.hh"
 #include "config.hh"
-#include "font-cache.hh"
+#include "resource-cache.hh"
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
@@ -19,13 +19,9 @@ SdlRenderer::SdlRenderer(SDL_Window *window) :
   if (Config::VSync)
     flags |= SDL_RENDERER_PRESENTVSYNC;
   this->renderer = SDL_CreateRenderer(window, -1, flags);
-
-  FontCache::Init();
 }
 
 SdlRenderer::~SdlRenderer() {
-  FontCache::Finalize();
-
   SDL_DestroyRenderer(this->renderer);
 }
 
@@ -72,7 +68,7 @@ void SdlRenderer::DrawLine(b2Vec2 begin, b2Vec2 end, int r, int g, int b, int a)
 void SdlRenderer::DrawTextM(string text, b2Vec2 pos, float32 height, SDL_Color color) const {
   int height_pixels = this->camera.LengthToScreen(height);
 
-  TTF_Font *font = FontCache::GetFont(height_pixels);
+  TTF_Font *font = ResourceCache::GetFont(height_pixels);
   SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
   if (textSurface == nullptr) {
     stringstream ss;
@@ -113,7 +109,7 @@ void SdlRenderer::DrawTextP(string text,
   SDL_GetWindowSize(this->window, &winw, &winh);
   int height_pixels = height * winh;
 
-  TTF_Font *font = FontCache::GetFont(height_pixels);
+  TTF_Font *font = ResourceCache::GetFont(height_pixels);
   SDL_Surface *textSurface = TTF_RenderText_Solid(font, text.data(), color);
   if (textSurface == nullptr) {
     stringstream ss;

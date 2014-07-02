@@ -2,6 +2,7 @@
 #include "game-screen.hh"
 #include "high-scores-screen.hh"
 #include "main-menu-screen.hh"
+#include "resource-cache.hh"
 
 #include <SDL2/SDL.h>
 
@@ -28,6 +29,9 @@ int main(int argc, char *argv[]) {
          << SDL_GetError() << endl;
     return 1;
   }
+
+  // Initialize resource cache.
+  ResourceCache::Init();
 
   // Create window.
   window = SDL_CreateWindow("polygons",
@@ -126,6 +130,8 @@ int main(int argc, char *argv[]) {
   }
 
   delete renderer;
+
+  ResourceCache::Finalize();
 
   // Destroy the window.
   SDL_DestroyWindow(window);
