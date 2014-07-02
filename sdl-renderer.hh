@@ -35,6 +35,11 @@ public:
                          SDL_Color c,
                          TextAnchor xanchor,
                          TextAnchor yanchor) const;
+  virtual void DrawTexture(SDL_Texture *texture,
+                           b2Vec2 bottomLeft,
+                           float32 width,
+                           float32 height) const;
+  virtual void DrawBackground(SDL_Texture *texture) const;
 
   virtual void PresentScreen();
 

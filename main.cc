@@ -30,9 +30,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // Initialize resource cache.
-  ResourceCache::Init();
-
   // Create window.
   window = SDL_CreateWindow("polygons",
                             SDL_WINDOWPOS_UNDEFINED,
@@ -130,8 +127,6 @@ int main(int argc, char *argv[]) {
   }
 
   delete renderer;
-
-  ResourceCache::Finalize();
 
   // Destroy the window.
   SDL_DestroyWindow(window);

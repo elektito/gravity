@@ -10,6 +10,7 @@ In order to build _Gravity_ you need the following libraries:
  - SDL2_gfx
  - SDL2_ttf
  - SDL2_mixer
+ - SDL2_image
  - Box2D
 
 In order to build run `./waf configure` and then `./waf build`. A

@@ -19,9 +19,13 @@ SdlRenderer::SdlRenderer(SDL_Window *window) :
   if (Config::VSync)
     flags |= SDL_RENDERER_PRESENTVSYNC;
   this->renderer = SDL_CreateRenderer(window, -1, flags);
+
+  // Initialize resource cache.
+  ResourceCache::Init(this->renderer);
 }
 
 SdlRenderer::~SdlRenderer() {
+  ResourceCache::Finalize();
   SDL_DestroyRenderer(this->renderer);
 }
 
@@ -149,4 +153,44 @@ void SdlRenderer::DrawTextP(string text,
   }
 
   SDL_FreeSurface(textSurface);
+}
+
+void SdlRenderer::DrawTexture(SDL_Texture *texture,
+                              b2Vec2 bottomLeft,
+                              float32 width,
+                              float32 height) const
+{
+  int w = this->camera.LengthToScreen(width);
+  int h = this->camera.LengthToScreen(height);
+  int x, y;
+  bottomLeft.y += height;
+  this->camera.PointToScreen(this->window, bottomLeft, x, y);
+  SDL_Rect dest {x, y, w, h};
+
+  SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
+}
+
+void SdlRenderer::DrawBackground(SDL_Texture *texture) const {
+  int winw, winh;
+  SDL_GetWindowSize(this->window, &winw, &winh);
+
+  int texturew, textureh;
+  SDL_QueryTexture(texture, nullptr, nullptr, &texturew, &textureh);
+
+  // First try to fit the background texture to screen width.
+  int w = winw;
+  int h = w * ((float32) textureh / texturew);
+  int x = 0;
+  int y = (winh - h) / 2;
+
+  if (h < winh) {
+    // Won't do. Fit to screen height then.
+    h = winh;
+    w = h * ((float32) texturew / textureh);
+    x = (winw - w) / 2;
+    y = 0;
+  }
+
+  SDL_Rect dest {x, y, w, h};
+  SDL_RenderCopy(this->renderer, texture, nullptr, &dest);
 }

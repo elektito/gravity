@@ -50,6 +50,12 @@ public:
                          TextAnchor xanchor,
                          TextAnchor yanchor) const = 0;
 
+  virtual void DrawTexture(SDL_Texture *texture,
+                           b2Vec2 bottomLeft,
+                           float32 width,
+                           float32 height) const = 0;
+  virtual void DrawBackground(SDL_Texture *texture) const = 0;
+
   virtual void PresentScreen() = 0;
 };
 

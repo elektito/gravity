@@ -1,5 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
 
 #include <tuple>
 #include <string>
@@ -10,6 +11,8 @@ using namespace std;
 
 namespace ResourceCache {
 
+SDL_Renderer *renderer = nullptr;
+
 struct FontDescriptor {
   string path;
   int size;
@@ -19,11 +22,14 @@ struct FontDescriptor {
   }
 };
 
-map <FontDescriptor, TTF_Font*> font_cache;
-map <string, Mix_Chunk*> sound_cache;
+map<FontDescriptor, TTF_Font*> font_cache;
+map<string, Mix_Chunk*> sound_cache;
+map<string, SDL_Texture*> image_cache;
 
-void Init() {
+void Init(SDL_Renderer *r) {
   stringstream ss;
+
+  renderer = r;
 
   // Initialize fonts.
   if (TTF_Init() == -1) {
@@ -44,6 +50,13 @@ void Init() {
        << Mix_GetError();
     throw runtime_error(ss.str());
   }
+
+  // Initialize images.
+  if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) == -1) {
+    ss << "Could not initialize SDL_image. SDL_image error: "
+       << IMG_GetError();
+    throw runtime_error(ss.str());
+  }
 }
 
 void Finalize() {
@@ -55,6 +68,7 @@ void Finalize() {
 
   TTF_Quit();
   Mix_Quit();
+  IMG_Quit();
 }
 
 TTF_Font *GetFont(int height_pixels) {
@@ -91,6 +105,30 @@ Mix_Chunk *GetSound(const string &name) {
   sound_cache[name] = chunk;
 
   return chunk;
+}
+
+SDL_Texture *GetImage(const string &name, const string &type) {
+  auto it = image_cache.find(name);
+  if (it != image_cache.end())
+    return it->second;
+
+  SDL_Surface *surface = IMG_Load(("resources/images/" + name + "." + type).data());
+  if (surface == nullptr) {
+    stringstream ss;
+    ss << "Unable to load image. SDL_image error: " << IMG_GetError();
+    throw runtime_error(ss.str());
+  }
+
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+  if (texture == nullptr) {
+    stringstream ss;
+    ss << "Unable to create texture. SDL error: " << SDL_GetError();
+    throw runtime_error(ss.str());
+  }
+
+  image_cache[name] = texture;
+
+  return texture;
 }
 
 } // namespace ResourceCache

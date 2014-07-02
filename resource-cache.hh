@@ -10,12 +10,14 @@ using namespace std;
 
 namespace ResourceCache {
 
-extern void Init();
+extern void Init(SDL_Renderer *r);
 extern void Finalize();
 
 extern TTF_Font *GetFont(int height_pixels);
 
 extern Mix_Chunk *GetSound(const string &name);
+
+extern SDL_Texture *GetImage(const string &name, const string &type="png");
 
 } // namespace ResourceCache
 

@@ -244,7 +244,7 @@ Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
   e->body = world->CreateBody(&bd);
 
   b2PolygonShape shape;
-  shape.SetAsBox(0.5, 0.5);
+  shape.SetAsBox(1.5, 1.5);
 
   b2FixtureDef fd;
   fd.shape = &shape;
