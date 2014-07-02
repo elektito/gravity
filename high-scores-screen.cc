@@ -40,6 +40,9 @@ void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
           this->currentScoreIndex = i;
   }
 
+  for (auto w : this->widgets)
+    w->Reset();
+
   this->state.clear();
   this->state["name"] = "highscores-ongoing";
 }

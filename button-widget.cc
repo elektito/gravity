@@ -90,3 +90,9 @@ void ButtonWidget::Render(Renderer *renderer) {
                       this->isActive ? this->activeColor : this->inactiveColor,
                       this->xanchor, this->yanchor);
 }
+
+void ButtonWidget::Reset() {
+  this->isActive = false;
+  this->mouseDown = false;
+  this->CalculateWidth();
+}

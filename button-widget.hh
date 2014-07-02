@@ -56,6 +56,7 @@ public:
   virtual void HandleEvent(const SDL_Event &e);
   virtual void Advance(float dt);
   virtual void Render(Renderer *renderer);
+  virtual void Reset();
 };
 
 #endif /* _GRAVITY_BUTTON_WIDGET_HH_ */

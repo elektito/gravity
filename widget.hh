@@ -19,6 +19,7 @@ public:
   virtual void HandleEvent(const SDL_Event &e) = 0;
   virtual void Advance(float dt) = 0;
   virtual void Render(Renderer *renderer) = 0;
+  virtual void Reset() = 0;
 };
 
 #endif /* _GRAVITY_WIDGET_HH_ */
