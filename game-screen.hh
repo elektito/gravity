@@ -60,13 +60,6 @@ protected:
   int fps;
   vector<Entity*> toBeRemoved;
 
-  // sounds
-  Mix_Chunk *scoreTickSound;
-  Mix_Chunk *sunPowerupSound;
-  Mix_Chunk *planetPowerupSound;
-  Mix_Chunk *enemyCollisionSound;
-  Mix_Chunk *planetSunCollisionSound;
-
   // methods
   void FixCamera();
   void FixCamera(Entity *e);
