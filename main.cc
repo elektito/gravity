@@ -1,4 +1,4 @@
-#include "sdl-renderer.hh"
+#include "renderer.hh"
 #include "game-screen.hh"
 #include "high-scores-screen.hh"
 #include "main-menu-screen.hh"
@@ -36,14 +36,15 @@ int main(int argc, char *argv[]) {
                             SDL_WINDOWPOS_UNDEFINED,
                             SCREEN_WIDTH,
                             SCREEN_HEIGHT,
-                            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                            SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
     cout << "Window could not be created. SDL_Error: "
          << SDL_GetError() << endl;
     return 2;
   }
 
-  Renderer *renderer = SdlRenderer::Create(window);
+  Renderer *renderer = new Renderer(window);
+  ResourceCache::Init();
 
   Screen *mainMenuScreen = new MainMenuScreen(window);
   Screen *gameScreen = new GameScreen(window);
@@ -56,6 +57,8 @@ int main(int argc, char *argv[]) {
   else
     cout << "No save file." << endl;
   input.close();
+
+  SDL_ShowWindow(window);
 
   Screen *currentScreen = mainMenuScreen;
 
@@ -82,6 +85,22 @@ int main(int argc, char *argv[]) {
           else
             SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
           break;
+        }
+      }
+      else if (e.type == SDL_WINDOWEVENT) {
+        if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+          int winw, winh;
+          SDL_GetWindowSize(window, &winw, &winh);
+
+          // Update OpenGL viewport.
+          glViewport(0, 0, winw, winh);
+
+          // Update window size in shader.
+          auto program = ResourceCache::texturedPolygonProgram;
+          glUseProgram(program);
+          GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
+          glUniform2f(resolutionUniform, winw, winh);
+          glUseProgram(0);
         }
       }
     }

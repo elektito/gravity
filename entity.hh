@@ -1,6 +1,8 @@
 #ifndef _GRAVITY_ENTITY_HH_
 #define _GRAVITY_ENTITY_HH_
 
+#include "mesh.hh"
+
 #include <Box2D/Box2D.h>
 
 #include <vector>
@@ -60,6 +62,9 @@ public:
   bool isCollectible;
   bool hasScore;
   int score;
+
+  bool isDrawable;
+  Mesh *mesh;
 
   void Save(ostream &s) const;
   void Load(istream &s, b2World *world);

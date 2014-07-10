@@ -8,42 +8,29 @@
 void GetRelativeCoords(int x, int y,
                        SDL_Window *window,
                        TextAnchor xanchor, TextAnchor yanchor,
-                       float32 &xp, float32 &yp)
+                       float &xp, float &yp)
 {
   int winw, winh;
   SDL_GetWindowSize(window, &winw, &winh);
 
   if (xanchor == TextAnchor::LEFT)
-    xp = (float32) x / winw;
+    xp = (float) x / winw;
   else if (xanchor == TextAnchor::RIGHT)
-    xp = (float32) (winw - x) / winw;
+    xp = (float) (winw - x) / winw;
   else if (xanchor == TextAnchor::CENTER)
-    xp = (float32) (x - winw / 2) / winw;
+    xp = (float) (x - winw / 2) / winw;
 
   if (yanchor == TextAnchor::TOP)
-    yp = (float32) y / winh;
+    yp = (float) y / winh;
   else if (yanchor == TextAnchor::BOTTOM)
-    yp = (float32) (winh - y) / winh;
+    yp = (float) (winh - y) / winh;
   else if (yanchor == TextAnchor::CENTER)
-    yp = (float32) (winh / 2 - y) / winh;
-}
-
-void ButtonWidget::SetText(const string &text) {
-  this->text = text;
-  this->CalculateWidth();
-}
-
-string ButtonWidget::GetText() const {
-  return this->text;
-}
-
-void ButtonWidget::CalculateWidth() {
-  GetTextWidthP(text, this->height, this->screen->window, this->width);
+    yp = (float) (winh / 2 - y) / winh;
 }
 
 void ButtonWidget::HandleEvent(const SDL_Event &e) {
-  int x, y;
-  float32 xp, yp;
+  int mousex, mousey;
+  float xp, yp;
 
   if (e.type == SDL_MOUSEBUTTONDOWN) {
     this->mouseDown = this->isActive;
@@ -56,8 +43,8 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
     this->mouseDown = false;
   }
   else if (e.type == SDL_MOUSEMOTION) {
-    SDL_GetMouseState(&x, &y);
-    GetRelativeCoords(x, y, this->screen->window, this->xanchor, this->yanchor, xp, yp);
+    SDL_GetMouseState(&mousex, &mousey);
+    GetRelativeCoords(mousex, mousey, this->screen->window, this->xanchor, this->yanchor, xp, yp);
 
     bool xInRange = false;
     bool yInRange = false;
@@ -73,26 +60,25 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
       yInRange = yp >= this->y && yp <= (this->y + this->height);
 
     this->isActive = xInRange && yInRange;
+    if (this->isActive)
+      this->SetColor(this->activeColor);
+    else
+      this->SetColor(this->inactiveColor);
   }
-  else if (e.type == SDL_WINDOWEVENT) {
-    if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-      this->CalculateWidth();
-  }
+
+  this->LabelWidget::HandleEvent(e);
 }
 
 void ButtonWidget::Advance(float dt) {
-
+  this->LabelWidget::Advance(dt);
 }
 
 void ButtonWidget::Render(Renderer *renderer) {
-  renderer->DrawTextP(this->text,
-                      this->x, this->y, this->height,
-                      this->isActive ? this->activeColor : this->inactiveColor,
-                      this->xanchor, this->yanchor);
+  this->LabelWidget::Render(renderer);
 }
 
 void ButtonWidget::Reset() {
   this->isActive = false;
   this->mouseDown = false;
-  this->CalculateWidth();
+  this->LabelWidget::Reset();
 }

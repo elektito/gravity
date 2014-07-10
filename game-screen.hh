@@ -5,6 +5,7 @@
 #include "camera.hh"
 #include "timer.hh"
 #include "entity.hh"
+#include "label-widget.hh"
 
 #include <SDL2/SDL_mixer.h>
 #include <Box2D/Box2D.h>
@@ -59,6 +60,10 @@ protected:
   int frameCount;
   int fps;
   vector<Entity*> toBeRemoved;
+
+  LabelWidget *scoreLabel;
+  LabelWidget *timeLabel;
+  LabelWidget *fpsLabel;
 
   // methods
   void FixCamera();

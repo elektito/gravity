@@ -13,10 +13,11 @@ def configure(cfg):
 
     cfg.check_cfg(package='sdl2', args='--cflags --libs', uselib_store='SDL2')
     cfg.check_cxx(lib='Box2D', uselib_store='BOX2D')
-    cfg.check_cxx(lib='SDL2_gfx', uselib_store='SDL2_GFX')
     cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
-    cfg.check_cxx(lib='SDL2_image', uselib_store='SDL2_IMAGE')
+    cfg.check_cxx(lib='GL', uselib_store='GL')
+    cfg.check_cxx(lib='GLEW', uselib_store='GLEW')
+    cfg.check_cxx(lib='SOIL', uselib_store='SOIL')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11'])
 
@@ -43,5 +44,5 @@ def build(bld):
     bld.program(
         source=source,
         target='gravity',
-        use='SDL2 SDL2_GFX SDL2_TTF SDL2_MIXER SDL2_IMAGE BOX2D'
+        use='SDL2 SDL2_TTF SDL2_MIXER GL GLEW SOIL BOX2D'
     )

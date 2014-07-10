@@ -1,17 +1,24 @@
+#include "resource-cache.hh"
+#include "helpers.hh"
+
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_image.h>
+#include <GL/glew.h>
+#include <SOIL/SOIL.h>
 
 #include <tuple>
 #include <string>
 #include <sstream>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
 namespace ResourceCache {
 
-SDL_Renderer *renderer = nullptr;
+GLuint texturedPolygonProgram = 0;
+GLuint textProgram = 0;
 
 struct FontDescriptor {
   string path;
@@ -22,16 +29,74 @@ struct FontDescriptor {
   }
 };
 
+map<GLenum, string> shaderTypeNames;
 map<FontDescriptor, TTF_Font*> font_cache;
 map<string, Mix_Chunk*> sound_cache;
-map<string, SDL_Texture*> image_cache;
+map<string, GLuint> texture_cache;
 
-void Init(SDL_Renderer *r) {
+GLuint CreateShader(GLenum shaderType, const string &shaderSource) {
+  string shaderTypeName = shaderTypeNames[shaderType];
+
+  GLuint shader = glCreateShader(shaderType);
+  const char *shaderSourceData = shaderSource.data();
+  glShaderSource(shader, 1, &shaderSourceData, NULL);
+
+  glCompileShader(shader);
+
+  // Get compilation log.
+  GLint infoLogLength;
+  glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+  GLchar *infoLog = new GLchar[infoLogLength + 1];
+  glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
+
+  if (infoLogLength > 1) {
+    cout << "Compilation log for " << shaderTypeName << " shader:" << endl << endl;
+    cout << infoLog << endl;
+  }
+
+  delete[] infoLog;
+
+  GLint status;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+  if (status == GL_FALSE) {
+    cout << "Compile failure in " << shaderTypeName << " shader." << endl;
+    exit(1);
+  }
+
+  return shader;
+}
+
+GLuint CreateProgram(const vector<GLuint> &shaders) {
+  GLuint program = glCreateProgram();
+
+  for (auto shader : shaders)
+    glAttachShader(program, shader);
+
+  glLinkProgram(program);
+
+  GLint status;
+  glGetProgramiv(program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE) {
+    GLint infoLogLength;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+    GLchar *infoLog = new GLchar[infoLogLength];
+    glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
+
+    cout << "Linker failure: " << infoLog << endl;
+    delete[] infoLog;
+    exit(1);
+  }
+
+  return program;
+}
+
+void Init() {
   stringstream ss;
 
-  renderer = r;
-
   // Initialize fonts.
+  cout << "Initializing font system..." << endl;
   if (TTF_Init() == -1) {
     ss << "Could not initialize SDL_ttf. SDL_ttf error: "
        << TTF_GetError();
@@ -39,6 +104,7 @@ void Init(SDL_Renderer *r) {
   }
 
   // Initialize sounds.
+  cout << "Initializing sound system..." << endl;
   if (Mix_Init(0) == -1) {
     ss << "Could not initialize SDL_mixer. SDL_mixer error: "
        << Mix_GetError();
@@ -51,12 +117,42 @@ void Init(SDL_Renderer *r) {
     throw runtime_error(ss.str());
   }
 
-  // Initialize images.
-  if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) == -1) {
-    ss << "Could not initialize SDL_image. SDL_image error: "
-       << IMG_GetError();
-    throw runtime_error(ss.str());
-  }
+  // Compile shaders.
+  cout << "Compiling shaders..." << endl;
+
+  shaderTypeNames[GL_VERTEX_SHADER] = "vertex";
+  shaderTypeNames[GL_GEOMETRY_SHADER] = "geometry";
+  shaderTypeNames[GL_FRAGMENT_SHADER] = "fragment";
+
+  vector<GLuint> shaders;
+  string vertexShaderSource = ReadFile("resources/shaders/tex-poly-vertex-shader.glsl");
+  string fragmentShaderSource = ReadFile("resources/shaders/tex-poly-fragment-shader.glsl");
+  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
+  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
+
+  texturedPolygonProgram = CreateProgram(shaders);
+
+  for_each(shaders.begin(), shaders.end(), glDeleteShader);
+  shaders.clear();
+
+  vertexShaderSource = ReadFile("resources/shaders/text-vertex-shader.glsl");
+  fragmentShaderSource = ReadFile("resources/shaders/text-fragment-shader.glsl");
+  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
+  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
+
+  textProgram = CreateProgram(shaders);
+
+  for_each(shaders.begin(), shaders.end(), glDeleteShader);
+  shaders.clear();
+
+  // Preload textures.
+  cout << "Pre-loading textures..." << endl;
+  GetTexture("sun");
+  GetTexture("planet");
+  GetTexture("plus-score");
+  GetTexture("enemy");
+
+  cout << "Resource cache initialized." << endl;
 }
 
 void Finalize() {
@@ -68,7 +164,6 @@ void Finalize() {
 
   TTF_Quit();
   Mix_Quit();
-  IMG_Quit();
 }
 
 TTF_Font *GetFont(int height_pixels) {
@@ -107,26 +202,26 @@ Mix_Chunk *GetSound(const string &name) {
   return chunk;
 }
 
-SDL_Texture *GetImage(const string &name, const string &type) {
-  auto it = image_cache.find(name);
-  if (it != image_cache.end())
+GLuint GetTexture(const string &name, const string &type) {
+  auto it = texture_cache.find(name);
+  if (it != texture_cache.end())
     return it->second;
 
-  SDL_Surface *surface = IMG_Load(("resources/images/" + name + "." + type).data());
-  if (surface == nullptr) {
+  GLuint texture = SOIL_load_OGL_texture(("resources/images/" + name + "." + type).data(),
+                                         SOIL_LOAD_AUTO,
+                                         SOIL_CREATE_NEW_ID,
+                                         SOIL_FLAG_MIPMAPS |
+                                         SOIL_FLAG_INVERT_Y |
+                                         SOIL_FLAG_NTSC_SAFE_RGB |
+                                         SOIL_FLAG_COMPRESS_TO_DXT);
+  if (texture == 0) {
     stringstream ss;
-    ss << "Unable to load image. SDL_image error: " << IMG_GetError();
+    ss << "Unable to load image. SOIL error: "
+       << SOIL_last_result();
     throw runtime_error(ss.str());
   }
 
-  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-  if (texture == nullptr) {
-    stringstream ss;
-    ss << "Unable to create texture. SDL error: " << SDL_GetError();
-    throw runtime_error(ss.str());
-  }
-
-  image_cache[name] = texture;
+  texture_cache[name] = texture;
 
   return texture;
 }

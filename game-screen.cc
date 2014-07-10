@@ -63,6 +63,14 @@ void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
   if (this->screen->timeRemaining < 0)
     this->screen->timeRemaining = 0;
 
+  int minutes = this->screen->timeRemaining / 60;
+  int seconds = this->screen->timeRemaining % 60;
+  stringstream ss;
+  ss << setw(2) << setfill('0') << minutes
+     << setw(0) << ":"
+     << setw(2) << setfill('0') << seconds;
+  this->screen->timeLabel->SetText(ss.str());
+
   this->screen->toBeRemoved.push_back(enemy);
 }
 
@@ -72,6 +80,14 @@ void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
   this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
     this->screen->timeRemaining = 0;
+
+  int minutes = this->screen->timeRemaining / 60;
+  int seconds = this->screen->timeRemaining % 60;
+  stringstream ss;
+  ss << setw(2) << setfill('0') << minutes
+     << setw(0) << ":"
+     << setw(2) << setfill('0') << seconds;
+  this->screen->timeLabel->SetText(ss.str());
 
   this->screen->toBeRemoved.push_back(enemy);
 }
@@ -83,6 +99,15 @@ void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
     this->screen->timeRemaining -= 10;
   if (this->screen->timeRemaining < 0)
     this->screen->timeRemaining = 0;
+
+  int minutes = this->screen->timeRemaining / 60;
+  int seconds = this->screen->timeRemaining % 60;
+  stringstream ss;
+  ss << setw(2) << setfill('0') << minutes
+     << setw(0) << ":"
+     << setw(2) << setfill('0') << seconds;
+  this->screen->timeLabel->SetText(ss.str());
+
   this->inContact = true;
 }
 
@@ -118,6 +143,8 @@ bool ContactFilter::ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
     return false;
   if (e2->isEnemy && e1->isCollectible)
     return false;
+  if (e2->isCollectible && e1->isCollectible)
+    return false;
 
   return true;
 }
@@ -149,6 +176,28 @@ GameScreen::GameScreen(SDL_Window *window) :
 
   this->world.SetContactListener(&this->contactListener);
   this->world.SetContactFilter(&this->contactFilter);
+
+  this->scoreLabel = new LabelWidget(this,
+                                    "000000",
+                                    0.02, 0.0, 0.1,
+                                    TextAnchor::RIGHT, TextAnchor::TOP,
+                                    {255, 255, 255, 128});
+
+  this->timeLabel = new LabelWidget(this,
+                                     "02:00",
+                                     0.02, 0.0, 0.1,
+                                     TextAnchor::LEFT, TextAnchor::TOP,
+                                     {255, 255, 255, 128});
+  this->fpsLabel = new LabelWidget(this,
+                                   "FPS: 0",
+                                   0.02, 0.0, 0.1,
+                                   TextAnchor::LEFT, TextAnchor::BOTTOM,
+                                   {255, 255, 255, 128});
+  this->fpsLabel->SetVisible(!this->paused);
+
+  this->widgets.push_back(this->scoreLabel);
+  this->widgets.push_back(this->timeLabel);
+  this->widgets.push_back(this->fpsLabel);
 
   // Reset all state data.
   this->Reset();
@@ -195,6 +244,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     switch (e.key.keysym.sym) {
     case SDLK_p:
       this->paused = !this->paused;
+      this->fpsLabel->SetVisible(!this->paused);
       Timer::TogglePauseAll();
       break;
     case SDLK_n:
@@ -203,8 +253,9 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     }
   }
   else if (e.type == SDL_WINDOWEVENT) {
-    if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
       this->FixCamera();
+    }
   }
 }
 
@@ -213,7 +264,15 @@ void GameScreen::Reset() {
   this->state["name"] = "playing";
 
   this->score = 0;
+    this->scoreLabel->SetText("000000");
   this->timeRemaining = 120;
+    int minutes = this->timeRemaining / 60;
+    int seconds = this->timeRemaining % 60;
+    stringstream ss;
+    ss << setw(2) << setfill('0') << minutes
+       << setw(0) << ":"
+       << setw(2) << setfill('0') << seconds;
+    this->timeLabel->SetText(ss.str());
   this->paused = true;
   this->time = 0.0;
 
@@ -247,6 +306,19 @@ void GameScreen::Reset() {
 
   Timer::PauseAll();
   this->FixCamera();
+
+  int winw, winh;
+  SDL_GetWindowSize(window, &winw, &winh);
+
+  // Update OpenGL viewport.
+  glViewport(0, 0, winw, winh);
+
+  // Update window size in shader.
+  auto program = ResourceCache::texturedPolygonProgram;
+  glUseProgram(program);
+  GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
+  glUniform2f(resolutionUniform, winw, winh);
+  glUseProgram(0);
 }
 
 void GameScreen::Save(ostream &s) const {
@@ -273,7 +345,17 @@ void GameScreen::Load(istream &s) {
 
   READ(this->time, s);
   READ(this->score, s);
+    stringstream ss;
+    ss << setw(6) << setfill('0') << this->score;
+    this->scoreLabel->SetText(ss.str());
   READ(this->timeRemaining, s);
+    int minutes = this->timeRemaining / 60;
+    int seconds = this->timeRemaining % 60;
+    stringstream ss2;
+    ss2 << setw(2) << setfill('0') << minutes
+        << setw(0) << ":"
+        << setw(2) << setfill('0') << seconds;
+    this->timeLabel->SetText(ss2.str());
   READ(this->paused, s);
   READ(this->camera.pos.x, s);
   READ(this->camera.pos.y, s);
@@ -323,27 +405,26 @@ void GameScreen::Advance(float dt) {
         this->scoreAccumulator += diff * 50 * PHYSICS_TIME_STEP;
         if (this->scoreAccumulator >= 100) {
           this->score += 100;
+            stringstream ss;
+            ss << setw(6) << setfill('0') << this->score;
+            this->scoreLabel->SetText(ss.str());
           this->scoreAccumulator -= 100;
           Mix_PlayChannel(-1, ResourceCache::GetSound("score-tik"), 0);
         }
       }
 
     // Apply forces.
-    vector<Entity*> gravitySources;
-
-    for (auto e : this->entities)
-      if (e->hasGravity)
-        gravitySources.push_back(e);
-
     b2Vec2 gravity;
     for (auto e : this->entities) {
       if (e->isAffectedByGravity) {
         gravity.Set(0.0, 0.0);
-        for (auto s : gravitySources) {
-          b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
-          float32 r2 = n.LengthSquared();
-          n.Normalize();
-          gravity += s->gravityCoeff / r2 * n;
+        for (auto s : this->entities) {
+          if (s->hasGravity) {
+            b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
+            float32 r2 = n.LengthSquared();
+            n.Normalize();
+            gravity += s->gravityCoeff / r2 * n;
+          }
         }
 
         e->body->ApplyForce(gravity, e->body->GetWorldCenter(), true);
@@ -364,7 +445,7 @@ void GameScreen::Advance(float dt) {
     }
 
     // Update the trails.
-    UpdateTrails();
+    //UpdateTrails();
 
     this->toBeRemoved.clear();
     this->physicsTimeAccumulator -= PHYSICS_TIME_STEP;
@@ -376,45 +457,55 @@ void GameScreen::Advance(float dt) {
 void GameScreen::Render(Renderer *renderer) {
   renderer->SetCamera(this->camera);
 
-  this->DrawBackground(renderer);
-  this->DrawGrid(renderer);
+  // clear screen
+  renderer->ClearScreen();
+
+  //this->DrawBackground(renderer);
+  //this->DrawGrid(renderer);
+
+  //for (auto e : this->entities)
+  //  if (e->hasTrail)
+  //    this->DrawTrail(renderer, e);
+
+  //for (const b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
+  //  this->DrawEntity(renderer, (Entity*) b->GetUserData());
+  //}
 
   for (auto e : this->entities)
-    if (e->hasTrail)
-      this->DrawTrail(renderer, e);
-
-  for (const b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
-    this->DrawEntity(renderer, (Entity*) b->GetUserData());
-  }
+    if (e->isDrawable)
+      e->mesh->Draw(e->body->GetPosition(), e->body->GetAngle());
 
   // Draw HUD.
 
   // Draw origin.
-  renderer->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
-  renderer->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
+  //renderer->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
+  //renderer->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
 
   // Draw score.
-  stringstream ss;
-  ss << setw(6) << setfill('0') << this->score;
-  renderer->DrawTextP(ss.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::RIGHT, TextAnchor::TOP);
+  //stringstream ss;
+  //ss << setw(6) << setfill('0') << this->score;
+  //renderer->DrawText(ss.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::RIGHT, TextAnchor::TOP);
 
   // Draw time.
   int minutes = this->timeRemaining / 60;
   int seconds = this->timeRemaining % 60;
-  stringstream ss2;
-  ss2 << setw(2) << setfill('0') << minutes
-      << setw(0) << ":"
-      << setw(2) << setfill('0') << seconds;
-  renderer->DrawTextP(ss2.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::TOP);
+  //stringstream ss;
+  //ss << setw(2) << setfill('0') << minutes
+  //   << setw(0) << ":"
+  //   << setw(2) << setfill('0') << seconds;
+  //renderer->DrawText(ss2.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::TOP);
 
   // Draw FPS Counter.
   if (!this->paused) {
     stringstream ss3;
     ss3 << "FPS: " << this->fps;
-    renderer->DrawTextP(ss3.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::BOTTOM);
+    //renderer->DrawText(ss3.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::BOTTOM);
 
     this->frameCount++;
   }
+
+  for (auto w : this->widgets)
+    w->Render(renderer);
 
   renderer->PresentScreen();
 }
@@ -503,6 +594,18 @@ void GameScreen::FixCamera(Entity *e) {
   this->camera.pos.y = - (height / 2.0);
 
   this->camera.ppm = winw / width;
+
+  auto program = ResourceCache::texturedPolygonProgram;
+
+  glUseProgram(program);
+
+  GLuint cameraPosUniform = glGetUniformLocation(program, "camera_pos");
+  GLuint ppmUniform = glGetUniformLocation(program, "ppm");
+
+  glUniform2f(cameraPosUniform, this->camera.pos.x, this->camera.pos.y);
+  glUniform1f(ppmUniform, this->camera.ppm);
+
+  glUseProgram(0);
 }
 
 void GameScreen::UpdateTrails() {
@@ -596,11 +699,23 @@ void GameScreen::AddRandomEnemy() {
 void GameScreen::TimerCallback(float elapsed) {
   // Update FPS counter.
   this->fps = this->frameCount;
+    stringstream ss;
+    ss << "FPS: " << this->fps;
+    this->fpsLabel->SetText(ss.str());
   this->frameCount = 0;
 
   // Decrement remaining time.
-  if (this->timeRemaining > 0)
+  if (this->timeRemaining > 0) {
     this->timeRemaining--;
+
+    int minutes = this->timeRemaining / 60;
+    int seconds = this->timeRemaining % 60;
+    stringstream ss;
+    ss << setw(2) << setfill('0') << minutes
+       << setw(0) << ":"
+       << setw(2) << setfill('0') << seconds;
+    this->timeLabel->SetText(ss.str());
+  }
 
   // Check for game over.
   if (this->timeRemaining == 0) {
@@ -619,12 +734,12 @@ void GameScreen::TimerCallback(float elapsed) {
 }
 
 void GameScreen::DrawBackground(Renderer *renderer) const {
-  renderer->DrawBackground(ResourceCache::GetImage("background", "jpg"));
+  //renderer->DrawBackground(ResourceCache::GetImage("background", "jpg"));
 }
 
 void GameScreen::DrawGrid(Renderer *renderer) const {
   // Draw grid.
-  int winw, winh;
+  /*int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
 
   float32 upperx = this->camera.pos.x + winw / this->camera.ppm;
@@ -634,11 +749,11 @@ void GameScreen::DrawGrid(Renderer *renderer) const {
   for (; x <= upperx; x += 10)
     renderer->DrawLine(b2Vec2(x, this->camera.pos.y), b2Vec2(x, uppery), 32, 32, 32, 255);
   for (; y <= uppery; y += 10)
-    renderer->DrawLine(b2Vec2(this->camera.pos.x, y), b2Vec2(upperx, y), 32, 32, 32, 255);
+  renderer->DrawLine(b2Vec2(this->camera.pos.x, y), b2Vec2(upperx, y), 32, 32, 32, 255);*/
 }
 
 void GameScreen::DrawEntity(Renderer *renderer, const Entity *entity) const {
-  b2Body *b = entity->body;
+  /*b2Body *b = entity->body;
   if (b == nullptr)
     return;
 
@@ -682,11 +797,11 @@ void GameScreen::DrawEntity(Renderer *renderer, const Entity *entity) const {
       else
         renderer->DrawPolygon(vertices, count);
     }
-  }
+    }*/
 }
 
 void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
-  vector<TrailPoint> points;
+  /*vector<TrailPoint> points;
 
   if (!e->hasTrail)
     return;
@@ -744,5 +859,5 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
     renderer->DrawDisk(p.pos, r, 255, 0, 0, a);
     r += dr;
     a += da;
-  }
+    }*/
 }

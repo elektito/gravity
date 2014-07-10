@@ -21,4 +21,6 @@ extern void LoadMap(map<string, string> &m, istream &s);
 
 extern void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp);
 
+extern string ReadFile(const string &filename);
+
 #endif /* _GRAVITY_STREAMS_HH_ */

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -20,7 +21,10 @@ public:
     window(window)
   {}
 
-  virtual ~Screen() = default;
+  virtual ~Screen() {
+    for (auto w : this->widgets)
+      delete w;
+  }
 
   SDL_Window *window;
   map<string, string> state;

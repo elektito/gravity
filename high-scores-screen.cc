@@ -4,6 +4,7 @@
 
 #include <iomanip>
 #include <sstream>
+#include <algorithm>
 
 HighScoresScreen::HighScoresScreen(SDL_Window *window) :
   Screen(window),
@@ -15,6 +16,22 @@ HighScoresScreen::HighScoresScreen(SDL_Window *window) :
                                            TextAnchor::RIGHT, TextAnchor::BOTTOM,
                                            {255, 0, 0},
                                            {255, 255, 255}));
+  this->widgets.push_back(new LabelWidget(this,
+                                          "High Scores",
+                                          0.0, 0.1, 0.2,
+                                          TextAnchor::CENTER, TextAnchor::TOP,
+                                          {255, 0, 0}));
+
+  for (int i =0; i < 5; ++i) {
+    LabelWidget *label = new LabelWidget(this,
+                                         "000000",
+                                         0.0, 0.1 + 0.2 + i * 0.1, 0.1,
+                                         TextAnchor::CENTER, TextAnchor::TOP,
+                                         {255, 255, 255});
+    this->widgets.push_back(label);
+    this->labels.push_back(label);
+  }
+
   this->Reset();
 }
 
@@ -95,8 +112,8 @@ void HighScoresScreen::Advance(float dt) {
 void HighScoresScreen::Render(Renderer *renderer) {
   stringstream ss;
 
-  renderer->ClearScreen(0, 0, 0);
-  renderer->DrawTextP("High Scores", 0.0, 0.1, 0.2, {255, 0, 0}, TextAnchor::CENTER, TextAnchor::TOP);
+  renderer->ClearScreen();
+
   for (int i =0; i < this->scores.size(); ++i) {
     ss.str("");
     ss.clear();
@@ -106,11 +123,13 @@ void HighScoresScreen::Render(Renderer *renderer) {
       c = {255, 255, 0};
     else
       c = {255, 255, 255};
-    renderer->DrawTextP(ss.str(),
-                        0.0, 0.1 + 0.2 + i * 0.1, 0.1,
-                        c,
-                        TextAnchor::CENTER, TextAnchor::TOP);
+    this->labels[i]->SetColor(c);
+    this->labels[i]->SetText(ss.str());
+    this->labels[i]->SetVisible(true);
   }
+
+  for (int i = this->scores.size(); i < 5; ++i)
+    this->labels[i]->SetVisible(false);
 
   for (auto w : this->widgets)
     w->Render(renderer);

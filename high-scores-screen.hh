@@ -2,11 +2,14 @@
 #define _GRAVITY_HIGH_SCORES_SCREEN_HH_
 
 #include "screen.hh"
+#include "label-widget.hh"
 
 class HighScoresScreen : public Screen {
 protected:
   vector<int> scores;
   int currentScoreIndex;
+
+  vector<LabelWidget*> labels;
 
 public:
   HighScoresScreen(SDL_Window *window);

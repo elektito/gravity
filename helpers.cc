@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include <map>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -64,4 +66,24 @@ void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp) {
   int w, h;
   TTF_SizeText(font, text.data(), &w, &h);
   wp = (float32) w / winw;
+}
+
+string ReadFile(const string &filename) {
+  ifstream stream(filename);
+  string str;
+
+  if (!stream) {
+    stringstream ss;
+    ss << "Cannot open file: " << filename;
+    throw runtime_error(ss.str());
+  }
+
+  stream.seekg(0, ios::end);
+  str.reserve(stream.tellg());
+  stream.seekg(0, ios::beg);
+
+  str.assign((istreambuf_iterator<char>(stream)),
+             istreambuf_iterator<char>());
+
+  return str;
 }

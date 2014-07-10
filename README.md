@@ -7,10 +7,11 @@ objects and score.
 In order to build _Gravity_ you need the following libraries:
 
  - SDL2
- - SDL2_gfx
  - SDL2_ttf
  - SDL2_mixer
- - SDL2_image
+ - OpenGL
+ - GLEW (OpenGL Extension Wrangler)
+ - SOIL (Simple OpenGL Image Library)
  - Box2D
 
 In order to build run `./waf configure` and then `./waf build`. A

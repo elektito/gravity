@@ -1,5 +1,6 @@
 #include "main-menu-screen.hh"
 #include "button-widget.hh"
+#include "label-widget.hh"
 
 MainMenuScreen::MainMenuScreen(SDL_Window *window) :
   Screen(window)
@@ -22,6 +23,11 @@ MainMenuScreen::MainMenuScreen(SDL_Window *window) :
                                            TextAnchor::CENTER, TextAnchor::TOP,
                                            {255, 0, 0},
                                            {255, 255, 255}));
+  this->widgets.push_back(new LabelWidget(this,
+                                          "Main Menu",
+                                          0.0, 0.1, 0.2,
+                                          TextAnchor::CENTER, TextAnchor::TOP,
+                                          {255, 0, 0}));
 
   this->Reset();
 }
@@ -79,8 +85,7 @@ void MainMenuScreen::Advance(float dt) {
 }
 
 void MainMenuScreen::Render(Renderer *renderer) {
-  renderer->ClearScreen(0, 0, 0);
-  renderer->DrawTextP("Main Menu", 0.0, 0.1, 0.2, {255, 0, 0}, TextAnchor::CENTER, TextAnchor::TOP);
+  renderer->ClearScreen();
 
   for (auto w : this->widgets)
     w->Render(renderer);

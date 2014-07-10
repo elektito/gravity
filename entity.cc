@@ -1,5 +1,6 @@
 #include "entity.hh"
 #include "helpers.hh"
+#include "resource-cache.hh"
 
 #include <exception>
 #include <iostream>
@@ -18,12 +19,14 @@ Entity::Entity() :
   isEnemy(false),
   isCollectible(false),
   hasScore(false),
-  score(0.0)
+  score(0.0),
+  isDrawable(false),
+  mesh(nullptr)
 {
 }
 
 Entity::~Entity() {
-
+  delete this->mesh;
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
@@ -196,6 +199,23 @@ Entity *Entity::CreatePlanet(b2World *world,
   e->isAffectedByGravity = true;
   e->isPlanet = true;
   e->isSun = false;
+
+  // Create mesh.
+  GLfloat vertexData[] = {
+    // triangle 1
+    /* coord */ -radius, -radius, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -radius,  radius, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  radius, -radius, /* tex_coord */ 1.0f, 0.0f,
+
+    // triangle 2
+    /* coord */ -radius,  radius, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  radius,  radius, /* tex_coord */ 1.0f, 1.0f,
+    /* coord */  radius, -radius, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("planet"));
+  e->isDrawable = true;
+
   e->body->SetUserData(e);
 
   return e;
@@ -230,6 +250,23 @@ Entity *Entity::CreateSun(b2World *world,
   e->isAffectedByGravity = false;
   e->isSun = true;
   e->isPlanet = false;
+
+  // Create mesh.
+  GLfloat vertexData[] = {
+    // triangle 1
+    /* coord */ -radius, -radius, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -radius,  radius, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  radius, -radius, /* tex_coord */ 1.0f, 0.0f,
+
+    // triangle 2
+    /* coord */ -radius,  radius, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  radius,  radius, /* tex_coord */ 1.0f, 1.0f,
+    /* coord */  radius, -radius, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("sun"));
+  e->isDrawable = true;
+
   e->body->SetUserData(e);
 
   return e;
@@ -253,6 +290,22 @@ Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
   e->isCollectible = true;
   e->hasScore = true;
   e->score = 100;
+
+    // Create mesh.
+  GLfloat vertexData[] = {
+    // triangle 1
+    /* coord */ -1.5f, -1.5f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -1.5f,  1.5f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  1.5f, -1.5f, /* tex_coord */ 1.0f, 0.0f,
+
+    // triangle 2
+    /* coord */ -1.5f,  1.5f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  1.5f,  1.5f, /* tex_coord */ 1.0f, 1.0f,
+    /* coord */  1.5f, -1.5f, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("plus-score"));
+  e->isDrawable = true;
 
   e->body->SetUserData(e);
 
@@ -283,6 +336,27 @@ Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, flo
   e->body->CreateFixture(&fd);
 
   e->isEnemy = true;
+
+  // Create mesh.
+  GLfloat vertexData[] = {
+    // triangle 1
+    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -2.0f,  0.0f, /* tex_coord */ 0.0f, 0.5f,
+    /* coord */  0.0f,  2.0f, /* tex_coord */ 0.5f, 1.0f,
+
+    // triangle 2
+    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */  0.0f,  2.0f, /* tex_coord */ 0.5f, 1.0f,
+    /* coord */  2.0f,  0.0f, /* tex_coord */ 1.0f, 0.5f,
+
+    // triangle 3
+    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */  2.0f,  0.0f, /* tex_coord */ 1.0f, 0.5f,
+    /* coord */  2.0f, -2.0f, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  e->mesh = new Mesh(vertexData, 9, ResourceCache::GetTexture("enemy"));
+  e->isDrawable = true;
 
   e->body->SetUserData(e);
 
