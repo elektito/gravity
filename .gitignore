@@ -2,4 +2,5 @@
 .lock*
 .waf*
 build/
+gmon.out
 gravity.save

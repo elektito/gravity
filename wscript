@@ -8,6 +8,11 @@ def options(opt):
         '--release', action='store_true', default=False, dest='release_build',
         help='Build a release build.')
 
+    opt.add_option(
+        '--enable-profiling', action='store_true', default=False, dest='profiling_enabled',
+        help='Enable collecting profiling information.'
+    )
+
 def configure(cfg):
     cfg.load('compiler_cxx')
 
@@ -26,10 +31,13 @@ def configure(cfg):
     else:
         cfg.env.append_value('CXXFLAGS', ['-g'])
 
+    if cfg.options.profiling_enabled:
+        cfg.env.append_value('CXXFLAGS', ['-pg'])
+        cfg.env.append_value('LINKFLAGS', ['-pg'])
+
 def build(bld):
     source = [
         'main.cc',
-        'sdl-renderer.cc',
         'camera.cc',
         'timer.cc',
         'game-screen.cc',
@@ -39,7 +47,10 @@ def build(bld):
         'resource-cache.cc',
         'helpers.cc',
         'config.cc',
-        'button-widget.cc'
+        'label-widget.cc',
+        'button-widget.cc',
+        'mesh.cc',
+        'renderer.cc'
     ]
     bld.program(
         source=source,
