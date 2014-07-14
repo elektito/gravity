@@ -49,6 +49,7 @@ Renderer::Renderer(SDL_Window *window) :
 
 Renderer::~Renderer() {
   glDeleteBuffers(1, &this->backgroundVbo);
+  glDeleteTextures(1, &this->backgroundTexture);
 }
 
 void Renderer::RebuildBackground() {
