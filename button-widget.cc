@@ -32,17 +32,20 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
   int mousex, mousey;
   float xp, yp;
 
-  if (e.type == SDL_MOUSEBUTTONDOWN) {
+  switch (e.type) {
+  case SDL_MOUSEBUTTONDOWN:
     this->mouseDown = this->isActive;
-  }
-  else if (e.type == SDL_MOUSEBUTTONUP) {
+    break;
+
+  case SDL_MOUSEBUTTONUP:
     if (this->isActive && this->mouseDown) {
       this->screen->HandleWidgetEvent(BUTTON_CLICK, this);
     }
 
     this->mouseDown = false;
-  }
-  else if (e.type == SDL_MOUSEMOTION) {
+    break;
+
+  case SDL_MOUSEMOTION:
     SDL_GetMouseState(&mousex, &mousey);
     GetRelativeCoords(mousex, mousey, this->screen->window, this->xanchor, this->yanchor, xp, yp);
 
@@ -64,7 +67,8 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
       this->SetColor(this->activeColor);
     else
       this->SetColor(this->inactiveColor);
-  }
+    break;
+  } // switch (e.type)
 
   this->LabelWidget::HandleEvent(e);
 }

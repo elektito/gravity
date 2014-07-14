@@ -214,7 +214,8 @@ void GameScreen::SwitchScreen(const map<string, string> &lastState) {
 void GameScreen::HandleEvent(const SDL_Event &e) {
   int x, y;
 
-  if (e.type == SDL_MOUSEBUTTONDOWN) {
+  switch (e.type) {
+  case SDL_MOUSEBUTTONDOWN:
     if (e.button.button == SDL_BUTTON_LEFT) {
       SDL_GetMouseState(&x, &y);
       b2Vec2 p = this->camera.PointToWorld(x, y, this->window);
@@ -227,20 +228,23 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
         }
       }
     }
-  }
-  else if (e.type == SDL_MOUSEMOTION) {
+    break;
+
+  case SDL_MOUSEMOTION:
     if (this->draggingBody) {
       SDL_GetMouseState(&x, &y);
       b2Vec2 p = this->camera.PointToWorld(x, y, this->window);
       this->draggingBody->SetTransform(p - this->draggingOffset, 0.0);
     }
-  }
-  else if (e.type == SDL_MOUSEBUTTONUP) {
+    break;
+
+  case SDL_MOUSEBUTTONUP:
     if (e.button.button == SDL_BUTTON_LEFT) {
       this->draggingBody = nullptr;
     }
-  }
-  else if (e.type == SDL_KEYDOWN) {
+    break;
+
+  case SDL_KEYDOWN:
     switch (e.key.keysym.sym) {
     case SDLK_p:
       this->paused = !this->paused;
@@ -251,12 +255,14 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       this->stepOnce = true;
       break;
     }
-  }
-  else if (e.type == SDL_WINDOWEVENT) {
+    break;
+
+  case SDL_WINDOWEVENT:
     if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
       this->FixCamera();
     }
-  }
+    break;
+  } // switch (e.type)
 }
 
 void GameScreen::Reset() {

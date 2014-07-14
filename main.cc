@@ -69,9 +69,12 @@ int main(int argc, char *argv[]) {
     while (SDL_PollEvent(&e)) {
       currentScreen->HandleEvent(e);
 
-      if (e.type == SDL_QUIT)
+      switch (e.type) {
+      case SDL_QUIT:
         quit = true;
-      else if (e.type == SDL_KEYDOWN) {
+        break;
+
+      case SDL_KEYDOWN:
         switch (e.key.keysym.sym) {
         case SDLK_q:
           SDL_Event quitEvent;
@@ -86,8 +89,9 @@ int main(int argc, char *argv[]) {
             SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
           break;
         }
-      }
-      else if (e.type == SDL_WINDOWEVENT) {
+        break;
+
+      case SDL_WINDOWEVENT:
         if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
           int winw, winh;
           SDL_GetWindowSize(window, &winw, &winh);
@@ -102,8 +106,9 @@ int main(int argc, char *argv[]) {
           glUniform2f(resolutionUniform, winw, winh);
           glUseProgram(0);
         }
-      }
-    }
+        break;
+      } // switch (e.type)
+    } // while (SDL_PollEvent(&e))
 
     int dt = SDL_GetTicks() - lastTime;
     SDL_Delay(TIME_STEP > dt ? TIME_STEP - dt : 0);
@@ -135,7 +140,7 @@ int main(int argc, char *argv[]) {
       mainMenuScreen->SwitchScreen(currentScreen->state);
       currentScreen = mainMenuScreen;
     }
-  }
+  } // while (!quit)
 
   ofstream output("gravity.save", ofstream::out | ofstream::binary);
   if (output) {
