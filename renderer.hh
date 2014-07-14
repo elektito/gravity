@@ -30,10 +30,6 @@ public:
 
   void SetCamera(Camera &camera);
   void ClearScreen();
-  void DrawText(const string &text,
-                float x, float y, float height,
-                const SDL_Color &color,
-                TextAnchor xanchor, TextAnchor yanchor);
   void PresentScreen() const;
 };
 
