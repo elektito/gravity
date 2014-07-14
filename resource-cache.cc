@@ -19,6 +19,7 @@ namespace ResourceCache {
 
 GLuint texturedPolygonProgram = 0;
 GLuint textProgram = 0;
+GLuint backgroundProgram = 0;
 
 struct FontDescriptor {
   string path;
@@ -141,6 +142,16 @@ void Init() {
   shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
 
   textProgram = CreateProgram(shaders);
+
+  for_each(shaders.begin(), shaders.end(), glDeleteShader);
+  shaders.clear();
+
+  vertexShaderSource = ReadFile("resources/shaders/background-vertex-shader.glsl");
+  fragmentShaderSource = ReadFile("resources/shaders/background-fragment-shader.glsl");
+  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
+  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
+
+  backgroundProgram = CreateProgram(shaders);
 
   for_each(shaders.begin(), shaders.end(), glDeleteShader);
   shaders.clear();

@@ -464,7 +464,8 @@ void GameScreen::Render(Renderer *renderer) {
   renderer->SetCamera(this->camera);
 
   // clear screen
-  renderer->ClearScreen();
+  //renderer->ClearScreen();
+  renderer->DrawBackground();
 
   //this->DrawBackground(renderer);
   //this->DrawGrid(renderer);

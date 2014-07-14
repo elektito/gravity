@@ -23,6 +23,15 @@ protected:
   SDL_Window *window;
   SDL_GLContext context;
   Camera camera;
+  GLuint backgroundTexture;
+  int backgroundTextureWidth;
+  int backgroundTextureHeight;
+  GLuint backgroundVbo;
+
+  int lastWindowWidth;
+  int lastWindowHeight;
+
+  void RebuildBackground();
 
 public:
   Renderer(SDL_Window *window);
@@ -30,6 +39,7 @@ public:
 
   void SetCamera(Camera &camera);
   void ClearScreen();
+  void DrawBackground();
   void PresentScreen() const;
 };
 

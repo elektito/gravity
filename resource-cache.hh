@@ -13,6 +13,7 @@ namespace ResourceCache {
 
 extern GLuint texturedPolygonProgram;
 extern GLuint textProgram;
+extern GLuint backgroundProgram;
 
 extern void Init();
 extern void Finalize();

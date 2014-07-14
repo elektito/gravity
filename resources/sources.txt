@@ -1,5 +1,1 @@
 This file lists the licenses and sources of third party assets.
-
- - resources/background.jpg
-   http://en.wikipedia.org/wiki/Great_Observatories_Origins_Deep_Survey#mediaviewer/File:Galaxy_history_revealed_by_the_Hubble_Space_Telescope_(GOODS-ERS2).jpg
-   Public Domain
