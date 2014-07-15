@@ -73,9 +73,7 @@ protected:
   void AddRandomCollectible();
   void AddRandomEnemy();
 
-  void DrawBackground(Renderer *renderer) const;
   void DrawGrid(Renderer *renderer) const;
-  void DrawEntity(Renderer *renderer, const Entity *entity) const;
   void DrawTrail(Renderer *renderer, const Entity *entity) const;
 
   friend class ContactListener;

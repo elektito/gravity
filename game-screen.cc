@@ -463,20 +463,12 @@ void GameScreen::Advance(float dt) {
 void GameScreen::Render(Renderer *renderer) {
   renderer->SetCamera(this->camera);
 
-  // clear screen
-  //renderer->ClearScreen();
   renderer->DrawBackground();
-
-  //this->DrawBackground(renderer);
   //this->DrawGrid(renderer);
 
   //for (auto e : this->entities)
   //  if (e->hasTrail)
   //    this->DrawTrail(renderer, e);
-
-  //for (const b2Body *b = this->world.GetBodyList(); b; b = b->GetNext()) {
-  //  this->DrawEntity(renderer, (Entity*) b->GetUserData());
-  //}
 
   for (auto e : this->entities)
     if (e->isDrawable)
@@ -488,28 +480,9 @@ void GameScreen::Render(Renderer *renderer) {
   //renderer->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
   //renderer->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
 
-  // Draw score.
-  //stringstream ss;
-  //ss << setw(6) << setfill('0') << this->score;
-  //renderer->DrawText(ss.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::RIGHT, TextAnchor::TOP);
-
-  // Draw time.
-  int minutes = this->timeRemaining / 60;
-  int seconds = this->timeRemaining % 60;
-  //stringstream ss;
-  //ss << setw(2) << setfill('0') << minutes
-  //   << setw(0) << ":"
-  //   << setw(2) << setfill('0') << seconds;
-  //renderer->DrawText(ss2.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::TOP);
-
-  // Draw FPS Counter.
-  if (!this->paused) {
-    stringstream ss3;
-    ss3 << "FPS: " << this->fps;
-    //renderer->DrawText(ss3.str(), 0.02, 0.0, 0.1, {255, 255, 255, 128}, TextAnchor::LEFT, TextAnchor::BOTTOM);
-
+  // Count this frame.
+  if (!this->paused)
     this->frameCount++;
-  }
 
   for (auto w : this->widgets)
     w->Render(renderer);
@@ -740,10 +713,6 @@ void GameScreen::TimerCallback(float elapsed) {
     this->AddRandomEnemy();
 }
 
-void GameScreen::DrawBackground(Renderer *renderer) const {
-  //renderer->DrawBackground(ResourceCache::GetImage("background", "jpg"));
-}
-
 void GameScreen::DrawGrid(Renderer *renderer) const {
   // Draw grid.
   /*int winw, winh;
@@ -757,54 +726,6 @@ void GameScreen::DrawGrid(Renderer *renderer) const {
     renderer->DrawLine(b2Vec2(x, this->camera.pos.y), b2Vec2(x, uppery), 32, 32, 32, 255);
   for (; y <= uppery; y += 10)
   renderer->DrawLine(b2Vec2(this->camera.pos.x, y), b2Vec2(upperx, y), 32, 32, 32, 255);*/
-}
-
-void GameScreen::DrawEntity(Renderer *renderer, const Entity *entity) const {
-  /*b2Body *b = entity->body;
-  if (b == nullptr)
-    return;
-
-  for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
-    b2Shape *shape = f->GetShape();
-    if (shape->GetType() == b2Shape::e_circle)
-      renderer->DrawDisk(b->GetPosition(), shape->m_radius, 255, 255, 255, 255);
-    else if (shape->GetType() == b2Shape::e_polygon) {
-      b2Vec2 pos = b->GetPosition();
-      float32 angle = b->GetAngle();
-      b2PolygonShape *polygon = (b2PolygonShape*) shape;
-      int count = polygon->GetVertexCount();
-      b2Vec2 vertices[count];
-      for (int i = 0; i < count; ++i) {
-        vertices[i] = pos + polygon->m_vertices[i];
-        vertices[i] = RotatePoint(vertices[i], angle, pos);
-      }
-
-      if (entity->isCollectible) {
-        SDL_Texture *texture = ResourceCache::GetImage("plus-score");
-        float32 minx = FLT_MAX;
-        float32 miny = FLT_MAX;
-        float32 maxx = -FLT_MAX;
-        float32 maxy = -FLT_MAX;
-        for (int i = 0; i < count; ++i) {
-          if (vertices[i].x < minx)
-            minx = vertices[i].x;
-          if (vertices[i].y < miny)
-            miny = vertices[i].y;
-          if (vertices[i].x > maxx)
-            maxx = vertices[i].x;
-          if (vertices[i].y > maxy)
-            maxy = vertices[i].y;
-        }
-        b2Vec2 bottomLeft(minx, miny);
-        float32 width = maxx - minx;
-        float32 height = maxy - miny;
-
-        renderer->DrawTexture(texture, bottomLeft, width, height);
-      }
-      else
-        renderer->DrawPolygon(vertices, count);
-    }
-    }*/
 }
 
 void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
