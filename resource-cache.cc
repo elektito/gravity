@@ -93,6 +93,19 @@ GLuint CreateProgram(const vector<GLuint> &shaders) {
   return program;
 }
 
+GLuint CreateProgram(string vertexShaderFilename, string fragmentShaderFilename) {
+  vector<GLuint> shaders;
+  string vertexShaderSource = ReadFile(vertexShaderFilename);
+  string fragmentShaderSource = ReadFile(fragmentShaderFilename);
+  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
+  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
+
+  GLuint program = CreateProgram(shaders);
+  for_each(shaders.begin(), shaders.end(), glDeleteShader);
+
+  return program;
+}
+
 void Init() {
   stringstream ss;
 
@@ -125,36 +138,14 @@ void Init() {
   shaderTypeNames[GL_GEOMETRY_SHADER] = "geometry";
   shaderTypeNames[GL_FRAGMENT_SHADER] = "fragment";
 
-  vector<GLuint> shaders;
-  string vertexShaderSource = ReadFile("resources/shaders/tex-poly-vertex-shader.glsl");
-  string fragmentShaderSource = ReadFile("resources/shaders/tex-poly-fragment-shader.glsl");
-  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
-  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
+  texturedPolygonProgram = CreateProgram("resources/shaders/tex-poly-vertex-shader.glsl",
+                                         "resources/shaders/tex-poly-fragment-shader.glsl");
 
-  texturedPolygonProgram = CreateProgram(shaders);
+  textProgram = CreateProgram("resources/shaders/text-vertex-shader.glsl",
+                              "resources/shaders/text-fragment-shader.glsl");
 
-  for_each(shaders.begin(), shaders.end(), glDeleteShader);
-  shaders.clear();
-
-  vertexShaderSource = ReadFile("resources/shaders/text-vertex-shader.glsl");
-  fragmentShaderSource = ReadFile("resources/shaders/text-fragment-shader.glsl");
-  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
-  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
-
-  textProgram = CreateProgram(shaders);
-
-  for_each(shaders.begin(), shaders.end(), glDeleteShader);
-  shaders.clear();
-
-  vertexShaderSource = ReadFile("resources/shaders/background-vertex-shader.glsl");
-  fragmentShaderSource = ReadFile("resources/shaders/background-fragment-shader.glsl");
-  shaders.push_back(CreateShader(GL_VERTEX_SHADER, vertexShaderSource));
-  shaders.push_back(CreateShader(GL_FRAGMENT_SHADER, fragmentShaderSource));
-
-  backgroundProgram = CreateProgram(shaders);
-
-  for_each(shaders.begin(), shaders.end(), glDeleteShader);
-  shaders.clear();
+  backgroundProgram = CreateProgram("resources/shaders/background-vertex-shader.glsl",
+                                    "resources/shaders/background-fragment-shader.glsl");
 
   // Preload textures.
   cout << "Pre-loading textures..." << endl;
