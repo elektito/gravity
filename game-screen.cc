@@ -263,6 +263,9 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     }
     break;
   } // switch (e.type)
+
+  for (auto w : this->widgets)
+    w->HandleEvent(e);
 }
 
 void GameScreen::Reset() {
@@ -325,6 +328,9 @@ void GameScreen::Reset() {
   GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
   glUniform2f(resolutionUniform, winw, winh);
   glUseProgram(0);
+
+  for (auto w : this->widgets)
+    w->Reset();
 }
 
 void GameScreen::Save(ostream &s) const {
@@ -390,6 +396,9 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
+  for (auto w : this->widgets)
+    w->Advance(dt);
+
   if (this->state["name"] == "game-over")
     return;
 
