@@ -2,6 +2,7 @@
 #include "entity.hh"
 #include "helpers.hh"
 #include "resource-cache.hh"
+#include "config.hh"
 
 #include <sstream>
 #include <iomanip>
@@ -10,8 +11,6 @@
 using std::placeholders::_1;
 
 using namespace std;
-
-const float32 PHYSICS_TIME_STEP = 0.005;
 
 b2Vec2 RotatePoint(b2Vec2 point, float32 theta, b2Vec2 center) {
   b2Vec2 np;
@@ -274,7 +273,7 @@ void GameScreen::Reset() {
 
   this->score = 0;
     this->scoreLabel->SetText("000000");
-  this->timeRemaining = 120;
+  this->timeRemaining = Config::GameTime;
     int minutes = this->timeRemaining / 60;
     int seconds = this->timeRemaining % 60;
     stringstream ss;
@@ -409,7 +408,7 @@ void GameScreen::Advance(float dt) {
 
   // Advance physics.
   this->physicsTimeAccumulator += dt;
-  while (this->physicsTimeAccumulator >= PHYSICS_TIME_STEP) {
+  while (this->physicsTimeAccumulator >= Config::PhysicsTimeStep) {
     // Update score.
     for (auto e : this->entities)
       if (e->isPlanet) {
@@ -417,7 +416,7 @@ void GameScreen::Advance(float dt) {
         float32 d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
         float32 diff = v / d;
         if (d > 100) d = 0.0;
-        this->scoreAccumulator += diff * 50 * PHYSICS_TIME_STEP;
+        this->scoreAccumulator += diff * 50 * Config::PhysicsTimeStep;
         if (this->scoreAccumulator >= 100) {
           this->score += 100;
             stringstream ss;
@@ -446,8 +445,8 @@ void GameScreen::Advance(float dt) {
       }
     }
 
-    this->world.Step(PHYSICS_TIME_STEP, 10, 10);
-    this->time += PHYSICS_TIME_STEP;
+    this->world.Step(Config::PhysicsTimeStep, 10, 10);
+    this->time += Config::PhysicsTimeStep;
 
     this->FixCamera();
 
@@ -463,7 +462,7 @@ void GameScreen::Advance(float dt) {
     //UpdateTrails();
 
     this->toBeRemoved.clear();
-    this->physicsTimeAccumulator -= PHYSICS_TIME_STEP;
+    this->physicsTimeAccumulator -= Config::PhysicsTimeStep;
   }
 
   this->stepOnce = false;

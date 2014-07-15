@@ -3,16 +3,12 @@
 #include "high-scores-screen.hh"
 #include "main-menu-screen.hh"
 #include "resource-cache.hh"
+#include "config.hh"
 
 #include <SDL2/SDL.h>
 
 #include <iostream>
 #include <fstream>
-
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
-const int TIME_STEP = 5;
 
 using namespace std;
 
@@ -34,8 +30,8 @@ int main(int argc, char *argv[]) {
   window = SDL_CreateWindow("polygons",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            SCREEN_WIDTH,
-                            SCREEN_HEIGHT,
+                            Config::ScreenWidth,
+                            Config::ScreenHeight,
                             SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
     cout << "Window could not be created. SDL_Error: "
@@ -111,7 +107,7 @@ int main(int argc, char *argv[]) {
     } // while (SDL_PollEvent(&e))
 
     int dt = SDL_GetTicks() - lastTime;
-    SDL_Delay(TIME_STEP > dt ? TIME_STEP - dt : 0);
+    SDL_Delay(Config::TimeStep > dt ? Config::TimeStep - dt : 0);
     dt = SDL_GetTicks() - lastTime;
     lastTime = SDL_GetTicks();
     currentScreen->Advance(dt / 1000.0);

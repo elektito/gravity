@@ -3,9 +3,14 @@
 
 class Config {
 public:
-  static bool HardwareAcceleration;
-  static bool VSync;
-  static int HighScores;
+  static const bool HardwareAcceleration;
+  static const bool VSync;
+  static const int HighScores;
+  static const float PhysicsTimeStep;
+  static const int ScreenWidth;
+  static const int ScreenHeight;
+  static const int TimeStep;
+  static const int GameTime;
 };
 
 #endif /* _GRAVITY_CONFIG_HH_ */
