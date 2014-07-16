@@ -9,9 +9,10 @@ protected:
   GLuint vbo;
   GLuint texture;
   int vertexCount;
+  GLuint program;
 
 public:
-  Mesh(const GLfloat *vertexData, int n, GLuint texture);
+  Mesh(const GLfloat *vertexData, int n, GLuint texture, bool hud=false);
   ~Mesh();
 
   void Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor=1.0f) const;

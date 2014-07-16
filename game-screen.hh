@@ -62,10 +62,12 @@ protected:
   int fps;
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
+  Mesh *pauseMesh;
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
   LabelWidget *fpsLabel;
+  LabelWidget *continueLabel;
 
   // methods
   void FixCamera();

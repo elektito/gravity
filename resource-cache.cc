@@ -18,6 +18,7 @@ using namespace std;
 namespace ResourceCache {
 
 GLuint texturedPolygonProgram = 0;
+GLuint hudTexturedPolygonProgram = 0;
 GLuint textProgram = 0;
 GLuint backgroundProgram = 0;
 
@@ -141,6 +142,9 @@ void Init() {
   texturedPolygonProgram = CreateProgram("resources/shaders/tex-poly-vertex-shader.glsl",
                                          "resources/shaders/tex-poly-fragment-shader.glsl");
 
+  hudTexturedPolygonProgram = CreateProgram("resources/shaders/hud-tex-poly-vertex-shader.glsl",
+                                            "resources/shaders/tex-poly-fragment-shader.glsl");
+
   textProgram = CreateProgram("resources/shaders/text-vertex-shader.glsl",
                               "resources/shaders/text-fragment-shader.glsl");
 
@@ -154,6 +158,7 @@ void Init() {
   GetTexture("trail-point");
   GetTexture("plus-score");
   GetTexture("enemy");
+  GetTexture("pause");
 
   cout << "Resource cache initialized." << endl;
 }

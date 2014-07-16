@@ -192,14 +192,21 @@ GameScreen::GameScreen(SDL_Window *window) :
                                    0.02, 0.0, 0.1,
                                    TextAnchor::LEFT, TextAnchor::BOTTOM,
                                    {255, 255, 255, 128});
+  this->continueLabel = new LabelWidget(this,
+                                        "[Press P to continue]",
+                                        0.0, 0.02, 0.05,
+                                        TextAnchor::CENTER, TextAnchor::BOTTOM,
+                                        {255, 255, 255, 128});
   this->fpsLabel->SetVisible(!this->paused);
+  this->continueLabel->SetVisible(true);
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
   this->widgets.push_back(this->fpsLabel);
+  this->widgets.push_back(this->continueLabel);
 
   // Create the "trail point" mesh.
-  GLfloat vertexData[] = {
+  GLfloat trailPointVertexData[] = {
     // triangle 1
     /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
     /* coord */ -2.0f,  2.0f, /* tex_coord */ 0.0f, 1.0f,
@@ -211,7 +218,22 @@ GameScreen::GameScreen(SDL_Window *window) :
     /* coord */  2.0f, -2.0f, /* tex_coord */ 1.0f, 0.0f,
   };
 
-  this->trailPointMesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("trail-point"));
+  this->trailPointMesh = new Mesh(trailPointVertexData, 6, ResourceCache::GetTexture("trail-point"));
+
+  // Create the "pause sign" mesh.
+  GLfloat pauseVertexData[] = {
+    // triangle 1
+    /* coord */ -0.3f, -0.3f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -0.3f,  0.3f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  0.3f, -0.3f, /* tex_coord */ 1.0f, 0.0f,
+
+    // triangle 2
+    /* coord */ -0.3f,  0.3f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  0.3f,  0.3f, /* tex_coord */ 1.0f, 1.0f,
+    /* coord */  0.3f, -0.3f, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  this->pauseMesh = new Mesh(pauseVertexData, 6, ResourceCache::GetTexture("pause"), true);
 
   // Reset all state data.
   this->Reset();
@@ -271,6 +293,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     case SDLK_p:
       this->paused = !this->paused;
       this->fpsLabel->SetVisible(!this->paused);
+      this->continueLabel->SetVisible(this->paused);
       Timer::TogglePauseAll();
       break;
     case SDLK_n:
@@ -506,6 +529,8 @@ void GameScreen::Render(Renderer *renderer) {
       e->mesh->Draw(e->body->GetPosition(), e->body->GetAngle());
 
   // Draw HUD.
+  if (this->paused)
+    this->pauseMesh->Draw(b2Vec2(0.0f, 0.0f), 0.0f);
 
   // Draw origin.
   //renderer->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
