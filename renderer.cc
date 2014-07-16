@@ -30,17 +30,10 @@ Renderer::Renderer(SDL_Window *window) :
   // Get background texture.
   this->backgroundTexture = ResourceCache::GetTexture("background");
 
-  //glBindTexture(GL_TEXTURE_2D, this->backgroundTexture);
-  //glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &this->backgroundTextureWidth);
-  //glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &this->backgroundTextureHeight);
-  //glBindTexture(GL_TEXTURE_2D, 0);
-
-  // The commented lines above do not work at the moment because SOIL
-  // resizes images when requested to make MIPMAPS and makes them
-  // square sized. These lines are just a temporary workaround. Image
-  // size should not be hard coded here.
-  this->backgroundTextureWidth = 1920;
-  this->backgroundTextureHeight = 1080;
+  glBindTexture(GL_TEXTURE_2D, this->backgroundTexture);
+  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &this->backgroundTextureWidth);
+  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &this->backgroundTextureHeight);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   // Create background vertex buffer object.
   this->RebuildBackground();
