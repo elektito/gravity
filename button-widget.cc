@@ -83,6 +83,7 @@ void ButtonWidget::Render(Renderer *renderer) {
 
 void ButtonWidget::Reset() {
   this->isActive = false;
+  this->SetColor(this->inactiveColor);
   this->mouseDown = false;
   this->LabelWidget::Reset();
 }

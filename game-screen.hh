@@ -6,6 +6,7 @@
 #include "timer.hh"
 #include "entity.hh"
 #include "label-widget.hh"
+#include "button-widget.hh"
 #include "mesh.hh"
 
 #include <SDL2/SDL_mixer.h>
@@ -68,6 +69,7 @@ protected:
   LabelWidget *timeLabel;
   LabelWidget *fpsLabel;
   LabelWidget *continueLabel;
+  ButtonWidget *endGameButton;
 
   // methods
   void FixCamera();
@@ -87,6 +89,7 @@ public:
   virtual ~GameScreen();
 
   virtual void SwitchScreen(const map<string, string> &lastState);
+  void HandleWidgetEvent(int event_type, Widget *widget);
   virtual void HandleEvent(const SDL_Event &e);
 
   virtual void Reset();

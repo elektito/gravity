@@ -197,13 +197,21 @@ GameScreen::GameScreen(SDL_Window *window) :
                                         0.0, 0.02, 0.05,
                                         TextAnchor::CENTER, TextAnchor::BOTTOM,
                                         {255, 255, 255, 128});
-  this->fpsLabel->SetVisible(!this->paused);
+  this->endGameButton = new ButtonWidget(this,
+                                         "End Game",
+                                         0.02, 0.02, 0.05,
+                                         TextAnchor::RIGHT, TextAnchor::BOTTOM,
+                                         {255, 0, 0, 128},
+                                         {255, 255, 255, 128});
+  this->fpsLabel->SetVisible(false);
   this->continueLabel->SetVisible(true);
+  this->endGameButton->SetVisible(true);
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
   this->widgets.push_back(this->fpsLabel);
   this->widgets.push_back(this->continueLabel);
+  this->widgets.push_back(this->endGameButton);
 
   // Create the "trail point" mesh.
   GLfloat trailPointVertexData[] = {
@@ -294,6 +302,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       this->paused = !this->paused;
       this->fpsLabel->SetVisible(!this->paused);
       this->continueLabel->SetVisible(this->paused);
+      this->endGameButton->SetVisible(this->paused);
       Timer::TogglePauseAll();
       break;
     case SDLK_n:
@@ -311,6 +320,18 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
 
   for (auto w : this->widgets)
     w->HandleEvent(e);
+}
+
+void GameScreen::HandleWidgetEvent(int event_type, Widget *widget) {
+  switch (event_type) {
+  case BUTTON_CLICK:
+    if (widget == this->endGameButton) { // End Game
+      this->state["name"] = "game-over";
+      this->state["score"] = to_string(this->score);
+    }
+
+    break;
+  } // switch (event_type)
 }
 
 void GameScreen::Reset() {
