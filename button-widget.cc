@@ -38,9 +38,9 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
     break;
 
   case SDL_MOUSEBUTTONUP:
-    if (this->isActive && this->mouseDown) {
-      this->screen->HandleWidgetEvent(BUTTON_CLICK, this);
-    }
+    if (this->isActive && this->mouseDown)
+      if (this->visible)
+        this->screen->HandleWidgetEvent(BUTTON_CLICK, this);
 
     this->mouseDown = false;
     break;
