@@ -198,6 +198,21 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->widgets.push_back(this->timeLabel);
   this->widgets.push_back(this->fpsLabel);
 
+  // Create the "trail point" mesh.
+  GLfloat vertexData[] = {
+    // triangle 1
+    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
+    /* coord */ -2.0f,  2.0f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  2.0f, -2.0f, /* tex_coord */ 1.0f, 0.0f,
+
+    // triangle 2
+    /* coord */ -2.0f,  2.0f, /* tex_coord */ 0.0f, 1.0f,
+    /* coord */  2.0f,  2.0f, /* tex_coord */ 1.0f, 1.0f,
+    /* coord */  2.0f, -2.0f, /* tex_coord */ 1.0f, 0.0f,
+  };
+
+  this->trailPointMesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("trail-point"));
+
   // Reset all state data.
   this->Reset();
 }
@@ -210,6 +225,8 @@ GameScreen::~GameScreen() {
     delete e;
   }
   this->entities.clear();
+
+  delete this->trailPointMesh;
 }
 
 void GameScreen::SwitchScreen(const map<string, string> &lastState) {
@@ -465,7 +482,7 @@ void GameScreen::Advance(float dt) {
     }
 
     // Update the trails.
-    //UpdateTrails();
+    UpdateTrails();
 
     this->toBeRemoved.clear();
     this->physicsTimeAccumulator -= Config::PhysicsTimeStep;
@@ -480,9 +497,9 @@ void GameScreen::Render(Renderer *renderer) {
   renderer->DrawBackground();
   //this->DrawGrid(renderer);
 
-  //for (auto e : this->entities)
-  //  if (e->hasTrail)
-  //    this->DrawTrail(renderer, e);
+  for (auto e : this->entities)
+    if (e->hasTrail)
+      this->DrawTrail(renderer, e);
 
   for (auto e : this->entities)
     if (e->isDrawable)
@@ -743,7 +760,7 @@ void GameScreen::DrawGrid(Renderer *renderer) const {
 }
 
 void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
-  /*vector<TrailPoint> points;
+  vector<TrailPoint> points;
 
   if (!e->hasTrail)
     return;
@@ -798,8 +815,9 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
   }
 
   for (auto &p : points) {
-    renderer->DrawDisk(p.pos, r, 255, 0, 0, a);
+    float scale_factor = r / e->body->GetFixtureList()->GetShape()->m_radius;
+    this->trailPointMesh->Draw(p.pos, 0.0f, scale_factor);
     r += dr;
     a += da;
-    }*/
+  }
 }

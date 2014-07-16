@@ -18,7 +18,7 @@ Mesh::~Mesh() {
   glDeleteBuffers(1, &this->vbo);
 }
 
-void Mesh::Draw(const b2Vec2 &pos, float32 angle) const {
+void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
   GLuint program = ResourceCache::texturedPolygonProgram;
 
   glUseProgram(program);
@@ -47,7 +47,7 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle) const {
   glVertexAttribPointer(texCoordAttr, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat)));
   glVertexAttrib2f(positionAttr, pos.x, pos.y);
   glVertexAttrib1f(angleAttr, angle);
-  glVertexAttrib1f(scaleAttr, 1.0f);
+  glVertexAttrib1f(scaleAttr, scale_factor);
 
   glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
   if (glGetError() != GL_NO_ERROR)

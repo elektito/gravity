@@ -14,7 +14,7 @@ public:
   Mesh(const GLfloat *vertexData, int n, GLuint texture);
   ~Mesh();
 
-  void Draw(const b2Vec2 &pos, float32 angle) const;
+  void Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor=1.0f) const;
 };
 
 #endif /* _GRAVITY_MESH_HH_ */

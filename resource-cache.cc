@@ -151,6 +151,7 @@ void Init() {
   cout << "Pre-loading textures..." << endl;
   GetTexture("sun");
   GetTexture("planet");
+  GetTexture("trail-point");
   GetTexture("plus-score");
   GetTexture("enemy");
 
