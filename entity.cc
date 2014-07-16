@@ -178,6 +178,7 @@ Entity *Entity::CreatePlanet(b2World *world,
   b2BodyDef bd;
   bd.type = b2_dynamicBody;
   bd.position = pos;
+  bd.angularDamping = 0.4f;
   e->body = world->CreateBody(&bd);
 
   b2CircleShape shape;
