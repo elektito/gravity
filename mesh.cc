@@ -38,6 +38,7 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle) const {
   GLint texCoordAttr = glGetAttribLocation(program, "tex_coord");
   GLint positionAttr = glGetAttribLocation(program, "position");
   GLint angleAttr = glGetAttribLocation(program, "angle");
+  GLint scaleAttr = glGetAttribLocation(program, "scale_factor");
 
   glEnableVertexAttribArray(coordAttr);
   glEnableVertexAttribArray(texCoordAttr);
@@ -46,6 +47,7 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle) const {
   glVertexAttribPointer(texCoordAttr, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat)));
   glVertexAttrib2f(positionAttr, pos.x, pos.y);
   glVertexAttrib1f(angleAttr, angle);
+  glVertexAttrib1f(scaleAttr, 1.0f);
 
   glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
   if (glGetError() != GL_NO_ERROR)
