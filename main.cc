@@ -146,6 +146,10 @@ int main(int argc, char *argv[]) {
     cout << "Could not write to save file." << endl;
   }
 
+  delete mainMenuScreen;
+  delete highScoresScreen;
+  delete gameScreen;
+
   delete renderer;
 
   // Destroy the window.

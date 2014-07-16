@@ -36,6 +36,7 @@ public:
     xanchor(xanchor),
     yanchor(yanchor),
     color(color),
+    vbo(0),
     texture(0)
   {
     this->Reset();

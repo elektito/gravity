@@ -203,7 +203,13 @@ GameScreen::GameScreen(SDL_Window *window) :
 }
 
 GameScreen::~GameScreen() {
-
+  // Remove existing entities.
+  for (auto e : this->entities) {
+    if (e->hasPhysics)
+      this->world.DestroyBody(e->body);
+    delete e;
+  }
+  this->entities.clear();
 }
 
 void GameScreen::SwitchScreen(const map<string, string> &lastState) {
