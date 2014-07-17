@@ -203,9 +203,6 @@ GameScreen::GameScreen(SDL_Window *window) :
                                          TextAnchor::RIGHT, TextAnchor::BOTTOM,
                                          {255, 0, 0, 128},
                                          {255, 255, 255, 128});
-  this->fpsLabel->SetVisible(false);
-  this->continueLabel->SetVisible(true);
-  this->endGameButton->SetVisible(true);
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
@@ -397,6 +394,10 @@ void GameScreen::Reset() {
 
   for (auto w : this->widgets)
     w->Reset();
+
+  this->fpsLabel->SetVisible(!this->paused);
+  this->continueLabel->SetVisible(this->paused);
+  this->endGameButton->SetVisible(this->paused);
 }
 
 void GameScreen::Save(ostream &s) const {
