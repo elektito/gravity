@@ -56,8 +56,10 @@ public:
 
   bool isAffectedByGravity;
   bool isSun;
-  bool isPlanet;
   bool isEnemy;
+
+  bool isPlanet;
+  int planetWhooshChannel;
 
   bool isCollectible;
   bool hasScore;

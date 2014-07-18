@@ -240,8 +240,6 @@ GameScreen::GameScreen(SDL_Window *window) :
 
   this->pauseMesh = new Mesh(pauseVertexData, 6, ResourceCache::GetTexture("pause"), true);
 
-  this->whooshChannel = Mix_PlayChannel(-1, ResourceCache::GetSound("brown"), -1);
-
   // Reset all state data.
   this->Reset();
 }
@@ -302,6 +300,14 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       this->fpsLabel->SetVisible(!this->paused);
       this->continueLabel->SetVisible(this->paused);
       this->endGameButton->SetVisible(this->paused);
+
+      for (auto e : this->entities)
+        if (e->isPlanet)
+          if (this->paused)
+            Mix_Pause(e->planetWhooshChannel);
+          else
+            Mix_Resume(e->planetWhooshChannel);
+
       Timer::TogglePauseAll();
       break;
     case SDLK_n:
@@ -465,30 +471,6 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
-  Entity *planet = *find_if(this->entities.begin(), this->entities.end(), [](Entity *e) {return e->isPlanet;});
-
-  float MIN_DISTANCE = 30.0f;
-  float MIN_SPEED = 20.0f;
-  float MAX_SPEED = 45.0f;
-
-  int vol = 0;
-  float speed = planet->body->GetLinearVelocity().Length();
-  if (speed < MIN_SPEED)
-    vol = 0;
-  else if (speed > MAX_SPEED)
-    vol = MIX_MAX_VOLUME;
-  else
-    vol = MIX_MAX_VOLUME * (speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED);
-
-  float distance = (planet->body->GetPosition() - this->sun->body->GetPosition()).Length();
-  if (distance > MIN_DISTANCE)
-    vol = 0;
-  else
-    vol = vol * ((MIN_DISTANCE - distance) / MIN_DISTANCE);
-
-  Mix_Volume(this->whooshChannel, vol);
-
-
   for (auto w : this->widgets)
     w->Advance(dt);
 
@@ -499,6 +481,31 @@ void GameScreen::Advance(float dt) {
     return;
 
   Timer::CheckAll();
+
+  // Set planet "whooshing" volume.
+  for (auto e : this->entities)
+    if (e->isPlanet) {
+      float MIN_DISTANCE = 30.0f;
+      float MIN_SPEED = 20.0f;
+      float MAX_SPEED = 45.0f;
+
+      int vol = 0;
+      float speed = e->body->GetLinearVelocity().Length();
+      if (speed < MIN_SPEED)
+        vol = 0;
+      else if (speed > MAX_SPEED)
+        vol = MIX_MAX_VOLUME;
+      else
+        vol = MIX_MAX_VOLUME * (speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED);
+
+      float distance = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
+      if (distance > MIN_DISTANCE)
+        vol = 0;
+      else
+        vol = vol * ((MIN_DISTANCE - distance) / MIN_DISTANCE);
+
+      Mix_Volume(e->planetWhooshChannel, vol);
+    }
 
   // Advance physics.
   this->physicsTimeAccumulator += dt;

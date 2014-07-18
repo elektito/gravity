@@ -27,6 +27,7 @@ Entity::Entity() :
 
 Entity::~Entity() {
   delete this->mesh;
+  Mix_ExpireChannel(this->planetWhooshChannel, 0);
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
@@ -198,8 +199,11 @@ Entity *Entity::CreatePlanet(b2World *world,
 
   e->hasGravity = false;
   e->isAffectedByGravity = true;
-  e->isPlanet = true;
   e->isSun = false;
+
+  e->isPlanet = true;
+  e->planetWhooshChannel = Mix_PlayChannel(-1, ResourceCache::GetSound("brown"), -1);
+  Mix_Volume(e->planetWhooshChannel, 0);
 
   // Create mesh.
   GLfloat vertexData[] = {
