@@ -812,6 +812,11 @@ void GameScreen::TimerCallback(float elapsed) {
   if (this->timeRemaining == 0) {
     this->state["name"] = "game-over";
     this->state["score"] = to_string(this->score);
+
+    for (auto e : this->entities)
+      if (e->isPlanet)
+        Mix_Pause(e->planetWhooshChannel);
+
     return;
   }
 
