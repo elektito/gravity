@@ -64,6 +64,7 @@ protected:
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
   Mesh *pauseMesh;
+  int whooshChannel;
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
