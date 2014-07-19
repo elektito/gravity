@@ -96,6 +96,11 @@ void HighScoresScreen::Save(ostream &s) const {
 void HighScoresScreen::Load(istream &s) {
   size_t size;
   s.read((char*) &size, sizeof(size));
+  if (size > Config::HighScores) {
+    cout << "Invalid save file." << endl;
+    exit(1);
+  }
+
   this->scores.clear();
   for (size_t i = 0; i < size; ++i) {
     int score;
