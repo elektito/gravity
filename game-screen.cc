@@ -114,7 +114,10 @@ void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
   Mix_PlayChannel(-1, ResourceCache::GetSound("sun-powerup"), 0);
 
   if (collectible->hasScore)
-    this->screen->score += collectible->score;
+    this->screen->AddScore(collectible->score);
+
+  if (collectible->hasTime)
+    this->screen->AddTime(collectible->time);
 
   this->screen->toBeRemoved.push_back(collectible);
 }
@@ -123,7 +126,10 @@ void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *plan
   Mix_PlayChannel(-1, ResourceCache::GetSound("planet-powerup"), 0);
 
   if (collectible->hasScore)
-    this->screen->score += 10 * collectible->score;
+    this->screen->AddScore(10 * collectible->score);
+
+  if (collectible->hasTime)
+    this->screen->AddTime(2 * collectible->time);
 
   this->screen->toBeRemoved.push_back(collectible);
 }
@@ -254,6 +260,26 @@ GameScreen::~GameScreen() {
   this->entities.clear();
 
   delete this->trailPointMesh;
+}
+
+void GameScreen::AddScore(int score) {
+  this->score += score;
+
+  stringstream ss;
+  ss << setw(6) << setfill('0') << this->score;
+  this->scoreLabel->SetText(ss.str());
+}
+
+void GameScreen::AddTime(int time) {
+  this->timeRemaining += time;
+
+  int minutes = this->timeRemaining / 60;
+  int seconds = this->timeRemaining % 60;
+  stringstream ss;
+  ss << setw(2) << setfill('0') << minutes
+     << setw(0) << ":"
+     << setw(2) << setfill('0') << seconds;
+  this->timeLabel->SetText(ss.str());
 }
 
 void GameScreen::SwitchScreen(const map<string, string> &lastState) {
@@ -744,8 +770,15 @@ void GameScreen::AddRandomCollectible() {
 
     break;
   }
-  this->entities.push_back(Entity::CreateScoreCollectible(&this->world,
-                                                          pos));
+
+
+  CollectibleType types[] = {CollectibleType::PLUS_SCORE,
+                             CollectibleType::MINUS_SCORE,
+                             CollectibleType::PLUS_TIME,
+                             CollectibleType::MINUS_TIME};
+  this->entities.push_back(Entity::CreateCollectible(&this->world,
+                                                     pos,
+                                                     types[rand() % 4]));
 }
 
 void GameScreen::AddRandomEnemy() {

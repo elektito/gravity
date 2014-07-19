@@ -19,7 +19,9 @@ Entity::Entity() :
   isEnemy(false),
   isCollectible(false),
   hasScore(false),
-  score(0.0),
+  score(0),
+  hasTime(false),
+  time(0),
   isDrawable(false),
   mesh(nullptr)
 {
@@ -277,7 +279,7 @@ Entity *Entity::CreateSun(b2World *world,
   return e;
 }
 
-Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
+Entity *Entity::CreateCollectible(b2World *world, b2Vec2 pos, CollectibleType type) {
   Entity *e = new Entity;
   e->hasPhysics = true;
   b2BodyDef bd;
@@ -293,10 +295,35 @@ Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
   e->body->CreateFixture(&fd);
 
   e->isCollectible = true;
-  e->hasScore = true;
-  e->score = 100;
 
-    // Create mesh.
+  GLuint texture = 0;
+  switch (type) {
+  case CollectibleType::PLUS_SCORE:
+    e->hasScore = true;
+    e->score = 100;
+    texture = ResourceCache::GetTexture("plus-score");
+    break;
+
+  case CollectibleType::MINUS_SCORE:
+    e->hasScore = true;
+    e->score = -100;
+    texture = ResourceCache::GetTexture("minus-score");
+    break;
+
+  case CollectibleType::PLUS_TIME:
+    e->hasTime = true;
+    e->time = 10;
+    texture = ResourceCache::GetTexture("plus-time");
+    break;
+
+  case CollectibleType::MINUS_TIME:
+    e->hasTime = true;
+    e->time = -10;
+    texture = ResourceCache::GetTexture("minus-time");
+    break;
+  }
+
+  // Create mesh.
   GLfloat vertexData[] = {
     // triangle 1
     /* coord */ -1.5f, -1.5f, /* tex_coord */ 0.0f, 0.0f,
@@ -309,7 +336,7 @@ Entity *Entity::CreateScoreCollectible(b2World *world, b2Vec2 pos) {
     /* coord */  1.5f, -1.5f, /* tex_coord */ 1.0f, 0.0f,
   };
 
-  e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("plus-score"));
+  e->mesh = new Mesh(vertexData, 6, texture);
   e->isDrawable = true;
 
   e->body->SetUserData(e);

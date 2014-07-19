@@ -34,6 +34,13 @@ struct Trail {
   vector<TrailPoint> points;
 };
 
+enum class CollectibleType {
+  PLUS_SCORE,
+  MINUS_SCORE,
+  PLUS_TIME,
+  MINUS_TIME,
+};
+
 struct Entity {
 protected:
   void SaveBody(const b2Body *b, ostream &s) const;
@@ -64,6 +71,8 @@ public:
   bool isCollectible;
   bool hasScore;
   int score;
+  bool hasTime;
+  int time;
 
   bool isDrawable;
   Mesh *mesh;
@@ -80,8 +89,9 @@ public:
                            float32 radius,
                            float32 density,
                            float32 gravityCoeff);
-  static Entity *CreateScoreCollectible(b2World *world,
-                                        b2Vec2 pos);
+  static Entity *CreateCollectible(b2World *world,
+                                   b2Vec2 pos,
+                                   CollectibleType type);
   static Entity *CreateEnemyShip(b2World *world,
                                  b2Vec2 pos,
                                  b2Vec2 velocity,

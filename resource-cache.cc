@@ -157,6 +157,9 @@ void Init() {
   GetTexture("planet");
   GetTexture("trail-point");
   GetTexture("plus-score");
+  GetTexture("minus-score");
+  GetTexture("plus-time");
+  GetTexture("minus-time");
   GetTexture("enemy");
   GetTexture("pause");
 
