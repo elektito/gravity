@@ -78,8 +78,8 @@ protected:
   void UpdateTrails();
   void AddRandomCollectible();
   void AddRandomEnemy();
-  void AddScore(int score);
-  void AddTime(int time);
+  void SetScore(int score);
+  void SetTimeRemaining(int time);
 
   void DrawGrid(Renderer *renderer) const;
   void DrawTrail(Renderer *renderer, const Entity *entity) const;

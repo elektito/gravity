@@ -58,17 +58,9 @@ void ContactListener::BeginContact(b2Contact *contact) {
 void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
   Mix_PlayChannel(-1, ResourceCache::GetSound("enemy-collision"), 0);
 
-  this->screen->timeRemaining -= 10;
+  this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
   if (this->screen->timeRemaining < 0)
-    this->screen->timeRemaining = 0;
-
-  int minutes = this->screen->timeRemaining / 60;
-  int seconds = this->screen->timeRemaining % 60;
-  stringstream ss;
-  ss << setw(2) << setfill('0') << minutes
-     << setw(0) << ":"
-     << setw(2) << setfill('0') << seconds;
-  this->screen->timeLabel->SetText(ss.str());
+    this->screen->SetTimeRemaining(0);
 
   this->screen->toBeRemoved.push_back(enemy);
 }
@@ -76,17 +68,9 @@ void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
 void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
   Mix_PlayChannel(-1, ResourceCache::GetSound("enemy-collision"), 0);
 
-  this->screen->timeRemaining -= 10;
+  this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
   if (this->screen->timeRemaining < 0)
-    this->screen->timeRemaining = 0;
-
-  int minutes = this->screen->timeRemaining / 60;
-  int seconds = this->screen->timeRemaining % 60;
-  stringstream ss;
-  ss << setw(2) << setfill('0') << minutes
-     << setw(0) << ":"
-     << setw(2) << setfill('0') << seconds;
-  this->screen->timeLabel->SetText(ss.str());
+    this->screen->SetTimeRemaining(0);
 
   this->screen->toBeRemoved.push_back(enemy);
 }
@@ -95,17 +79,9 @@ void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
   Mix_PlayChannel(-1, ResourceCache::GetSound("planet-sun-collision"), 0);
 
   if (!this->inContact)
-    this->screen->timeRemaining -= 10;
+    this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
   if (this->screen->timeRemaining < 0)
-    this->screen->timeRemaining = 0;
-
-  int minutes = this->screen->timeRemaining / 60;
-  int seconds = this->screen->timeRemaining % 60;
-  stringstream ss;
-  ss << setw(2) << setfill('0') << minutes
-     << setw(0) << ":"
-     << setw(2) << setfill('0') << seconds;
-  this->screen->timeLabel->SetText(ss.str());
+    this->screen->SetTimeRemaining(0);
 
   this->inContact = true;
 }
@@ -114,10 +90,10 @@ void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
   Mix_PlayChannel(-1, ResourceCache::GetSound("sun-powerup"), 0);
 
   if (collectible->hasScore)
-    this->screen->AddScore(collectible->score);
+    this->screen->SetScore(this->screen->score + collectible->score);
 
   if (collectible->hasTime)
-    this->screen->AddTime(collectible->time);
+    this->screen->SetTimeRemaining(this->screen->timeRemaining + collectible->time);
 
   this->screen->toBeRemoved.push_back(collectible);
 }
@@ -126,10 +102,10 @@ void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *plan
   Mix_PlayChannel(-1, ResourceCache::GetSound("planet-powerup"), 0);
 
   if (collectible->hasScore)
-    this->screen->AddScore(10 * collectible->score);
+    this->screen->SetScore(this->screen->score + 10 * collectible->score);
 
   if (collectible->hasTime)
-    this->screen->AddTime(2 * collectible->time);
+    this->screen->SetTimeRemaining(this->screen->timeRemaining + 2 * collectible->time);
 
   this->screen->toBeRemoved.push_back(collectible);
 }
@@ -262,16 +238,16 @@ GameScreen::~GameScreen() {
   delete this->trailPointMesh;
 }
 
-void GameScreen::AddScore(int score) {
-  this->score += score;
+void GameScreen::SetScore(int score) {
+  this->score = score;
 
   stringstream ss;
   ss << setw(6) << setfill('0') << this->score;
   this->scoreLabel->SetText(ss.str());
 }
 
-void GameScreen::AddTime(int time) {
-  this->timeRemaining += time;
+void GameScreen::SetTimeRemaining(int time) {
+  this->timeRemaining = time;
 
   int minutes = this->timeRemaining / 60;
   int seconds = this->timeRemaining % 60;
@@ -369,16 +345,8 @@ void GameScreen::Reset() {
   this->state.clear();
   this->state["name"] = "playing";
 
-  this->score = 0;
-    this->scoreLabel->SetText("000000");
-  this->timeRemaining = Config::GameTime;
-    int minutes = this->timeRemaining / 60;
-    int seconds = this->timeRemaining % 60;
-    stringstream ss;
-    ss << setw(2) << setfill('0') << minutes
-       << setw(0) << ":"
-       << setw(2) << setfill('0') << seconds;
-    this->timeLabel->SetText(ss.str());
+  this->SetScore(0);
+  this->SetTimeRemaining(Config::GameTime);
   this->paused = true;
   this->time = 0.0;
 
@@ -458,17 +426,9 @@ void GameScreen::Load(istream &s) {
 
   READ(this->time, s);
   READ(this->score, s);
-    stringstream ss;
-    ss << setw(6) << setfill('0') << this->score;
-    this->scoreLabel->SetText(ss.str());
+  this->SetScore(this->score);
   READ(this->timeRemaining, s);
-    int minutes = this->timeRemaining / 60;
-    int seconds = this->timeRemaining % 60;
-    stringstream ss2;
-    ss2 << setw(2) << setfill('0') << minutes
-        << setw(0) << ":"
-        << setw(2) << setfill('0') << seconds;
-    this->timeLabel->SetText(ss2.str());
+  this->SetTimeRemaining(this->timeRemaining);
   READ(this->paused, s);
   READ(this->camera.pos.x, s);
   READ(this->camera.pos.y, s);
@@ -545,10 +505,7 @@ void GameScreen::Advance(float dt) {
         if (d > 100) d = 0.0;
         this->scoreAccumulator += diff * 50 * Config::PhysicsTimeStep;
         if (this->scoreAccumulator >= 100) {
-          this->score += 100;
-            stringstream ss;
-            ss << setw(6) << setfill('0') << this->score;
-            this->scoreLabel->SetText(ss.str());
+          this->SetScore(this->score + 100);
           this->scoreAccumulator -= 100;
           Mix_PlayChannel(-1, ResourceCache::GetSound("score-tik"), 0);
         }
@@ -829,17 +786,8 @@ void GameScreen::TimerCallback(float elapsed) {
   this->frameCount = 0;
 
   // Decrement remaining time.
-  if (this->timeRemaining > 0) {
-    this->timeRemaining--;
-
-    int minutes = this->timeRemaining / 60;
-    int seconds = this->timeRemaining % 60;
-    stringstream ss;
-    ss << setw(2) << setfill('0') << minutes
-       << setw(0) << ":"
-       << setw(2) << setfill('0') << seconds;
-    this->timeLabel->SetText(ss.str());
-  }
+  if (this->timeRemaining > 0)
+    this->SetTimeRemaining(this->timeRemaining - 1);
 
   // Check for game over.
   if (this->timeRemaining == 0) {
