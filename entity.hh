@@ -39,6 +39,7 @@ enum class CollectibleType {
   MINUS_SCORE,
   PLUS_TIME,
   MINUS_TIME,
+  SPAWN_PLANET,
 };
 
 struct Entity {
@@ -73,6 +74,7 @@ public:
   int score;
   bool hasTime;
   int time;
+  bool spawnPlanet;
 
   bool isDrawable;
   Mesh *mesh;

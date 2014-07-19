@@ -160,6 +160,7 @@ void Init() {
   GetTexture("minus-score");
   GetTexture("plus-time");
   GetTexture("minus-time");
+  GetTexture("plus-planet");
   GetTexture("enemy");
   GetTexture("pause");
 

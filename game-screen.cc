@@ -95,6 +95,9 @@ void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
   if (collectible->hasTime)
     this->screen->SetTimeRemaining(this->screen->timeRemaining + collectible->time);
 
+  if (collectible->spawnPlanet)
+    this->screen->spawnPlanet = true;
+
   this->screen->toBeRemoved.push_back(collectible);
 }
 
@@ -106,6 +109,9 @@ void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *plan
 
   if (collectible->hasTime)
     this->screen->SetTimeRemaining(this->screen->timeRemaining + 2 * collectible->time);
+
+  if (collectible->spawnPlanet)
+    this->screen->spawnPlanet = true;
 
   this->screen->toBeRemoved.push_back(collectible);
 }
@@ -151,7 +157,8 @@ GameScreen::GameScreen(SDL_Window *window) :
   timer(bind(&GameScreen::TimerCallback, this, _1)),
   contactListener(this),
   frameCount(0),
-  fps(0)
+  fps(0),
+  spawnPlanet(false)
 {
   this->timer.Set(1.0, true);
 
@@ -256,6 +263,49 @@ void GameScreen::SetTimeRemaining(int time) {
      << setw(0) << ":"
      << setw(2) << setfill('0') << seconds;
   this->timeLabel->SetText(ss.str());
+}
+
+b2Vec2 GameScreen::GetRandomPosition() {
+  const float32 MIN_DISTANCE = 5;
+
+  int wpixels, hpixels;
+  SDL_GetWindowSize(this->window, &wpixels, &hpixels);
+
+  // Get window dimensions in meters.
+  float32 width = wpixels / this->camera.ppm;
+  float32 height = hpixels / this->camera.ppm;
+
+  b2Vec2 pos;
+  while (true) {
+    // Choose a random position for the collectible.
+    pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
+    pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
+
+    // Retry if the chosen position is to close to a sun or a planet.
+    for (auto e : this->entities)
+      if (e->isSun || e->isPlanet) {
+        // Get sun/planet radius.
+        float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
+
+        // If distance from the surface (indicated by the '+r') is
+        // less than minimum distance, retry.
+        if ((e->body->GetPosition() - pos).Length() + r < MIN_DISTANCE);
+          continue;
+      }
+
+    break;
+  }
+
+  return pos;
+}
+
+void GameScreen::SpawnPlanet() {
+  b2Vec2 pos = this->GetRandomPosition();
+  Entity *planet = Entity::CreatePlanet(&this->world,
+                                        pos,
+                                        2.0,
+                                        1.0);
+  this->entities.push_back(planet);
 }
 
 void GameScreen::SwitchScreen(const map<string, string> &lastState) {
@@ -493,6 +543,12 @@ void GameScreen::Advance(float dt) {
       Mix_Volume(e->planetWhooshChannel, vol);
     }
 
+  // Spawn new planet if needed.
+  if (this->spawnPlanet) {
+    this->SpawnPlanet();
+    this->spawnPlanet = false;
+  }
+
   // Advance physics.
   this->physicsTimeAccumulator += dt;
   while (this->physicsTimeAccumulator >= Config::PhysicsTimeStep) {
@@ -698,44 +754,16 @@ void GameScreen::UpdateTrails() {
 }
 
 void GameScreen::AddRandomCollectible() {
-  const float32 MIN_DISTANCE = 5;
-
-  int wpixels, hpixels;
-  SDL_GetWindowSize(this->window, &wpixels, &hpixels);
-
-  // Get window dimensions in meters.
-  float32 width = wpixels / this->camera.ppm;
-  float32 height = hpixels / this->camera.ppm;
-
-  b2Vec2 pos;
-  while (true) {
-    // Choose a random position for the collectible.
-    pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
-    pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
-
-    // Retry if the chosen position is to close to a sun or a planet.
-    for (auto e : this->entities)
-      if (e->isSun || e->isPlanet) {
-        // Get sun/planet radius.
-        float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
-
-        // If distance from the surface (indicated by the '+r') is
-        // less than minimum distance, retry.
-        if ((e->body->GetPosition() - pos).Length() + r < MIN_DISTANCE);
-          continue;
-      }
-
-    break;
-  }
-
-
+  b2Vec2 pos = this->GetRandomPosition();
   CollectibleType types[] = {CollectibleType::PLUS_SCORE,
                              CollectibleType::MINUS_SCORE,
                              CollectibleType::PLUS_TIME,
-                             CollectibleType::MINUS_TIME};
+                             CollectibleType::MINUS_TIME,
+                             CollectibleType::SPAWN_PLANET};
+  CollectibleType type = types[rand() % (sizeof(types) / sizeof(types[0]))];
   this->entities.push_back(Entity::CreateCollectible(&this->world,
                                                      pos,
-                                                     types[rand() % 4]));
+                                                     type));
 }
 
 void GameScreen::AddRandomEnemy() {

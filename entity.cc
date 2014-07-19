@@ -22,6 +22,7 @@ Entity::Entity() :
   score(0),
   hasTime(false),
   time(0),
+  spawnPlanet(false),
   isDrawable(false),
   mesh(nullptr)
 {
@@ -321,6 +322,16 @@ Entity *Entity::CreateCollectible(b2World *world, b2Vec2 pos, CollectibleType ty
     e->time = -10;
     texture = ResourceCache::GetTexture("minus-time");
     break;
+
+  case CollectibleType::SPAWN_PLANET:
+    e->spawnPlanet = true;
+    texture = ResourceCache::GetTexture("plus-planet");
+    break;
+
+  default:
+    cout << "Invalid collectible type" << endl;
+    delete e;
+    return nullptr;
   }
 
   // Create mesh.

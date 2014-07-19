@@ -64,6 +64,7 @@ protected:
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
   Mesh *pauseMesh;
+  bool spawnPlanet;
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
@@ -80,6 +81,8 @@ protected:
   void AddRandomEnemy();
   void SetScore(int score);
   void SetTimeRemaining(int time);
+  b2Vec2 GetRandomPosition();
+  void SpawnPlanet();
 
   void DrawGrid(Renderer *renderer) const;
   void DrawTrail(Renderer *renderer, const Entity *entity) const;
