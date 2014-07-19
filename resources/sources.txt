@@ -1,1 +1,5 @@
 This file lists the licenses and sources of third party assets.
+
+ - Plus Score Collectible
+   by qubodup, CC-BY-SA 3.0
+   http://opengameart.org/content/space-jet-side-sprite
