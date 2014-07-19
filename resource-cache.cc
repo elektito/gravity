@@ -151,19 +151,6 @@ void Init() {
   backgroundProgram = CreateProgram("resources/shaders/background-vertex-shader.glsl",
                                     "resources/shaders/background-fragment-shader.glsl");
 
-  // Preload textures.
-  cout << "Pre-loading textures..." << endl;
-  GetTexture("sun");
-  GetTexture("planet");
-  GetTexture("trail-point");
-  GetTexture("plus-score");
-  GetTexture("minus-score");
-  GetTexture("plus-time");
-  GetTexture("minus-time");
-  GetTexture("plus-planet");
-  GetTexture("enemy");
-  GetTexture("pause");
-
   cout << "Resource cache initialized." << endl;
 }
 

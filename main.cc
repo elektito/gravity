@@ -1,4 +1,5 @@
 #include "renderer.hh"
+#include "splash-screen.hh"
 #include "game-screen.hh"
 #include "high-scores-screen.hh"
 #include "main-menu-screen.hh"
@@ -42,9 +43,18 @@ int main(int argc, char *argv[]) {
   Renderer *renderer = new Renderer(window);
   ResourceCache::Init();
 
+  Screen *splashScreen = new SplashScreen(window);
+  SDL_ShowWindow(window);
+  splashScreen->Render(renderer);
+
   Screen *mainMenuScreen = new MainMenuScreen(window);
+  splashScreen->Render(renderer);
+
   Screen *gameScreen = new GameScreen(window);
+  splashScreen->Render(renderer);
+
   Screen *highScoresScreen = new HighScoresScreen(window);
+  splashScreen->Render(renderer);
 
   ifstream input("gravity.save", ifstream::in | ifstream::binary);
   if (input) {
@@ -54,9 +64,7 @@ int main(int argc, char *argv[]) {
     cout << "No save file." << endl;
   input.close();
 
-  SDL_ShowWindow(window);
-
-  Screen *currentScreen = mainMenuScreen;
+  Screen *currentScreen = splashScreen;
 
   uint32_t lastTime = SDL_GetTicks();
 
@@ -113,7 +121,11 @@ int main(int argc, char *argv[]) {
     currentScreen->Advance(dt / 1000.0);
     currentScreen->Render(renderer);
 
-    if (currentScreen->state["name"] == "game-over") {
+    if (currentScreen->state["name"] == "splash-over") {
+      mainMenuScreen->SwitchScreen(currentScreen->state);
+      currentScreen = mainMenuScreen;
+    }
+    else if (currentScreen->state["name"] == "game-over") {
       highScoresScreen->SwitchScreen(currentScreen->state);
       currentScreen = highScoresScreen;
     }

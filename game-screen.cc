@@ -158,7 +158,8 @@ GameScreen::GameScreen(SDL_Window *window) :
   contactListener(this),
   frameCount(0),
   fps(0),
-  spawnPlanet(false)
+  spawnPlanet(false),
+  background(window, ResourceCache::GetTexture("background"))
 {
   this->timer.Set(1.0, true);
 
@@ -625,7 +626,7 @@ void GameScreen::Advance(float dt) {
 void GameScreen::Render(Renderer *renderer) {
   renderer->SetCamera(this->camera);
 
-  renderer->DrawBackground();
+  this->background.Draw();
   //this->DrawGrid(renderer);
 
   for (auto e : this->entities)

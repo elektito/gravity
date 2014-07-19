@@ -18,20 +18,31 @@ enum class TextAnchor {
   BOTTOM
 };
 
+class Background {
+protected:
+  SDL_Window *window;
+  GLuint texture;
+  int textureWidth;
+  int textureHeight;
+  GLuint vbo;
+
+  int lastWindowWidth;
+  int lastWindowHeight;
+
+  void RebuildIfNecessary();
+
+public:
+  Background(SDL_Window *window, GLuint texture);
+  virtual ~Background();
+
+  void Draw();
+};
+
 class Renderer {
 protected:
   SDL_Window *window;
   SDL_GLContext context;
   Camera camera;
-  GLuint backgroundTexture;
-  int backgroundTextureWidth;
-  int backgroundTextureHeight;
-  GLuint backgroundVbo;
-
-  int lastWindowWidth;
-  int lastWindowHeight;
-
-  void RebuildBackground();
 
 public:
   Renderer(SDL_Window *window);
@@ -39,7 +50,6 @@ public:
 
   void SetCamera(Camera &camera);
   void ClearScreen();
-  void DrawBackground();
   void PresentScreen() const;
 };
 

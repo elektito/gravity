@@ -40,6 +40,7 @@ def build(bld):
         'main.cc',
         'camera.cc',
         'timer.cc',
+        'splash-screen.cc',
         'game-screen.cc',
         'main-menu-screen.cc',
         'high-scores-screen.cc',

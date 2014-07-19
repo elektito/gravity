@@ -65,6 +65,7 @@ protected:
   Mesh *trailPointMesh;
   Mesh *pauseMesh;
   bool spawnPlanet;
+  Background background;
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
