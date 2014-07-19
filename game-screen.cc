@@ -255,6 +255,8 @@ void GameScreen::SetScore(int score) {
 
 void GameScreen::SetTimeRemaining(int time) {
   this->timeRemaining = time;
+  if (this->timeRemaining < 0)
+    this->timeRemaining = 0;
 
   int minutes = this->timeRemaining / 60;
   int seconds = this->timeRemaining % 60;
@@ -263,6 +265,18 @@ void GameScreen::SetTimeRemaining(int time) {
      << setw(0) << ":"
      << setw(2) << setfill('0') << seconds;
   this->timeLabel->SetText(ss.str());
+
+  // Check for game over.
+  if (this->timeRemaining == 0) {
+    this->state["name"] = "game-over";
+    this->state["score"] = to_string(this->score);
+
+    for (auto e : this->entities)
+      if (e->isPlanet)
+        Mix_Pause(e->planetWhooshChannel);
+
+    return;
+  }
 }
 
 b2Vec2 GameScreen::GetRandomPosition() {
@@ -816,18 +830,6 @@ void GameScreen::TimerCallback(float elapsed) {
   // Decrement remaining time.
   if (this->timeRemaining > 0)
     this->SetTimeRemaining(this->timeRemaining - 1);
-
-  // Check for game over.
-  if (this->timeRemaining == 0) {
-    this->state["name"] = "game-over";
-    this->state["score"] = to_string(this->score);
-
-    for (auto e : this->entities)
-      if (e->isPlanet)
-        Mix_Pause(e->planetWhooshChannel);
-
-    return;
-  }
 
   // Occasionally add collectibles.
   if (rand() % 5 == 0)
