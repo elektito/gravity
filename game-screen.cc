@@ -647,6 +647,11 @@ void GameScreen::Render(Renderer *renderer) {
 
     glUseProgram(program);
 
+    GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
+    int winw, winh;
+    SDL_GetWindowSize(this->window, &winw, &winh);
+    glUniform2f(resolutionUniform, winw, winh);
+
     GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
     glActiveTexture(GL_TEXTURE0);

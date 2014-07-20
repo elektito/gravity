@@ -1,5 +1,7 @@
 #version 330
 
+uniform vec2 resolution;
+
 const int LEFT = 1;
 const int CENTER = 2;
 const int RIGHT = 3;
@@ -27,14 +29,16 @@ out VERTEX {
 } vertex;
 
 void main() {
+  float w = width * (resolution.y / resolution.x);
+
   if (xalign == LEFT) {
     vertex.coord.x = position.x * 2.0 - 1.0;
   }
   else if (xalign == CENTER) {
-    vertex.coord.x = -width + position.x * 2.0;
+    vertex.coord.x = -w + position.x * 2.0;
   }
   else if (xalign == RIGHT) {
-    vertex.coord.x = (1.0 - width + position.x) * 2.0 - 1.0;
+    vertex.coord.x = (1.0 - w + position.x) * 2.0 - 1.0;
   }
 
   if (yalign == BOTTOM) {
@@ -47,7 +51,7 @@ void main() {
     vertex.coord.y = (1.0 - height + position.y) * 2.0 - 1.0;
   }
 
-  vertex.coord += 2.0 * coord * vec2(width, height);
+  vertex.coord += 2.0 * coord * vec2(w, height);
 
   vertex.tex_coord = tex_coord;
   gl_Position = vec4(vertex.coord, 0.0, 1.0);
