@@ -30,25 +30,26 @@ out VERTEX {
 
 void main() {
   float w = width * (resolution.y / resolution.x);
+  vec2 pos = vec2(position.x * (resolution.y / resolution.x), position.y);
 
   if (xalign == LEFT) {
-    vertex.coord.x = position.x * 2.0 - 1.0;
+    vertex.coord.x = pos.x * 2.0 - 1.0;
   }
   else if (xalign == CENTER) {
-    vertex.coord.x = -w + position.x * 2.0;
+    vertex.coord.x = -w + pos.x * 2.0;
   }
   else if (xalign == RIGHT) {
-    vertex.coord.x = (1.0 - w + position.x) * 2.0 - 1.0;
+    vertex.coord.x = (1.0 - w + pos.x) * 2.0 - 1.0;
   }
 
   if (yalign == BOTTOM) {
-    vertex.coord.y = position.y * 2.0 - 1.0;
+    vertex.coord.y = pos.y * 2.0 - 1.0;
   }
   else if (yalign == CENTER) {
-    vertex.coord.y = -height + position.y;
+    vertex.coord.y = -height + pos.y * 2.0;
   }
   else if (yalign == TOP) {
-    vertex.coord.y = (1.0 - height + position.y) * 2.0 - 1.0;
+    vertex.coord.y = (1.0 - height + pos.y) * 2.0 - 1.0;
   }
 
   vertex.coord += 2.0 * coord * vec2(w, height);
