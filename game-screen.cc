@@ -833,11 +833,20 @@ void GameScreen::TimerCallback(float elapsed) {
     this->SetTimeRemaining(this->timeRemaining - 1);
 
   // Occasionally add collectibles.
-  if (rand() % 5 == 0)
+  if (rand() % 10 == 0)
     this->AddRandomCollectible();
 
   // Occasionally add enemy ships.
-  if (rand() % 10 == 0)
+  int n;
+  if (this->time < 30)
+    n = 20;
+  else if (this->time < 60)
+    n = 15;
+  else if (this->time < 90)
+    n = 10;
+  else
+    n = 5;
+  if (rand() % n == 0)
     this->AddRandomEnemy();
 }
 
