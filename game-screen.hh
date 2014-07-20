@@ -63,7 +63,7 @@ protected:
   int fps;
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
-  Mesh *pauseMesh;
+  GLuint pauseVbo;
   bool spawnPlanet;
   Background background;
 
