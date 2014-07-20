@@ -59,6 +59,7 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
   glDisableVertexAttribArray(coordAttr);
   glDisableVertexAttribArray(texCoordAttr);
 
+  glBindTexture(GL_TEXTURE_2D, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glUseProgram(0);
 }
