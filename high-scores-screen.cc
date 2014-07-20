@@ -1,6 +1,7 @@
 #include "high-scores-screen.hh"
 #include "config.hh"
 #include "button-widget.hh"
+#include "resource-cache.hh"
 
 #include <iomanip>
 #include <sstream>
@@ -8,7 +9,8 @@
 
 HighScoresScreen::HighScoresScreen(SDL_Window *window) :
   Screen(window),
-  currentScoreIndex(-1)
+  currentScoreIndex(-1),
+  background(window, ResourceCache::GetTexture("background"))
 {
   this->widgets.push_back(new ButtonWidget(this,
                                            "Main Menu",
@@ -117,7 +119,7 @@ void HighScoresScreen::Advance(float dt) {
 void HighScoresScreen::Render(Renderer *renderer) {
   stringstream ss;
 
-  renderer->ClearScreen();
+  this->background.Draw();
 
   for (int i =0; i < this->scores.size(); ++i) {
     ss.str("");

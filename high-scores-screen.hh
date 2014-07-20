@@ -8,6 +8,7 @@ class HighScoresScreen : public Screen {
 protected:
   vector<int> scores;
   int currentScoreIndex;
+  Background background;
 
   vector<LabelWidget*> labels;
 

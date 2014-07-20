@@ -1,9 +1,11 @@
 #include "main-menu-screen.hh"
 #include "button-widget.hh"
 #include "label-widget.hh"
+#include "resource-cache.hh"
 
 MainMenuScreen::MainMenuScreen(SDL_Window *window) :
-  Screen(window)
+  Screen(window),
+  background(window, ResourceCache::GetTexture("background"))
 {
   this->widgets.push_back(new ButtonWidget(this,
                                            "New Game",
@@ -85,7 +87,7 @@ void MainMenuScreen::Advance(float dt) {
 }
 
 void MainMenuScreen::Render(Renderer *renderer) {
-  renderer->ClearScreen();
+  this->background.Draw();
 
   for (auto w : this->widgets)
     w->Render(renderer);

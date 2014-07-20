@@ -4,6 +4,9 @@
 #include "screen.hh"
 
 class MainMenuScreen : public Screen {
+protected:
+  Background background;
+
 public:
   MainMenuScreen(SDL_Window *window);
   virtual ~MainMenuScreen();
