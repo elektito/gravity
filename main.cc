@@ -13,6 +13,48 @@
 
 using namespace std;
 
+void HandleEvents(SDL_Event &e, SDL_Window *window, bool &quit) {
+  switch (e.type) {
+  case SDL_QUIT:
+    quit = true;
+    break;
+
+  case SDL_KEYDOWN:
+    switch (e.key.keysym.sym) {
+    case SDLK_q:
+      SDL_Event quitEvent;
+      quitEvent.type = SDL_QUIT;
+      SDL_PushEvent(&quitEvent);
+      break;
+    case SDLK_f:
+      auto flags = SDL_GetWindowFlags(window);
+      if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+        SDL_SetWindowFullscreen(window, SDL_FALSE);
+      else
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+      break;
+    }
+    break;
+
+  case SDL_WINDOWEVENT:
+    if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+      int winw, winh;
+      SDL_GetWindowSize(window, &winw, &winh);
+
+      // Update OpenGL viewport.
+      glViewport(0, 0, winw, winh);
+
+      // Update window size in shader.
+      auto program = ResourceCache::texturedPolygonProgram;
+      glUseProgram(program);
+      GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
+      glUniform2f(resolutionUniform, winw, winh);
+      glUseProgram(0);
+    }
+    break;
+  } // switch (e.type)
+}
+
 int main(int argc, char *argv[]) {
   bool quit = false;
   SDL_Window *window = nullptr;
@@ -45,6 +87,13 @@ int main(int argc, char *argv[]) {
 
   Screen *splashScreen = new SplashScreen(window);
   SDL_ShowWindow(window);
+
+  // On some systems (like on StumpWM), a size change might happen
+  // right after the window is shown. This takes care of that.
+  SDL_Event e;
+  while (SDL_PollEvent(&e))
+    HandleEvents(e, window, quit);
+
   splashScreen->Render(renderer);
 
   Screen *mainMenuScreen = new MainMenuScreen(window);
@@ -72,46 +121,7 @@ int main(int argc, char *argv[]) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
       currentScreen->HandleEvent(e);
-
-      switch (e.type) {
-      case SDL_QUIT:
-        quit = true;
-        break;
-
-      case SDL_KEYDOWN:
-        switch (e.key.keysym.sym) {
-        case SDLK_q:
-          SDL_Event quitEvent;
-          quitEvent.type = SDL_QUIT;
-          SDL_PushEvent(&quitEvent);
-          break;
-        case SDLK_f:
-          auto flags = SDL_GetWindowFlags(window);
-          if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
-            SDL_SetWindowFullscreen(window, SDL_FALSE);
-          else
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-          break;
-        }
-        break;
-
-      case SDL_WINDOWEVENT:
-        if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-          int winw, winh;
-          SDL_GetWindowSize(window, &winw, &winh);
-
-          // Update OpenGL viewport.
-          glViewport(0, 0, winw, winh);
-
-          // Update window size in shader.
-          auto program = ResourceCache::texturedPolygonProgram;
-          glUseProgram(program);
-          GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
-          glUniform2f(resolutionUniform, winw, winh);
-          glUseProgram(0);
-        }
-        break;
-      } // switch (e.type)
+      HandleEvents(e, window, quit);
     } // while (SDL_PollEvent(&e))
 
     int dt = SDL_GetTicks() - lastTime;
