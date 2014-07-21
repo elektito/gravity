@@ -49,6 +49,7 @@ def build(bld):
         'helpers.cc',
         'config.cc',
         'image-widget.cc',
+        'image-button-widget.cc',
         'label-widget.cc',
         'button-widget.cc',
         'mesh.cc',
