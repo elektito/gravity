@@ -43,7 +43,7 @@ void main() {
     vertex.coord.x = -w + pos.x * 2.0;
   }
   else if (xalign == RIGHT) {
-    vertex.coord.x = (1.0 - w + pos.x) * 2.0 - 1.0;
+    vertex.coord.x = (1.0 - w - pos.x) * 2.0 - 1.0;
   }
 
   if (yalign == BOTTOM) {
@@ -53,7 +53,7 @@ void main() {
     vertex.coord.y = -height + pos.y * 2.0;
   }
   else if (yalign == TOP) {
-    vertex.coord.y = (1.0 - height + pos.y) * 2.0 - 1.0;
+    vertex.coord.y = (1.0 - height - pos.y) * 2.0 - 1.0;
   }
 
   vertex.coord += 2.0 * coord * vec2(w, height);
