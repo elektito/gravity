@@ -15,10 +15,18 @@ protected:
   TextAnchor yanchor;
   GLuint texture;
   GLuint vbo;
+  struct {
+    float r;
+    float g;
+    float b;
+    float a;
+  } color;
 
 public:
   ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor);
   virtual ~ImageWidget();
+
+  void SetColor(float r, float g, float b, float a);
 
   virtual void HandleEvent(const SDL_Event &e);
   virtual void Advance(float dt);

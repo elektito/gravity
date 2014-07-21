@@ -38,10 +38,19 @@ ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float
 
   float ratio = (float) textureWidth / textureHeight;
   this->width = height * ratio;
+
+  this->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 ImageWidget::~ImageWidget() {
   glDeleteBuffers(1, &this->vbo);
+}
+
+void ImageWidget::SetColor(float r, float g, float b, float a) {
+  this->color.r = r;
+  this->color.g = g;
+  this->color.b = b;
+  this->color.a = a;
 }
 
 void ImageWidget::HandleEvent(const SDL_Event &e) {
@@ -78,6 +87,7 @@ void ImageWidget::Render(Renderer *renderer) {
   GLint yalignAttr = glGetAttribLocation(program, "yalign");
   GLint widthAttr = glGetAttribLocation(program, "width");
   GLint heightAttr = glGetAttribLocation(program, "height");
+  GLint colorAttr = glGetAttribLocation(program, "color");
 
   glEnableVertexAttribArray(coordAttr);
   glEnableVertexAttribArray(texCoordAttr);
@@ -103,6 +113,7 @@ void ImageWidget::Render(Renderer *renderer) {
   glVertexAttribI1i(yalignAttr, shaderYAnchor);
   glVertexAttrib1f(widthAttr, this->width);
   glVertexAttrib1f(heightAttr, this->height);
+  glVertexAttrib4f(colorAttr, this->color.r, this->color.g, this->color.b, this->color.a);
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   if (glGetError() != GL_NO_ERROR)

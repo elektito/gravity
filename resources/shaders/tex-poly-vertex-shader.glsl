@@ -9,10 +9,12 @@ in vec2 tex_coord;
 in vec2 position;
 in float angle;
 in float scale_factor;
+in vec4 color;
 
 out VERTEX {
   vec2 coord;
   vec2 tex_coord;
+  vec4 color;
 } vertex;
 
 vec2 rotate(in vec2 coord, in float angle, in vec2 origin) {
@@ -32,5 +34,6 @@ void main() {
   vertex.coord = vertex.coord / resolution * 2.0 - 1.0;
 
   vertex.tex_coord = tex_coord;
+  vertex.color = color;
   gl_Position = vec4(vertex.coord, 0.0, 1.0);
 }

@@ -23,9 +23,13 @@ in float height;
 /// Instance width in units of screen height.
 in float width;
 
+/// The color mixed with the texture.
+in vec4 color;
+
 out VERTEX {
   vec2 coord;
   vec2 tex_coord;
+  vec4 color;
 } vertex;
 
 void main() {
@@ -54,6 +58,7 @@ void main() {
 
   vertex.coord += 2.0 * coord * vec2(w, height);
 
+  vertex.color = color;
   vertex.tex_coord = tex_coord;
   gl_Position = vec4(vertex.coord, 0.0, 1.0);
 }

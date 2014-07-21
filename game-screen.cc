@@ -670,6 +670,7 @@ void GameScreen::Render(Renderer *renderer) {
     GLint yalignAttr = glGetAttribLocation(program, "yalign");
     GLint widthAttr = glGetAttribLocation(program, "width");
     GLint heightAttr = glGetAttribLocation(program, "height");
+    GLint colorAttr = glGetAttribLocation(program, "color");
 
     glEnableVertexAttribArray(coordAttr);
     glEnableVertexAttribArray(texCoordAttr);
@@ -682,6 +683,7 @@ void GameScreen::Render(Renderer *renderer) {
     glVertexAttribI1i(yalignAttr, 2);
     glVertexAttrib1f(widthAttr, 0.2);
     glVertexAttrib1f(heightAttr, 0.2);
+    glVertexAttrib4f(colorAttr, 1.0f, 1.0f, 1.0f, 1.0f);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     if (glGetError() != GL_NO_ERROR)
