@@ -50,6 +50,12 @@ void HandleEvents(SDL_Event &e, SDL_Window *window, bool &quit) {
       GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
       glUniform2f(resolutionUniform, winw, winh);
       glUseProgram(0);
+
+      program = ResourceCache::hudTexturedPolygonProgram;
+      glUseProgram(program);
+      resolutionUniform = glGetUniformLocation(program, "resolution");
+      glUniform2f(resolutionUniform, winw, winh);
+      glUseProgram(0);
     }
     break;
   } // switch (e.type)
@@ -87,6 +93,21 @@ int main(int argc, char *argv[]) {
 
   Screen *splashScreen = new SplashScreen(window);
   SDL_ShowWindow(window);
+
+  // Set resolution uniforms in shader programs that need it.
+  int winw, winh;
+  SDL_GetWindowSize(window, &winw, &winh);
+  auto program = ResourceCache::texturedPolygonProgram;
+  glUseProgram(program);
+  GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
+  glUniform2f(resolutionUniform, winw, winh);
+  glUseProgram(0);
+
+  program = ResourceCache::hudTexturedPolygonProgram;
+  glUseProgram(program);
+  resolutionUniform = glGetUniformLocation(program, "resolution");
+  glUniform2f(resolutionUniform, winw, winh);
+  glUseProgram(0);
 
   // On some systems (like on StumpWM), a size change might happen
   // right after the window is shown. This takes care of that.
