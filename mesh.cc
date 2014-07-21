@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Mesh::Mesh(const GLfloat *vertexData, int n, GLuint texture, bool hud) :
+Mesh::Mesh(const GLfloat *vertexData, int n, GLuint texture) :
   vertexCount(n),
   texture(texture)
 {
@@ -12,11 +12,6 @@ Mesh::Mesh(const GLfloat *vertexData, int n, GLuint texture, bool hud) :
   glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
   glBufferData(GL_ARRAY_BUFFER, n * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  if (hud)
-    this->program = ResourceCache::hudTexturedPolygonProgram;
-  else
-    this->program = ResourceCache::texturedPolygonProgram;
 }
 
 Mesh::~Mesh() {
@@ -24,9 +19,10 @@ Mesh::~Mesh() {
 }
 
 void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
-  glUseProgram(this->program);
+  GLuint program = ResourceCache::texturedPolygonProgram;
+  glUseProgram(program);
 
-  GLuint textureUniform = glGetUniformLocation(this->program, "texture0");
+  GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, this->texture);
@@ -37,11 +33,11 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
 
   glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
 
-  GLint coordAttr = glGetAttribLocation(this->program, "coord");
-  GLint texCoordAttr = glGetAttribLocation(this->program, "tex_coord");
-  GLint positionAttr = glGetAttribLocation(this->program, "position");
-  GLint angleAttr = glGetAttribLocation(this->program, "angle");
-  GLint scaleAttr = glGetAttribLocation(this->program, "scale_factor");
+  GLint coordAttr = glGetAttribLocation(program, "coord");
+  GLint texCoordAttr = glGetAttribLocation(program, "tex_coord");
+  GLint positionAttr = glGetAttribLocation(program, "position");
+  GLint angleAttr = glGetAttribLocation(program, "angle");
+  GLint scaleAttr = glGetAttribLocation(program, "scale_factor");
 
   glEnableVertexAttribArray(coordAttr);
   glEnableVertexAttribArray(texCoordAttr);
