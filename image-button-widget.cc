@@ -49,10 +49,18 @@ void ImageButtonWidget::HandleEvent(const SDL_Event &e) {
     bool xInRange = false;
     bool yInRange = false;
 
+    // this->width is expressed as a ratio of screen
+    // _height_. Calculate the width as a ratio of screen width for
+    // the following calculations.
+    int winw, winh;
+    SDL_GetWindowSize(this->screen->window, &winw, &winh);
+    float screenRatio = (float) winh / winw;
+    float w = this->width * screenRatio;
+
     if (this->xanchor == TextAnchor::CENTER)
-      xInRange = xp >= (this->x - this->width / 2.0) && xp <= (this->x + this->width / 2.0);
+      xInRange = xp >= (this->x - w / 2.0) && xp <= (this->x + w / 2.0);
     else
-      xInRange = xp >= this->x && xp <= (this->x + this->width);
+      xInRange = xp >= this->x && xp <= (this->x + w);
 
     if (this->yanchor == TextAnchor::CENTER)
       yInRange = yp >= (this->y - this->height / 2.0) && yp <= (this->y + this->height / 2.0);
