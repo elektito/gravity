@@ -1,30 +1,31 @@
 #include "main-menu-screen.hh"
 #include "button-widget.hh"
 #include "label-widget.hh"
+#include "image-button-widget.hh"
 #include "resource-cache.hh"
 
 MainMenuScreen::MainMenuScreen(SDL_Window *window) :
   Screen(window),
   background(window, ResourceCache::GetTexture("background"))
 {
-  this->widgets.push_back(new ButtonWidget(this,
-                                           "New Game",
-                                           0.0, 0.45, 0.1,
-                                           TextAnchor::CENTER, TextAnchor::TOP,
-                                           {255, 0, 0},
-                                           {255, 255, 255}));
-  this->widgets.push_back(new ButtonWidget(this,
-                                           "High Scores",
-                                           0.0, 0.55, 0.1,
-                                           TextAnchor::CENTER, TextAnchor::TOP,
-                                           {255, 0, 0},
-                                           {255, 255, 255}));
-  this->widgets.push_back(new ButtonWidget(this,
-                                           "Exit",
-                                           0.0, 0.65, 0.1,
-                                           TextAnchor::CENTER, TextAnchor::TOP,
-                                           {255, 0, 0},
-                                           {255, 255, 255}));
+  this->widgets.push_back(new ImageButtonWidget(this,
+                                                ResourceCache::GetTexture("new-game"),
+                                                0.0, 0.45, 0.08,
+                                                TextAnchor::CENTER, TextAnchor::TOP,
+                                                {255, 0, 0, 255},
+                                                {255, 255, 255, 255}));
+  this->widgets.push_back(new ImageButtonWidget(this,
+                                                ResourceCache::GetTexture("high-scores"),
+                                                0.0, 0.55, 0.08,
+                                                TextAnchor::CENTER, TextAnchor::TOP,
+                                                {255, 0, 0, 255},
+                                                {255, 255, 255, 255}));
+  this->widgets.push_back(new ImageButtonWidget(this,
+                                                ResourceCache::GetTexture("exit"),
+                                                0.0, 0.65, 0.08,
+                                                TextAnchor::CENTER, TextAnchor::TOP,
+                                                {255, 0, 0, 255},
+                                                {255, 255, 255, 255}));
   this->widgets.push_back(new LabelWidget(this,
                                           "Main Menu",
                                           0.0, 0.1, 0.2,
