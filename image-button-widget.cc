@@ -56,11 +56,12 @@ void ImageButtonWidget::HandleEvent(const SDL_Event &e) {
     SDL_GetWindowSize(this->screen->window, &winw, &winh);
     float screenRatio = (float) winh / winw;
     float w = this->width * screenRatio;
+    float nx = this->x * screenRatio;
 
     if (this->xanchor == TextAnchor::CENTER)
-      xInRange = xp >= (this->x - w / 2.0) && xp <= (this->x + w / 2.0);
+      xInRange = xp >= (nx - w / 2.0) && xp <= (nx + w / 2.0);
     else
-      xInRange = xp >= this->x && xp <= (this->x + w);
+      xInRange = xp >= nx && xp <= (nx + w);
 
     if (this->yanchor == TextAnchor::CENTER)
       yInRange = yp >= (this->y - this->height / 2.0) && yp <= (this->y + this->height / 2.0);
