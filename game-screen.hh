@@ -63,7 +63,6 @@ protected:
   int fps;
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
-  GLuint pauseVbo;
   bool spawnPlanet;
   Background background;
 
@@ -71,6 +70,7 @@ protected:
   LabelWidget *timeLabel;
   LabelWidget *fpsLabel;
   ImageWidget *continueLabel;
+  ImageWidget *pauseSign;
   ImageButtonWidget *endGameButton;
   ImageWidget *gameOverLabel;
 

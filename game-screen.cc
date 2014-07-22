@@ -187,6 +187,11 @@ GameScreen::GameScreen(SDL_Window *window) :
                                         0.0, -0.15, 0.05,
                                         TextAnchor::CENTER, TextAnchor::CENTER,
                                         {255, 255, 255, 128});
+  this->pauseSign = new ImageWidget(this,
+                                    ResourceCache::GetTexture("pause"),
+                                    0.0, 0.0, 0.2,
+                                    TextAnchor::CENTER, TextAnchor::CENTER,
+                                    {255, 255, 255, 128});
   this->endGameButton = new ImageButtonWidget(this,
                                               ResourceCache::GetTexture("end-game"),
                                               0.02, 0.02, 0.05,
@@ -202,6 +207,7 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->widgets.push_back(this->timeLabel);
   this->widgets.push_back(this->fpsLabel);
   this->widgets.push_back(this->continueLabel);
+  this->widgets.push_back(this->pauseSign);
   this->widgets.push_back(this->endGameButton);
   this->widgets.push_back(this->gameOverLabel);
 
@@ -219,25 +225,6 @@ GameScreen::GameScreen(SDL_Window *window) :
   };
 
   this->trailPointMesh = new Mesh(trailPointVertexData, 6, ResourceCache::GetTexture("trail-point"));
-
-  // Create the "pause sign" mesh.
-  GLfloat pauseVertexData[] = {
-    // triangle 1
-    /* coord */ 0.0f, 0.0f, /* tex_coord */ 0.0f, 0.0f,
-    /* coord */ 0.0f, 1.0f, /* tex_coord */ 0.0f, 1.0f,
-    /* coord */ 1.0f, 0.0f, /* tex_coord */ 1.0f, 0.0f,
-
-    // triangle 2
-    /* coord */ 0.0f, 1.0f, /* tex_coord */ 0.0f, 1.0f,
-    /* coord */ 1.0f, 1.0f, /* tex_coord */ 1.0f, 1.0f,
-    /* coord */ 1.0f, 0.0f, /* tex_coord */ 1.0f, 0.0f,
-  };
-
-  glGenBuffers(1, &this->pauseVbo);
-
-  glBindBuffer(GL_ARRAY_BUFFER, this->pauseVbo);
-  glBufferData(GL_ARRAY_BUFFER, 6 * 4 * sizeof(GLfloat), pauseVertexData, GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // Reset all state data.
   this->Reset();
@@ -377,6 +364,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       this->paused = !this->paused;
       this->fpsLabel->SetVisible(!this->paused);
       this->continueLabel->SetVisible(this->paused);
+      this->pauseSign->SetVisible(this->paused);
       this->endGameButton->SetVisible(this->paused);
 
       for (auto e : this->entities)
@@ -475,6 +463,7 @@ void GameScreen::Reset() {
 
   this->fpsLabel->SetVisible(!this->paused);
   this->continueLabel->SetVisible(this->paused);
+  this->pauseSign->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
   this->gameOverLabel->SetVisible(false);
 }
@@ -651,62 +640,6 @@ void GameScreen::Render(Renderer *renderer) {
   for (auto e : this->entities)
     if (e->isDrawable)
       e->mesh->Draw(e->body->GetPosition(), e->body->GetAngle());
-
-  // Draw HUD.
-  if (this->paused) {
-    GLuint program = ResourceCache::hudTexturedPolygonProgram;
-
-    glUseProgram(program);
-
-    GLuint resolutionUniform = glGetUniformLocation(program, "resolution");
-    int winw, winh;
-    SDL_GetWindowSize(this->window, &winw, &winh);
-    glUniform2f(resolutionUniform, winw, winh);
-
-    GLuint textureUniform = glGetUniformLocation(program, "texture0");
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ResourceCache::GetTexture("pause"));
-    glUniform1i(textureUniform, 0); // set it to 0  because the texture is bound to GL_TEXTURE0
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindBuffer(GL_ARRAY_BUFFER, this->pauseVbo);
-
-    GLint coordAttr = glGetAttribLocation(program, "coord");
-    GLint texCoordAttr = glGetAttribLocation(program, "tex_coord");
-    GLint positionAttr = glGetAttribLocation(program, "position");
-    GLint xalignAttr = glGetAttribLocation(program, "xalign");
-    GLint yalignAttr = glGetAttribLocation(program, "yalign");
-    GLint widthAttr = glGetAttribLocation(program, "width");
-    GLint heightAttr = glGetAttribLocation(program, "height");
-    GLint colorAttr = glGetAttribLocation(program, "color");
-
-    glEnableVertexAttribArray(coordAttr);
-    glEnableVertexAttribArray(texCoordAttr);
-
-    glVertexAttribPointer(coordAttr, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*) 0);
-    glVertexAttribPointer(texCoordAttr, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat)));
-
-    glVertexAttrib2f(positionAttr, 0.0f, 0.0f);
-    glVertexAttribI1i(xalignAttr, 2);
-    glVertexAttribI1i(yalignAttr, 2);
-    glVertexAttrib1f(widthAttr, 0.2);
-    glVertexAttrib1f(heightAttr, 0.2);
-    glVertexAttrib4f(colorAttr, 1.0f, 1.0f, 1.0f, 1.0f);
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    if (glGetError() != GL_NO_ERROR)
-      cout << "OpenGL draw error." << endl;
-
-    glDisableVertexAttribArray(coordAttr);
-    glDisableVertexAttribArray(texCoordAttr);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glUseProgram(0);
-  }
 
   // Count this frame.
   if (!this->paused)
