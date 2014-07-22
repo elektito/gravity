@@ -72,6 +72,7 @@ protected:
   LabelWidget *fpsLabel;
   ImageWidget *continueLabel;
   ImageButtonWidget *endGameButton;
+  ImageWidget *gameOverLabel;
 
   // methods
   void FixCamera();

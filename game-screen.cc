@@ -193,12 +193,17 @@ GameScreen::GameScreen(SDL_Window *window) :
                                               TextAnchor::RIGHT, TextAnchor::BOTTOM,
                                               {255, 0, 0, 128},
                                               {255, 255, 255, 128});
+  this->gameOverLabel = new ImageWidget(this,
+                                        ResourceCache::GetTexture("game-over"),
+                                        0.0, 0.0, 0.1,
+                                        TextAnchor::CENTER, TextAnchor::CENTER);
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
   this->widgets.push_back(this->fpsLabel);
   this->widgets.push_back(this->continueLabel);
   this->widgets.push_back(this->endGameButton);
+  this->widgets.push_back(this->gameOverLabel);
 
   // Create the "trail point" mesh.
   GLfloat trailPointVertexData[] = {
@@ -273,8 +278,7 @@ void GameScreen::SetTimeRemaining(int time) {
 
   // Check for game over.
   if (this->timeRemaining == 0) {
-    this->state["name"] = "game-over";
-    this->state["score"] = to_string(this->score);
+    this->gameOverLabel->SetVisible(true);
 
     for (auto e : this->entities)
       if (e->isPlanet)
@@ -333,6 +337,9 @@ void GameScreen::SwitchScreen(const map<string, string> &lastState) {
 
 void GameScreen::HandleEvent(const SDL_Event &e) {
   int x, y;
+
+  if (this->gameOverLabel->GetVisible())
+    return;
 
   switch (e.type) {
   case SDL_MOUSEBUTTONDOWN:
@@ -469,6 +476,7 @@ void GameScreen::Reset() {
   this->fpsLabel->SetVisible(!this->paused);
   this->continueLabel->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
+  this->gameOverLabel->SetVisible(false);
 }
 
 void GameScreen::Save(ostream &s) const {
@@ -526,6 +534,11 @@ void GameScreen::Load(istream &s) {
 }
 
 void GameScreen::Advance(float dt) {
+  Timer::CheckAll();
+
+  if (this->gameOverLabel->GetVisible())
+    return;
+
   for (auto w : this->widgets)
     w->Advance(dt);
 
@@ -534,8 +547,6 @@ void GameScreen::Advance(float dt) {
 
   if (this->paused && !this->stepOnce)
     return;
-
-  Timer::CheckAll();
 
   // Set planet "whooshing" volume.
   for (auto e : this->entities)
@@ -873,6 +884,12 @@ void GameScreen::AddRandomEnemy() {
 }
 
 void GameScreen::TimerCallback(float elapsed) {
+  if (this->gameOverLabel->GetVisible()) {
+    this->state["name"] = "game-over";
+    this->state["score"] = to_string(this->score);
+    return;
+  }
+
   // Update FPS counter.
   this->fps = this->frameCount;
     stringstream ss;

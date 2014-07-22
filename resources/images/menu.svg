@@ -25,7 +25,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="691.21497"
+     inkscape:cx="439.7864"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -143,5 +143,20 @@
          x="48.42635"
          y="832.18359"
          style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">[PRESS P to continue]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="49.854908"
+       y="945.04071"
+       id="text2985-0-9-4"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/game-over.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
+         sodipodi:role="line"
+         id="tspan2987-3-75-7"
+         x="49.854908"
+         y="945.04071"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">Game Over</tspan></text>
   </g>
 </svg>
