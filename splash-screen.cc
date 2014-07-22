@@ -68,6 +68,15 @@ void SplashScreen::Advance(float dt) {
   case 10:
     ResourceCache::GetTexture("pause");
     break;
+  case 11:
+    ResourceCache::GetTexture("new-game");
+    break;
+  case 12:
+    ResourceCache::GetTexture("high-scores");
+    break;
+  case 13:
+    ResourceCache::GetTexture("exit");
+    break;
   default:
     this->state["name"] = "splash-over";
     break;
