@@ -1,6 +1,7 @@
 #include "high-scores-screen.hh"
 #include "config.hh"
-#include "button-widget.hh"
+#include "image-button-widget.hh"
+#include "image-widget.hh"
 #include "resource-cache.hh"
 
 #include <iomanip>
@@ -12,17 +13,17 @@ HighScoresScreen::HighScoresScreen(SDL_Window *window) :
   currentScoreIndex(-1),
   background(window, ResourceCache::GetTexture("background"))
 {
-  this->widgets.push_back(new ButtonWidget(this,
-                                           "Main Menu",
-                                           0.02, 0.02, 0.1,
-                                           TextAnchor::RIGHT, TextAnchor::BOTTOM,
-                                           {255, 0, 0},
-                                           {255, 255, 255}));
-  this->widgets.push_back(new LabelWidget(this,
-                                          "High Scores",
-                                          0.0, 0.1, 0.2,
+  this->widgets.push_back(new ImageButtonWidget(this,
+                                                ResourceCache::GetTexture("main-menu"),
+                                                0.02, 0.02, 0.05,
+                                                TextAnchor::RIGHT, TextAnchor::BOTTOM,
+                                                {255, 0, 0, 128},
+                                                {255, 255, 255, 128}));
+  this->widgets.push_back(new ImageWidget(this,
+                                          ResourceCache::GetTexture("high-scores"),
+                                          0.0, 0.1, 0.1,
                                           TextAnchor::CENTER, TextAnchor::TOP,
-                                          {255, 0, 0}));
+                                          {255, 0, 0, 255}));
 
   for (int i =0; i < 5; ++i) {
     LabelWidget *label = new LabelWidget(this,

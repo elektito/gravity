@@ -12,20 +12,20 @@ MainMenuScreen::MainMenuScreen(SDL_Window *window) :
                                                 ResourceCache::GetTexture("new-game"),
                                                 0.1, 0.15, 0.08,
                                                 TextAnchor::RIGHT, TextAnchor::TOP,
-                                                {255, 0, 0, 255},
-                                                {255, 255, 255, 255}));
+                                                {255, 0, 0, 128},
+                                                {255, 255, 255, 128}));
   this->widgets.push_back(new ImageButtonWidget(this,
                                                 ResourceCache::GetTexture("high-scores"),
                                                 0.0, 0.3, 0.08,
                                                 TextAnchor::CENTER, TextAnchor::TOP,
-                                                {255, 0, 0, 255},
-                                                {255, 255, 255, 255}));
+                                                {255, 0, 0, 128},
+                                                {255, 255, 255, 128}));
   this->widgets.push_back(new ImageButtonWidget(this,
                                                 ResourceCache::GetTexture("exit"),
                                                 0.1, 0.45, 0.08,
                                                 TextAnchor::LEFT, TextAnchor::TOP,
-                                                {255, 0, 0, 255},
-                                                {255, 255, 255, 255}));
+                                                {255, 0, 0, 128},
+                                                {255, 255, 255, 128}));
   this->widgets.push_back(new ImageWidget(this,
                                           ResourceCache::GetTexture("splash"),
                                           -0.15, 0.0, 0.6,

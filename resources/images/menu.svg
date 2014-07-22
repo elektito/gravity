@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1000"
+   width="2000"
    height="1000"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="menu.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -22,10 +22,10 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="123.57143"
+     inkscape:cx="691.21497"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -34,7 +34,8 @@
      inkscape:window-height="1056"
      inkscape:window-x="65"
      inkscape:window-y="24"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     borderlayer="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -54,39 +55,93 @@
      transform="translate(0,-52.362183)">
     <text
        xml:space="preserve"
-       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
        x="48.571426"
        y="209.50504"
        id="text2985"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/new-game.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
          sodipodi:role="line"
          id="tspan2987"
          x="48.571426"
          y="209.50504"
-         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">New Game</tspan></text>
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">New Game</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
-       x="48.783482"
-       y="349.32648"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="48.571426"
+       y="334.10321"
        id="text2985-3"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/high-scores.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
          sodipodi:role="line"
          id="tspan2987-1"
-         x="48.783482"
-         y="349.32648"
-         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">High scores</tspan></text>
+         x="48.571426"
+         y="334.10321"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">High scores</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
-       x="51.640617"
-       y="473.61221"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="48.571426"
+       y="458.70145"
        id="text2985-0"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/exit.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
          sodipodi:role="line"
          id="tspan2987-3"
-         x="51.640617"
-         y="473.61221"
-         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">Exit</tspan></text>
+         x="48.571426"
+         y="458.70145"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">Exit</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="48.571426"
+       y="583.29968"
+       id="text2985-0-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/main-menu.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
+         sodipodi:role="line"
+         id="tspan2987-3-7"
+         x="48.571426"
+         y="583.29968"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">Main Menu</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="48.571426"
+       y="707.89789"
+       id="text2985-0-9"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/end-game.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
+         sodipodi:role="line"
+         id="tspan2987-3-75"
+         x="48.571426"
+         y="707.89789"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">End Game</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;font-family:KenVector Future;-inkscape-font-specification:KenVector Future"
+       x="48.42635"
+       y="832.18359"
+       id="text2985-0-9-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mostafa/source/gravity/resources/images/continue.png"
+       inkscape:export-xdpi="725.66931"
+       inkscape:export-ydpi="725.66931"><tspan
+         sodipodi:role="line"
+         id="tspan2987-3-75-8"
+         x="48.42635"
+         y="832.18359"
+         style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold">[PRESS P to continue]</tspan></text>
   </g>
 </svg>

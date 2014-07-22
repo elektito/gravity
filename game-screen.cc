@@ -182,17 +182,17 @@ GameScreen::GameScreen(SDL_Window *window) :
                                    0.02, 0.0, 0.1,
                                    TextAnchor::LEFT, TextAnchor::BOTTOM,
                                    {255, 255, 255, 128});
-  this->continueLabel = new LabelWidget(this,
-                                        "[Press P to continue]",
-                                        0.0, 0.02, 0.05,
-                                        TextAnchor::CENTER, TextAnchor::BOTTOM,
+  this->continueLabel = new ImageWidget(this,
+                                        ResourceCache::GetTexture("continue"),
+                                        0.0, -0.15, 0.05,
+                                        TextAnchor::CENTER, TextAnchor::CENTER,
                                         {255, 255, 255, 128});
-  this->endGameButton = new ButtonWidget(this,
-                                         "End Game",
-                                         0.02, 0.02, 0.05,
-                                         TextAnchor::RIGHT, TextAnchor::BOTTOM,
-                                         {255, 0, 0, 128},
-                                         {255, 255, 255, 128});
+  this->endGameButton = new ImageButtonWidget(this,
+                                              ResourceCache::GetTexture("end-game"),
+                                              0.02, 0.02, 0.05,
+                                              TextAnchor::RIGHT, TextAnchor::BOTTOM,
+                                              {255, 0, 0, 128},
+                                              {255, 255, 255, 128});
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);

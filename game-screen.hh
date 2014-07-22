@@ -6,7 +6,7 @@
 #include "timer.hh"
 #include "entity.hh"
 #include "label-widget.hh"
-#include "button-widget.hh"
+#include "image-button-widget.hh"
 #include "mesh.hh"
 
 #include <SDL2/SDL_mixer.h>
@@ -70,8 +70,8 @@ protected:
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
   LabelWidget *fpsLabel;
-  LabelWidget *continueLabel;
-  ButtonWidget *endGameButton;
+  ImageWidget *continueLabel;
+  ImageButtonWidget *endGameButton;
 
   // methods
   void FixCamera();
