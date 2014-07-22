@@ -23,7 +23,7 @@ protected:
   } color;
 
 public:
-  ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor);
+  ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color={255, 255, 255, 255});
   virtual ~ImageWidget();
 
   void SetColor(float r, float g, float b, float a);

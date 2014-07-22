@@ -3,14 +3,15 @@
 
 #include <iostream>
 
-ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor) :
+ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color) :
     Widget(screen),
     x(x),
     y(y),
     height(height),
     xanchor(xanchor),
     yanchor(yanchor),
-    texture(texture)
+    texture(texture),
+    color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f})
 {
   const GLfloat vertexData[] = {
     // triangle 1
@@ -38,8 +39,6 @@ ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float
 
   float ratio = (float) textureWidth / textureHeight;
   this->width = height * ratio;
-
-  this->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 ImageWidget::~ImageWidget() {
