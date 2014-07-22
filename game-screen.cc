@@ -697,10 +697,6 @@ void GameScreen::Render(Renderer *renderer) {
     glUseProgram(0);
   }
 
-  // Draw origin.
-  //renderer->DrawLine(b2Vec2(0, 1), b2Vec2(0, -1), 255, 0, 0, 255);
-  //renderer->DrawLine(b2Vec2(1, 0), b2Vec2(-1, 0), 255, 0, 0, 255);
-
   // Count this frame.
   if (!this->paused)
     this->frameCount++;
