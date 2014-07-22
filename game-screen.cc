@@ -969,15 +969,20 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
   auto startr = r / 10.0;
   auto endr = r / 2.0;
   r = startr;
-  float32 a = 128;
+
+  const float32 starta = 0.25;
+  const float32 enda = 0.5;
+  float32 a = starta;
+
   float32 dr, da;
   if (points.size() > 0) {
     dr = (endr - startr) / points.size();
-    da = (255 - a) / points.size();
+    da = (enda - starta) / points.size();
   }
 
   for (auto &p : points) {
     float scale_factor = r / e->body->GetFixtureList()->GetShape()->m_radius;
+    this->trailPointMesh->SetColor(1.0, 1.0, 1.0, a);
     this->trailPointMesh->Draw(p.pos, 0.0f, scale_factor);
     r += dr;
     a += da;

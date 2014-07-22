@@ -10,10 +10,18 @@ protected:
   GLuint texture;
   int vertexCount;
 
+  struct {
+    float r;
+    float g;
+    float b;
+    float a;
+  } color;
+
 public:
   Mesh(const GLfloat *vertexData, int n, GLuint texture);
   ~Mesh();
 
+  void SetColor(float r, float g, float b, float a);
   void Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor=1.0f) const;
 };
 
