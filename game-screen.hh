@@ -85,6 +85,7 @@ protected:
   void SetTimeRemaining(int time);
   b2Vec2 GetRandomPosition();
   void SpawnPlanet();
+  void TogglePause();
 
   void DrawGrid(Renderer *renderer) const;
   void DrawTrail(Renderer *renderer, const Entity *entity) const;

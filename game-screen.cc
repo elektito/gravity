@@ -242,6 +242,23 @@ GameScreen::~GameScreen() {
   delete this->trailPointMesh;
 }
 
+void GameScreen::TogglePause() {
+  this->paused = !this->paused;
+  this->fpsLabel->SetVisible(!this->paused);
+  this->continueLabel->SetVisible(this->paused);
+  this->pauseSign->SetVisible(this->paused);
+  this->endGameButton->SetVisible(this->paused);
+
+  for (auto e : this->entities)
+    if (e->isPlanet)
+      if (this->paused)
+        Mix_Pause(e->planetWhooshChannel);
+      else
+        Mix_Resume(e->planetWhooshChannel);
+
+  Timer::TogglePauseAll();
+}
+
 void GameScreen::SetScore(int score) {
   this->score = score;
 
@@ -355,26 +372,17 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
   case SDL_MOUSEBUTTONUP:
     if (e.button.button == SDL_BUTTON_LEFT) {
       this->draggingBody = nullptr;
+
+      if (this->paused) {
+        this->TogglePause();
+      }
     }
     break;
 
   case SDL_KEYDOWN:
     switch (e.key.keysym.sym) {
     case SDLK_p:
-      this->paused = !this->paused;
-      this->fpsLabel->SetVisible(!this->paused);
-      this->continueLabel->SetVisible(this->paused);
-      this->pauseSign->SetVisible(this->paused);
-      this->endGameButton->SetVisible(this->paused);
-
-      for (auto e : this->entities)
-        if (e->isPlanet)
-          if (this->paused)
-            Mix_Pause(e->planetWhooshChannel);
-          else
-            Mix_Resume(e->planetWhooshChannel);
-
-      Timer::TogglePauseAll();
+      this->TogglePause();
       break;
     case SDLK_n:
       this->stepOnce = true;
