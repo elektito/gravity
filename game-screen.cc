@@ -342,7 +342,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       b2Body *b = GetBodyFromPoint(p, &this->world);
       if (b) {
         Entity *e = (Entity*) b->GetUserData();
-        if (e->isSun) {
+        if (e->isSun && !this->paused) {
           this->draggingBody = b;
           this->draggingOffset = p - b->GetPosition();
         }
