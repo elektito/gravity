@@ -50,14 +50,16 @@ void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
 
     this->scores.push_back(score);
     std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
+
+    auto it = find(this->scores.rbegin(), this->scores.rend(), score);
+    if (it != this->scores.rend())
+      this->currentScoreIndex = this->scores.rend() - it - 1;
+
     if (this->scores.size() > Config::HighScores)
       this->scores.resize(Config::HighScores);
 
-    // See if the current score made it into the high scores.
-    for (int i = 0; i < this->scores.size(); ++i)
-      if (score == this->scores[i])
-        if (i != this->scores.size() - 1 || score > this->scores[i])
-          this->currentScoreIndex = i;
+    if (this->currentScoreIndex >= this->scores.size())
+      this->currentScoreIndex = -1;
   }
 
   for (auto w : this->widgets)
