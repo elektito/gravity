@@ -866,7 +866,7 @@ void GameScreen::TimerCallback(float elapsed) {
     this->SetTimeRemaining(this->timeRemaining - 1);
 
   // Occasionally add collectibles.
-  if (rand() % 10 == 0)
+  if (rand() % 8 == 0)
     this->AddRandomCollectible();
 
   // Occasionally add enemy ships.
