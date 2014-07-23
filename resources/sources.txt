@@ -4,6 +4,10 @@ This file lists the licenses and sources of third party assets.
    by qubodup, CC-BY-SA 3.0
    http://opengameart.org/content/space-jet-side-sprite
 
+ - Enemy Ship
+   by Kenney, CC0 (Public Domain)
+   http://kenney.itch.io/kenney-donation
+
 Also, the following fonts have been used:
 
  - "KenVector Future" by Kenney

@@ -366,12 +366,13 @@ Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, flo
   e->body = world->CreateBody(&bd);
 
   b2PolygonShape shape;
-  b2Vec2 vertices[5];
-  vertices[0].Set(-2, -2);
-  vertices[1].Set(-2, 0);
-  vertices[2].Set(0, 2);
-  vertices[3].Set(2, 0);
-  vertices[4].Set(2, -2);
+  b2Vec2 vertices[6];
+  vertices[0].Set(-1.84375, -2.0);
+  vertices[1].Set(-2.453125, 0.1171875);
+  vertices[2].Set(-0.96875, 1.9921875);
+  vertices[3].Set(0.9453125, 1.9921875);
+  vertices[4].Set(2.4453125, 0.1171875);
+  vertices[5].Set(1.8359375, -2.0);
   shape.Set(vertices, 5);
 
   b2FixtureDef fd;
@@ -383,22 +384,27 @@ Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, flo
   // Create mesh.
   GLfloat vertexData[] = {
     // triangle 1
-    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
-    /* coord */ -2.0f,  0.0f, /* tex_coord */ 0.0f, 0.5f,
-    /* coord */  0.0f,  2.0f, /* tex_coord */ 0.5f, 1.0f,
+    /* coord */ -1.84375, -2.0, /* tex_coord */ 0.12440191387559808, 0.0,
+    /* coord */ -2.453125, 0.1171875, /* tex_coord */ 0.0, 0.5303326810176126,
+    /* coord */ -0.96875, 1.9921875, /* tex_coord */ 0.30303030303030304, 1.0,
 
     // triangle 2
-    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
-    /* coord */  0.0f,  2.0f, /* tex_coord */ 0.5f, 1.0f,
-    /* coord */  2.0f,  0.0f, /* tex_coord */ 1.0f, 0.5f,
+    /* coord */ -1.84375, -2.0, /* tex_coord */ 0.12440191387559808, 0.0,
+    /* coord */ -0.96875, 1.9921875, /* tex_coord */ 0.30303030303030304, 1.0,
+    /* coord */ 0.9453125, 1.9921875, /* tex_coord */ 0.69377990430622, 1.0,
 
     // triangle 3
-    /* coord */ -2.0f, -2.0f, /* tex_coord */ 0.0f, 0.0f,
-    /* coord */  2.0f,  0.0f, /* tex_coord */ 1.0f, 0.5f,
-    /* coord */  2.0f, -2.0f, /* tex_coord */ 1.0f, 0.0f,
+    /* coord */ -1.84375, -2.0, /* tex_coord */ 0.12440191387559808, 0.0,
+    /* coord */ 0.9453125, 1.9921875, /* tex_coord */ 0.69377990430622, 1.0,
+    /* coord */ 2.4453125, 0.1171875, /* tex_coord */ 1.0, 0.5303326810176126,
+
+    // triangle 4
+    /* coord */ -1.84375, -2.0, /* tex_coord */ 0.12440191387559808, 0.0,
+    /* coord */ 2.4453125, 0.1171875, /* tex_coord */ 1.0, 0.5303326810176126,
+    /* coord */ 1.8359375, -2.0, /* tex_coord */ 0.8755980861244019, 0.0,
   };
 
-  e->mesh = new Mesh(vertexData, 9, ResourceCache::GetTexture("enemy"));
+  e->mesh = new Mesh(vertexData, 12, ResourceCache::GetTexture("enemy"));
   e->isDrawable = true;
 
   e->body->SetUserData(e);
