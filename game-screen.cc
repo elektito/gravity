@@ -177,11 +177,13 @@ GameScreen::GameScreen(SDL_Window *window) :
                                      0.02, 0.0, 0.1,
                                      TextAnchor::LEFT, TextAnchor::TOP,
                                      {255, 255, 255, 128});
+#ifndef RELEASE_BUILD
   this->fpsLabel = new LabelWidget(this,
                                    "FPS: 0",
                                    0.02, 0.0, 0.1,
                                    TextAnchor::LEFT, TextAnchor::BOTTOM,
                                    {255, 255, 255, 128});
+#endif
   this->continueLabel = new ImageWidget(this,
                                         ResourceCache::GetTexture("continue"),
                                         0.0, -0.15, 0.05,
@@ -205,7 +207,9 @@ GameScreen::GameScreen(SDL_Window *window) :
 
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
+#ifndef RELEASE_BUILD
   this->widgets.push_back(this->fpsLabel);
+#endif
   this->widgets.push_back(this->continueLabel);
   this->widgets.push_back(this->pauseSign);
   this->widgets.push_back(this->endGameButton);
@@ -244,7 +248,9 @@ GameScreen::~GameScreen() {
 
 void GameScreen::TogglePause() {
   this->paused = !this->paused;
+#ifndef RELEASE_BUILD
   this->fpsLabel->SetVisible(!this->paused);
+#endif
   this->continueLabel->SetVisible(this->paused);
   this->pauseSign->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
@@ -469,7 +475,9 @@ void GameScreen::Reset() {
   for (auto w : this->widgets)
     w->Reset();
 
+#ifndef RELEASE_BUILD
   this->fpsLabel->SetVisible(!this->paused);
+#endif
   this->continueLabel->SetVisible(this->paused);
   this->pauseSign->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
@@ -833,9 +841,11 @@ void GameScreen::TimerCallback(float elapsed) {
 
   // Update FPS counter.
   this->fps = this->frameCount;
+#ifndef RELEASE_BUILD
     stringstream ss;
     ss << "FPS: " << this->fps;
     this->fpsLabel->SetText(ss.str());
+#endif
   this->frameCount = 0;
 
   // Decrement remaining time.

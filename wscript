@@ -28,6 +28,7 @@ def configure(cfg):
 
     if cfg.options.release_build:
         cfg.env.append_value('CXXFLAGS', ['-O3'])
+        cfg.env.append_value('DEFINES', 'RELEASE_BUILD')
     else:
         cfg.env.append_value('CXXFLAGS', ['-g'])
 

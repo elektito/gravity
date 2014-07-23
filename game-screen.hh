@@ -68,7 +68,9 @@ protected:
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;
+#ifndef RELEASE_BUILD
   LabelWidget *fpsLabel;
+#endif
   ImageWidget *continueLabel;
   ImageWidget *pauseSign;
   ImageButtonWidget *endGameButton;
