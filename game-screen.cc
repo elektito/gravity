@@ -779,8 +779,9 @@ void GameScreen::AddRandomCollectible() {
   // Choose a random position, but make sure it is not too close to
   // another collectible.
   b2Vec2 pos;
-  bool retry = false;
+  bool retry;
   do {
+    retry = false;
     pos = this->GetRandomPosition();
     for (auto e : this->entities)
       if (e->isCollectible) {
