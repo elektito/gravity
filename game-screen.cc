@@ -351,6 +351,9 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
   if (this->gameOverLabel->GetVisible())
     return;
 
+  for (auto w : this->widgets)
+    w->HandleEvent(e);
+
   switch (e.type) {
   case SDL_MOUSEBUTTONDOWN:
     if (e.button.button == SDL_BUTTON_LEFT) {
@@ -402,9 +405,6 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     }
     break;
   } // switch (e.type)
-
-  for (auto w : this->widgets)
-    w->HandleEvent(e);
 }
 
 void GameScreen::HandleWidgetEvent(int event_type, Widget *widget) {
