@@ -781,7 +781,20 @@ void GameScreen::UpdateTrails() {
 }
 
 void GameScreen::AddRandomCollectible() {
-  b2Vec2 pos = this->GetRandomPosition();
+  // Choose a random position, but make sure it is not too close to
+  // another collectible.
+  b2Vec2 pos;
+  bool retry = false;
+  do {
+    pos = this->GetRandomPosition();
+    for (auto e : this->entities)
+      if (e->isCollectible) {
+        float distanceSq = (e->body->GetPosition() - pos).LengthSquared();
+        if (distanceSq < 25.0)
+          retry = true;
+      }
+  } while (retry);
+
   CollectibleType types[] = {CollectibleType::PLUS_SCORE,
                              CollectibleType::MINUS_SCORE,
                              CollectibleType::PLUS_TIME,
