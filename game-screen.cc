@@ -674,11 +674,6 @@ void GameScreen::FixCamera() {
 }
 
 void GameScreen::FixCamera(Entity *e) {
-  const float32 min_width = 150;
-  const float32 min_height = 75;
-  const float32 max_width = 300;
-  const float32 max_height = 150;
-
   int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
   float32 ratio = ((float32) winw) / winh;
@@ -730,20 +725,20 @@ void GameScreen::FixCamera(Entity *e) {
     height = height2;
   }
 
-  if (width > max_width) {
-    width = max_width;
+  if (width > Config::CameraMaxWidth) {
+    width = Config::CameraMaxWidth;
     height = width / ratio;
   }
-  if (width < min_width) {
-    width = min_width;
+  if (width < Config::CameraMinWidth) {
+    width = Config::CameraMinWidth;
     height = width / ratio;
   }
-  if (height > max_height) {
-    height = max_height;
+  if (height > Config::CameraMaxHeight) {
+    height = Config::CameraMaxHeight;
     width = height * ratio;
   }
-  if (height < min_height) {
-    height = min_height;
+  if (height < Config::CameraMinHeight) {
+    height = Config::CameraMinHeight;
     width = height * ratio;
   }
 
@@ -851,6 +846,12 @@ void GameScreen::TimerCallback(float elapsed) {
     this->state["score"] = to_string(this->score);
     return;
   }
+
+  // Remove out of bounds enemy ships.
+  for (auto e : this->entities)
+    if (e->isEnemy)
+      if (e->body->GetPosition().LengthSquared() > pow(Config::CameraMaxWidth / 2.0, 2) + pow(Config::CameraMaxHeight / 2.0, 2) + 25.0)
+        this->toBeRemoved.push_back(e);
 
   // Update FPS counter.
   this->fps = this->frameCount;
