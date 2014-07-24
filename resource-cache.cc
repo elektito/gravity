@@ -291,18 +291,10 @@ GLuint GetTexture(const string &name, const string &type) {
 
   int nw = w;
   int nh = h;
-  if (w > GL_MAX_TEXTURE_SIZE) {
-    float ratio = (float) h / w;
-    nw = GL_MAX_TEXTURE_SIZE;
-    nh = (float) nw * ratio;
-    cout << "resize1: ratio=" << ratio << " nw=" << nw << " nh=" << nh << endl;
-  }
-
-  if (h > GL_MAX_TEXTURE_SIZE) {
-    float ratio = (float) w / h;
-    nh = GL_MAX_TEXTURE_SIZE;
-    nw = (float) nh * ratio;
-    cout << "resize2: ratio=" << ratio << " nw=" << nw << " nh=" << nh << endl;
+  while (nw > GL_MAX_TEXTURE_SIZE || h > GL_MAX_TEXTURE_SIZE) {
+    nw /= 2;
+    nh /= 2;
+    cout << "resize: nw=" << nw << " nh=" << nh << endl;
   }
 
   if (nw != w || nh != h) {
