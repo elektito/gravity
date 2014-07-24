@@ -155,7 +155,7 @@ void LabelWidget::Render(Renderer *renderer) {
   g = (float) this->color.g / 255;
   b = (float) this->color.b / 255;
   a = (float) this->color.a / 255;
-  glVertexAttrib3f(colorAttr, r, g, b);
+  glVertexAttrib4f(colorAttr, r, g, b, a);
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   if (glGetError() != GL_NO_ERROR)

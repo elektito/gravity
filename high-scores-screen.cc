@@ -17,8 +17,8 @@ HighScoresScreen::HighScoresScreen(SDL_Window *window) :
                                                 ResourceCache::GetTexture("main-menu"),
                                                 0.02, 0.02, 0.05,
                                                 TextAnchor::RIGHT, TextAnchor::BOTTOM,
-                                                {255, 0, 0, 128},
-                                                {255, 255, 255, 128}));
+                                                {255, 0, 0, 200},
+                                                {255, 255, 255, 200}));
   this->widgets.push_back(new ImageWidget(this,
                                           ResourceCache::GetTexture("high-scores"),
                                           0.0, 0.1, 0.1,
@@ -30,7 +30,7 @@ HighScoresScreen::HighScoresScreen(SDL_Window *window) :
                                          "000000",
                                          0.0, 0.1 + 0.2 + i * 0.1, 0.1,
                                          TextAnchor::CENTER, TextAnchor::TOP,
-                                         {255, 255, 255});
+                                         {255, 255, 255, 128});
     this->widgets.push_back(label);
     this->labels.push_back(label);
   }
@@ -130,9 +130,9 @@ void HighScoresScreen::Render(Renderer *renderer) {
     ss << setw(6) << setfill('0') << this->scores[i];
     SDL_Color c;
     if (i == this->currentScoreIndex)
-      c = {255, 255, 0};
+      c = {255, 255, 0, 200};
     else
-      c = {255, 255, 255};
+      c = {255, 255, 255, 200};
     this->labels[i]->SetColor(c);
     this->labels[i]->SetText(ss.str());
     this->labels[i]->SetVisible(true);
