@@ -57,7 +57,7 @@ void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
 
   glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
   if (glGetError() != GL_NO_ERROR)
-    cout << "OpenGL draw error." << endl;
+    cout << "mesh: OpenGL draw error." << endl;
 
   glDisableVertexAttribArray(coordAttr);
   glDisableVertexAttribArray(texCoordAttr);

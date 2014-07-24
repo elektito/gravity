@@ -101,7 +101,7 @@ void Background::Draw() {
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   if (glGetError() != GL_NO_ERROR)
-    cout << "OpenGL draw error." << endl;
+    cout << "renderer: OpenGL draw error." << endl;
 
   glDisableVertexAttribArray(coordAttr);
   glDisableVertexAttribArray(texCoordAttr);

@@ -159,7 +159,7 @@ void LabelWidget::Render(Renderer *renderer) {
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   if (glGetError() != GL_NO_ERROR)
-    cout << "OpenGL draw error." << endl;
+    cout << "label-widget: OpenGL draw error." << endl;
 
   glDisableVertexAttribArray(coordAttr);
   glDisableVertexAttribArray(texCoordAttr);
