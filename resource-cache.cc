@@ -172,7 +172,7 @@ TTF_Font *GetFont(int height_pixels) {
   if (it != font_cache.end())
     return it->second;
 
-  TTF_Font *font = TTF_OpenFont("resources/fonts/UbuntuMono-B.ttf", height_pixels);
+  TTF_Font *font = TTF_OpenFont("resources/fonts/kenvector_future.ttf", height_pixels);
   if (font == nullptr) {
     stringstream ss;
     ss << "Unable to load font. SDL_ttf error: " << TTF_GetError();
