@@ -203,74 +203,69 @@ Mix_Chunk *GetSound(const string &name) {
   return chunk;
 }
 
-int
-        downscale_image
-        (
-                const unsigned char* const orig,
-                int width, int height, int channels,
-                unsigned char* resampled,
-                int new_width, int new_height
-        )
+// This is adapted from libSOIL source code, specifically from
+// image_helper.c source file in which this function is called
+// mipmap_image.
+int downscale_image(const unsigned char* const orig,
+                    int width, int height, int channels,
+                    unsigned char* resampled,
+                    int new_width, int new_height)
 {
-        int i, j, c;
-        int block_size_x = width / new_width;
-        int block_size_y = height / new_height;
+  int i, j, c;
+  int block_size_x = width / new_width;
+  int block_size_y = height / new_height;
 
-        /*	error check	*/
-        if( (width < 1) || (height < 1) ||
-                (channels < 1) || (orig == NULL) ||
-                (resampled == NULL) ||
-                (block_size_x < 1) || (block_size_y < 1) )
-        {
-                /*	nothing to do	*/
-                return 0;
+  // error check
+  if((width < 1) || (height < 1) ||
+     (channels < 1) || (orig == NULL) ||
+     (resampled == NULL) ||
+     (block_size_x < 1) || (block_size_y < 1))
+  {
+    // nothing to do
+    return 0;
+  }
+
+  if( new_width < 1 ) {
+    new_width = 1;
+  }
+  if(new_height < 1) {
+    new_height = 1;
+  }
+  for (j = 0; j < new_height; ++j) {
+    for(i = 0; i < new_width; ++i) {
+      for( c = 0; c < channels; ++c ) {
+        const int index = (j*block_size_y)*width*channels + (i*block_size_x)*channels + c;
+        int sum_value;
+        int u, v;
+        int u_block = block_size_x;
+        int v_block = block_size_y;
+        int block_area;
+
+        // do a bit of checking so we don't over-run the boundaries
+        // (necessary for non-square textures)
+        if(block_size_x * (i+1) > width) {
+          u_block = width - i*block_size_y;
+        }
+        if(block_size_y * (j+1) > height) {
+          v_block = height - j*block_size_y;
         }
 
-        if( new_width < 1 )
-        {
-                new_width = 1;
-        }
-        if( new_height < 1 )
-        {
-                new_height = 1;
-        }
-        for( j = 0; j < new_height; ++j )
-        {
-                for( i = 0; i < new_width; ++i )
-                {
-                        for( c = 0; c < channels; ++c )
-                        {
-                                const int index = (j*block_size_y)*width*channels + (i*block_size_x)*channels + c;
-                                int sum_value;
-                                int u,v;
-                                int u_block = block_size_x;
-                                int v_block = block_size_y;
-                                int block_area;
-                                /*	do a bit of checking so we don't over-run the boundaries
-                                        (necessary for non-square textures!)	*/
-                                if( block_size_x * (i+1) > width )
-                                {
-                                        u_block = width - i*block_size_y;
-                                }
-                                if( block_size_y * (j+1) > height )
-                                {
-                                        v_block = height - j*block_size_y;
-                                }
-                                block_area = u_block*v_block;
-                                /*	for this pixel, see what the average
-                                        of all the values in the block are.
-                                        note: start the sum at the rounding value, not at 0	*/
-                                sum_value = block_area >> 1;
-                                for( v = 0; v < v_block; ++v )
-                                for( u = 0; u < u_block; ++u )
-                                {
-                                        sum_value += orig[index + v*width*channels + u*channels];
-                                }
-                                resampled[j*new_width*channels + i*channels + c] = sum_value / block_area;
-                        }
-                }
-        }
-        return 1;
+        block_area = u_block*v_block;
+
+        // for this pixel, see what the average of all the values in
+        // the block are.  note: start the sum at the rounding value,
+        // not at 0
+        sum_value = block_area >> 1;
+        for( v = 0; v < v_block; ++v )
+          for( u = 0; u < u_block; ++u )
+            sum_value += orig[index + v*width*channels + u*channels];
+
+        resampled[j*new_width*channels + i*channels + c] = sum_value / block_area;
+      }
+    }
+  }
+
+  return 1;
 }
 
 GLuint GetTexture(const string &name, const string &type) {
