@@ -22,7 +22,6 @@ def configure(cfg):
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
     cfg.check_cxx(lib='GL', uselib_store='GL')
     cfg.check_cxx(lib='GLEW', uselib_store='GLEW')
-    cfg.check_cxx(lib='SOIL', uselib_store='SOIL')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11'])
 
@@ -62,5 +61,5 @@ def build(bld):
     bld.program(
         source=source,
         target='gravity',
-        use='SDL2 SDL2_TTF SDL2_MIXER GL GLEW SOIL BOX2D'
+        use='SDL2 SDL2_TTF SDL2_MIXER GL GLEW BOX2D'
     )

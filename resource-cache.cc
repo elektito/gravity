@@ -1,10 +1,12 @@
 #include "resource-cache.hh"
 #include "helpers.hh"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <GL/glew.h>
-#include <SOIL/SOIL.h>
 
 #include <tuple>
 #include <string>
@@ -206,22 +208,29 @@ GLuint GetTexture(const string &name, const string &type) {
   if (it != texture_cache.end())
     return it->second;
 
-  GLuint texture = SOIL_load_OGL_texture(("resources/images/" + name + "." + type).data(),
-                                         SOIL_LOAD_AUTO,
-                                         SOIL_CREATE_NEW_ID,
-                                         0);
+  int w, h, channels;
+  uint8_t *img = stbi_load(("resources/images/" + name + "." + type).data(), &w, &h, &channels, 0);
+  if (img == nullptr) {
+    stringstream ss;
+    ss << "Unable to load image. stb_image error: "
+       << stbi_failure_reason();
+    throw runtime_error(ss.str());
+  }
+  cout << w << " " << h << " " << channels << " " << GL_MAX_TEXTURE_SIZE << endl;
+
+  GLuint texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+  auto err = glGetError();
+  if (err != GL_NO_ERROR)
+    cout << "OpenGL error " << err << " while loading image: " << name << endl;
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   // Generate mipmaps.
   glBindTexture(GL_TEXTURE_2D, texture);
   glGenerateMipmap(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 0);
-
-  if (texture == 0) {
-    stringstream ss;
-    ss << "Unable to load image. SOIL error: "
-       << SOIL_last_result();
-    throw runtime_error(ss.str());
-  }
 
   texture_cache[name] = texture;
 
