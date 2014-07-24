@@ -317,6 +317,8 @@ GLuint GetTexture(const string &name, const string &type) {
   auto err = glGetError();
   if (err != GL_NO_ERROR)
     cout << "OpenGL error " << err << " while loading image: " << name << endl;
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   // Generate mipmaps.
