@@ -391,6 +391,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
   case SDL_KEYDOWN:
     switch (e.key.keysym.sym) {
     case SDLK_p:
+    case SDLK_ESCAPE:
       this->TogglePause();
       break;
     case SDLK_n:
