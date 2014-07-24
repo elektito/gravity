@@ -573,7 +573,7 @@ void GameScreen::Advance(float dt) {
       float MAX_SPEED = 45.0f;
 
       int vol = 0;
-      float speed = e->body->GetLinearVelocity().Length();
+      float speed = (e->body->GetLinearVelocity() - this->sun->body->GetLinearVelocity()).Length();
       if (speed < MIN_SPEED)
         vol = 0;
       else if (speed > MAX_SPEED)
