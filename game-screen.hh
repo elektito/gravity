@@ -65,6 +65,9 @@ protected:
   Mesh *trailPointMesh;
   bool spawnPlanet;
   Background background;
+  bool mouseDown;
+  int mouseDownX;
+  int mouseDownY;
 
   LabelWidget *scoreLabel;
   LabelWidget *timeLabel;

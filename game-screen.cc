@@ -262,6 +262,10 @@ void GameScreen::TogglePause() {
       else
         Mix_Resume(e->planetWhooshChannel);
 
+  if (this->paused) {
+    this->draggingBody = nullptr;
+  }
+
   Timer::TogglePauseAll();
 }
 
@@ -367,6 +371,10 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
           this->draggingOffset = p - b->GetPosition();
         }
       }
+
+      this->mouseDown = true;
+      this->mouseDownX = x;
+      this->mouseDownY = y;
     }
     break;
 
@@ -382,8 +390,11 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
     if (e.button.button == SDL_BUTTON_LEFT) {
       this->draggingBody = nullptr;
 
-      if (this->paused) {
-        this->TogglePause();
+      SDL_GetMouseState(&x, &y);
+      if (mouseDown && abs(mouseDownX - x) <= 2 && abs(mouseDownY - y) <= 2) { // It's a click.
+        if (this->paused)
+          TogglePause();
+        this->mouseDown = false;
       }
     }
     break;
