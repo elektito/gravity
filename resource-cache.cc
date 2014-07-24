@@ -209,12 +209,12 @@ int
                 const unsigned char* const orig,
                 int width, int height, int channels,
                 unsigned char* resampled,
-                int block_size_x, int block_size_y,
                 int new_width, int new_height
         )
 {
-        int mip_width, mip_height;
         int i, j, c;
+        int block_size_x = width / new_width;
+        int block_size_y = height / new_height;
 
         /*	error check	*/
         if( (width < 1) || (height < 1) ||
@@ -225,19 +225,18 @@ int
                 /*	nothing to do	*/
                 return 0;
         }
-        mip_width = new_width;// width / block_size_x;
-        mip_height = new_height;// height / block_size_y;
-        /*if( mip_width < 1 )
+
+        if( new_width < 1 )
         {
-                mip_width = 1;
+                new_width = 1;
         }
-        if( mip_height < 1 )
+        if( new_height < 1 )
         {
-                mip_height = 1;
-                }*/
-        for( j = 0; j < mip_height; ++j )
+                new_height = 1;
+        }
+        for( j = 0; j < new_height; ++j )
         {
-                for( i = 0; i < mip_width; ++i )
+                for( i = 0; i < new_width; ++i )
                 {
                         for( c = 0; c < channels; ++c )
                         {
@@ -267,7 +266,7 @@ int
                                 {
                                         sum_value += orig[index + v*width*channels + u*channels];
                                 }
-                                resampled[j*mip_width*channels + i*channels + c] = sum_value / block_area;
+                                resampled[j*new_width*channels + i*channels + c] = sum_value / block_area;
                         }
                 }
         }
@@ -287,23 +286,18 @@ GLuint GetTexture(const string &name, const string &type) {
        << stbi_failure_reason();
     throw runtime_error(ss.str());
   }
-  cout << w << " " << h << " " << channels << " " << GL_MAX_TEXTURE_SIZE << endl;
 
   int nw = w;
   int nh = h;
   while (nw > GL_MAX_TEXTURE_SIZE || h > GL_MAX_TEXTURE_SIZE) {
     nw /= 2;
     nh /= 2;
-    cout << "resize: nw=" << nw << " nh=" << nh << endl;
   }
 
   if (nw != w || nh != h) {
-    cout << "[" << name << "] obtaining: " << nw * nh * channels << " (nw=" << nw << ", nh=" << nh << ", ch=" << channels << ")" << endl;
     uint8_t *resampled = new uint8_t[nw * nh * channels];
-    int bx = w / nw;
-    int by = h / nh;
-    cout << "bx=" << bx << " by=" << by << endl;
-    downscale_image(img, w, h, channels, resampled, bx, by, nw, nh);
+
+    downscale_image(img, w, h, channels, resampled, nw, nh);
     stbi_image_free(img);
     img = resampled;
     w = nw;
