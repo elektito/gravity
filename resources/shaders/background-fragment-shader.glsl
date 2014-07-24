@@ -27,7 +27,11 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 void main() {
-  output_color = texture(texture0, vertex.tex_coord);
+  // Flip the y axis in texture coordinates.
+  vec2 tex_coord = vec2(vertex.tex_coord.x, 1.0 - vertex.tex_coord.y);
+
+  // Sample the texture.
+  output_color = texture(texture0, tex_coord);
 
   // Make the color darker. It's much better, performance-wise, to
   // bake this into the texture itself, but we're gonna do it here for

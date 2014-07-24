@@ -209,9 +209,7 @@ GLuint GetTexture(const string &name, const string &type) {
   GLuint texture = SOIL_load_OGL_texture(("resources/images/" + name + "." + type).data(),
                                          SOIL_LOAD_AUTO,
                                          SOIL_CREATE_NEW_ID,
-                                         SOIL_FLAG_INVERT_Y |
-                                         SOIL_FLAG_NTSC_SAFE_RGB |
-                                         SOIL_FLAG_COMPRESS_TO_DXT);
+                                         0);
 
   // Generate mipmaps.
   glBindTexture(GL_TEXTURE_2D, texture);
