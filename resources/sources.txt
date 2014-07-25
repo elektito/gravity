@@ -8,6 +8,10 @@ This file lists the licenses and sources of third party assets.
    by Kenney, CC0 (Public Domain)
    http://kenney.itch.io/kenney-donation
 
+ - Score ticking sound (UI Sounds/switch15.ogg in the original pack)
+   by Kenney, CC0
+   http://kenney.itch.io/kenney-donation
+
 Also, the following fonts have been used:
 
  - "KenVector Future" by Kenney
