@@ -6,6 +6,9 @@
 #include "resource-cache.hh"
 #include "config.hh"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 #include <SDL2/SDL.h>
 
 #include <iostream>
@@ -14,6 +17,9 @@
 using namespace std;
 
 void HandleEvents(SDL_Event &e, SDL_Window *window, bool &quit) {
+  uint32_t flags;
+  int winw, winh;
+
   switch (e.type) {
   case SDL_QUIT:
     quit = true;
@@ -26,12 +32,39 @@ void HandleEvents(SDL_Event &e, SDL_Window *window, bool &quit) {
       quitEvent.type = SDL_QUIT;
       SDL_PushEvent(&quitEvent);
       break;
+
     case SDLK_f:
-      auto flags = SDL_GetWindowFlags(window);
+      flags = SDL_GetWindowFlags(window);
       if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
         SDL_SetWindowFullscreen(window, SDL_FALSE);
       else
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+      break;
+
+    case SDLK_s:
+      SDL_GetWindowSize(window, &winw, &winh);
+      GLubyte *pixels = new GLubyte[4 * winw * winh];
+      glReadPixels(0, 0, winw, winh, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+      // Flip the image so it will be the right way up in the image
+      // file.
+      auto rowsize = winw * 4;
+      GLubyte *tmprow = new GLubyte[rowsize];
+      for (int y = 0; y < winh / 2; y++) {
+        auto row1 = pixels + y * rowsize;
+        auto row2 = pixels + (winh-1-y) * rowsize;
+        memcpy(tmprow, row1, rowsize);
+        memcpy(row1, row2, rowsize);
+        memcpy(row2, tmprow, rowsize);
+      }
+      delete[] tmprow;
+
+      string filename = tmpnam(nullptr);
+      filename += ".png";
+      stbi_write_png(filename.data(), winw, winh, 4, pixels, 0);
+      cout << "Saved screenshot to " << filename << endl;
+
+      delete[] pixels;
       break;
     }
     break;
