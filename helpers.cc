@@ -88,9 +88,6 @@ string ReadFile(const string &filename) {
   return str;
 }
 
-/// Converts the window coordinate (x, y) to relative coordinates (xp,
-/// yp), i.e. xp and yp in range [0.0, 1.0], for a widget with the
-/// given width and height in the given window.
 void GetRelativeCoords(int x, int y,
                        SDL_Window *window,
                        TextAnchor xanchor, TextAnchor yanchor,
