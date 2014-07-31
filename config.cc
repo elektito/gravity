@@ -10,5 +10,5 @@ const int Config::TimeStep = 5;
 const int Config::GameTime = 120;
 const float Config::CameraMinWidth = 150.0;
 const float Config::CameraMinHeight = 75.0;
-const float Config::CameraMaxWidth = 300.0;
-const float Config::CameraMaxHeight = 150.0;
+const float Config::CameraMaxWidth = 150.0;
+const float Config::CameraMaxHeight = 75.0;
