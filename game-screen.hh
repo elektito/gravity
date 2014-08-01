@@ -6,6 +6,7 @@
 #include "timer.hh"
 #include "entity.hh"
 #include "label-widget.hh"
+#include "number-widget.hh"
 #include "image-button-widget.hh"
 #include "mesh.hh"
 
@@ -69,7 +70,7 @@ protected:
   int mouseDownX;
   int mouseDownY;
 
-  LabelWidget *scoreLabel;
+  NumberWidget *scoreLabel;
   LabelWidget *timeLabel;
 #ifndef RELEASE_BUILD
   LabelWidget *fpsLabel;

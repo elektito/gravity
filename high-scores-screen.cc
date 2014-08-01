@@ -26,11 +26,12 @@ HighScoresScreen::HighScoresScreen(SDL_Window *window) :
                                           {255, 0, 0, 255}));
 
   for (int i =0; i < 5; ++i) {
-    LabelWidget *label = new LabelWidget(this,
-                                         "000000",
-                                         0.0, 0.1 + 0.2 + i * 0.1, 0.1,
-                                         TextAnchor::CENTER, TextAnchor::TOP,
-                                         {255, 255, 255, 128});
+    NumberWidget *label = new NumberWidget(this,
+                                          0,
+                                          0.0, 0.1 + 0.2 + i * 0.1, 0.08,
+                                          TextAnchor::CENTER, TextAnchor::TOP,
+                                          6,
+                                          {255, 255, 255, 128});
     this->widgets.push_back(label);
     this->labels.push_back(label);
   }
@@ -120,21 +121,16 @@ void HighScoresScreen::Advance(float dt) {
 }
 
 void HighScoresScreen::Render(Renderer *renderer) {
-  stringstream ss;
-
   this->background.Draw();
 
   for (int i =0; i < this->scores.size(); ++i) {
-    ss.str("");
-    ss.clear();
-    ss << setw(6) << setfill('0') << this->scores[i];
     SDL_Color c;
     if (i == this->currentScoreIndex)
       c = {255, 255, 0, 200};
     else
       c = {255, 255, 255, 200};
     this->labels[i]->SetColor(c);
-    this->labels[i]->SetText(ss.str());
+    this->labels[i]->SetNumber(this->scores[i]);
     this->labels[i]->SetVisible(true);
   }
 

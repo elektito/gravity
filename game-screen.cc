@@ -166,11 +166,12 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->world.SetContactListener(&this->contactListener);
   this->world.SetContactFilter(&this->contactFilter);
 
-  this->scoreLabel = new LabelWidget(this,
-                                    "000000",
-                                    0.02, 0.0, 0.1,
-                                    TextAnchor::RIGHT, TextAnchor::TOP,
-                                    {255, 255, 255, 128});
+  this->scoreLabel = new NumberWidget(this,
+                                      0,
+                                      0.02, 0.02, 0.08,
+                                      TextAnchor::RIGHT, TextAnchor::TOP,
+                                      6,
+                                      {255, 255, 255, 128});
 
   this->timeLabel = new LabelWidget(this,
                                      "02:00",
@@ -271,10 +272,7 @@ void GameScreen::TogglePause() {
 
 void GameScreen::SetScore(int score) {
   this->score = score;
-
-  stringstream ss;
-  ss << setw(6) << setfill('0') << this->score;
-  this->scoreLabel->SetText(ss.str());
+  this->scoreLabel->SetNumber(score);
 }
 
 void GameScreen::SetTimeRemaining(int time) {

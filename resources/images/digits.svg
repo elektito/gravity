@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2500"
+   height="256"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="digits.svg"
+   inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="786.42856"
+     inkscape:cy="177.14286"
+     inkscape:document-units="px"
+     inkscape:current-layer="text3005"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       orientation="1,0"
+       position="251.42857,1188.5714"
+       id="guide2987" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="500,705.71429"
+       id="guide2989" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="751.42857,634.28571"
+       id="guide2991" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1000,242.85714"
+       id="guide2993" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1251.4286,11.428571"
+       id="guide2995" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1500,1800"
+       id="guide2997" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1751.4286,414.28571"
+       id="guide2999" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="2000,1734.2857"
+       id="guide3001" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="2251.4286,517.14286"
+       id="guide3003" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-796.36215)">
+    <g
+       style="font-size:360px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="text3005">
+      <path
+         d="m 194.28572,993.07643 0,-135 -135.000001,0 0,135 135.000001,0 M 59.285719,1038.0764 c -12.656282,0 -23.320334,-4.3359 -31.992187,-13.0078 -8.671879,-8.9062 -13.007813,-19.5703 -13.007813,-31.99217 l 0,-135 c 0,-12.42168 4.335934,-22.96854 13.007813,-31.64062 8.906228,-8.90603 19.57028,-13.35915 31.992187,-13.35938 l 135.000001,0 c 12.42168,2.3e-4 22.96854,4.45335 31.64062,13.35938 8.90603,8.90645 13.35915,19.45332 13.35938,31.64062 l 0,135 c -2.3e-4,12.65627 -4.45335,23.32037 -13.35938,31.99217 -8.90645,8.6719 -19.45332,13.0078 -31.64062,13.0078 l -135.000001,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3010"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 376.7138,1038.0764 0,-179.99997 -45,0 0,-45 45,0 c 12.42181,2.3e-4 22.96868,4.45335 31.64062,13.35938 8.90617,8.90645 13.35929,19.45332 13.35938,31.64062 l 0,179.99997 -45,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3012"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 559.1419,1038.0764 c -12.65629,0 -23.32034,-4.3359 -31.99219,-13.0078 -8.67188,-8.9062 -13.00781,-19.5703 -13.00781,-31.99217 l 0,-45 c 0,-12.42177 4.33593,-22.96863 13.00781,-31.64062 8.90623,-8.90612 19.57028,-13.35924 31.99219,-13.35938 l 135,0 0,-45 -180,0 0,-45 180,0 c 12.42168,2.3e-4 22.96854,4.45335 31.64062,13.35938 8.90603,8.90645 13.35915,19.45332 13.35938,31.64062 l 0,45 c -2.3e-4,12.65638 -4.45335,23.32043 -13.35938,31.99219 -8.90645,8.67197 -19.45332,13.0079 -31.64062,13.00781 l -135,0 0,45 180,0 0,44.99997 -180,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3014"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 764.06998,1038.0764 0,-44.99997 180,0 0,-45 -180,0 0,-45 180,0 0,-45 -180,0 0,-45 180,0 c 12.42168,2.3e-4 22.96854,4.45335 31.64062,13.35938 8.90603,8.90645 13.35915,19.45332 13.35935,31.64062 l 0,135 c -2e-4,12.65627 -4.45332,23.32037 -13.35935,31.99217 -8.90645,8.6719 -19.45332,13.0078 -31.64062,13.0078 l -180,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3016"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 1193.998,1038.0764 0,-89.99997 -135,0 c -12.6563,9e-5 -23.3204,-4.33584 -31.9922,-13.00781 -8.6719,-8.90614 -13.0078,-19.57019 -13.0078,-31.99219 l 0,-90 45,0 0,90 135,0 0,-90 45,0 0,224.99997 -45,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3018"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 1263.9262,1038.0764 0,-44.99997 180,0 0,-45 -135,0 c -12.6563,9e-5 -23.3203,-4.33584 -31.9922,-13.00781 -8.6718,-8.90614 -13.0078,-19.57019 -13.0078,-31.99219 l 0,-45 c 0,-12.42168 4.336,-22.96854 13.0078,-31.64062 8.9063,-8.90603 19.5703,-13.35915 31.9922,-13.35938 l 180,0 0,45 -180,0 0,45 135,0 c 12.4217,1.4e-4 22.9686,4.45326 31.6407,13.35938 8.906,8.90636 13.3591,19.45323 13.3593,31.64062 l 0,45 c -2e-4,12.65627 -4.4533,23.32037 -13.3593,31.99217 -8.9065,8.6719 -19.4534,13.0078 -31.6407,13.0078 l -180,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3020"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 1693.8543,993.07643 0,-45 -135,0 0,45 135,0 m -135,44.99997 c -12.6563,0 -23.3204,-4.3359 -31.9922,-13.0078 -8.6719,-8.9062 -13.0078,-19.5703 -13.0078,-31.99217 l 0,-135 c 0,-12.42168 4.3359,-22.96854 13.0078,-31.64062 8.9062,-8.90603 19.5703,-13.35915 31.9922,-13.35938 l 180,0 0,45 -180,0 0,45 135,0 c 12.4217,1.4e-4 22.9685,4.45326 31.6406,13.35938 8.906,8.90636 13.3592,19.45323 13.3594,31.64062 l 0,45 c -2e-4,12.65627 -4.4534,23.32037 -13.3594,31.99217 -8.9065,8.6719 -19.4533,13.0078 -31.6406,13.0078 l -135,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3022"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 1943.7824,1038.0764 0,-179.99997 -180,0 0,-45 180,0 c 12.4217,2.3e-4 22.9686,4.45335 31.6407,13.35938 8.906,8.90645 13.3591,19.45332 13.3593,31.64062 l 0,179.99997 -45,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3024"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 2193.7105,993.07643 0,-45 -135,0 0,45 135,0 m 0,-90 0,-45 -135,0 0,45 135,0 m -135,134.99997 c -12.6563,0 -23.3204,-4.3359 -31.9922,-13.0078 -8.6719,-8.9062 -13.0078,-19.5703 -13.0078,-31.99217 l 0,-135 c 0,-12.42168 4.3359,-22.96854 13.0078,-31.64062 8.9062,-8.90603 19.5703,-13.35915 31.9922,-13.35938 l 135,0 c 12.4217,2.3e-4 22.9685,4.45335 31.6406,13.35938 8.906,8.90645 13.3592,19.45332 13.3594,31.64062 l 0,135 c -2e-4,12.65627 -4.4534,23.32037 -13.3594,31.99217 -8.9065,8.6719 -19.4533,13.0078 -31.6406,13.0078 l -135,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3026"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+      <path
+         d="m 2443.6384,903.07643 0,-45 -135,0 0,45 135,0 m -180,134.99997 0,-44.99997 180,0 0,-45 -135,0 c -12.6563,9e-5 -23.3203,-4.33584 -31.9922,-13.00781 -8.6718,-8.90614 -13.0078,-19.57019 -13.0078,-31.99219 l 0,-45 c 0,-12.42168 4.336,-22.96854 13.0078,-31.64062 8.9063,-8.90603 19.5703,-13.35915 31.9922,-13.35938 l 135,0 c 12.4217,2.3e-4 22.9686,4.45335 31.6407,13.35938 8.906,8.90645 13.3591,19.45332 13.3593,31.64062 l 0,135 c -2e-4,12.65627 -4.4533,23.32037 -13.3593,31.99217 -8.9065,8.6719 -19.4534,13.0078 -31.6407,13.0078 l -180,0"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-family:KenVector Future;-inkscape-font-specification:KenVector Future Bold;fill:#ffffff;fill-opacity:1"
+         id="path3028"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/home/mostafa/source/gravity/resources/images/digits.png"
+         inkscape:export-xdpi="204.80003"
+         inkscape:export-ydpi="204.80003" />
+    </g>
+  </g>
+</svg>

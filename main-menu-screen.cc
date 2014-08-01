@@ -1,6 +1,7 @@
 #include "main-menu-screen.hh"
 #include "button-widget.hh"
 #include "label-widget.hh"
+#include "number-widget.hh"
 #include "image-button-widget.hh"
 #include "resource-cache.hh"
 

@@ -49,6 +49,7 @@ def build(bld):
         'resource-cache.cc',
         'helpers.cc',
         'config.cc',
+        'number-widget.cc',
         'image-widget.cc',
         'image-button-widget.cc',
         'label-widget.cc',

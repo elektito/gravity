@@ -2,7 +2,7 @@
 #define _GRAVITY_HIGH_SCORES_SCREEN_HH_
 
 #include "screen.hh"
-#include "label-widget.hh"
+#include "number-widget.hh"
 
 class HighScoresScreen : public Screen {
 protected:
@@ -10,7 +10,7 @@ protected:
   int currentScoreIndex;
   Background background;
 
-  vector<LabelWidget*> labels;
+  vector<NumberWidget*> labels;
 
 public:
   HighScoresScreen(SDL_Window *window);
