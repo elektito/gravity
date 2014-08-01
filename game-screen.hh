@@ -69,6 +69,7 @@ protected:
   bool mouseDown;
   int mouseDownX;
   int mouseDownY;
+  bool discardLeftButtonUp;
 
   NumberWidget *scoreLabel;
   LabelWidget *timeLabel;
@@ -78,6 +79,7 @@ protected:
   ImageWidget *continueLabel;
   ImageWidget *pauseSign;
   ImageButtonWidget *endGameButton;
+  ImageButtonWidget *muteButton;
   ImageWidget *gameOverLabel;
 
   // methods

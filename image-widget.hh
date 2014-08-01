@@ -27,6 +27,7 @@ public:
   virtual ~ImageWidget();
 
   void SetColor(float r, float g, float b, float a);
+  void SetTexture(GLuint texture);
 
   virtual void HandleEvent(const SDL_Event &e);
   virtual void Advance(float dt);

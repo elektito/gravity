@@ -2,8 +2,8 @@
 #include "button-widget.hh"
 #include "label-widget.hh"
 #include "number-widget.hh"
-#include "image-button-widget.hh"
 #include "resource-cache.hh"
+#include "helpers.hh"
 
 MainMenuScreen::MainMenuScreen(SDL_Window *window) :
   Screen(window),
@@ -27,6 +27,13 @@ MainMenuScreen::MainMenuScreen(SDL_Window *window) :
                                                 TextAnchor::LEFT, TextAnchor::TOP,
                                                 {255, 0, 0, 128},
                                                 {255, 255, 255, 128}));
+  this->muteButton = new ImageButtonWidget(this,
+                                           ResourceCache::GetTexture("mute"),
+                                           0.05, 0.05, 0.08,
+                                           TextAnchor::LEFT, TextAnchor::BOTTOM,
+                                           {255, 128, 128, 255},
+                                           {255, 255, 255, 128});
+  this->widgets.push_back(this->muteButton);
   this->widgets.push_back(new ImageWidget(this,
                                           ResourceCache::GetTexture("splash"),
                                           -0.15, 0.0, 0.6,
@@ -63,6 +70,13 @@ void MainMenuScreen::HandleWidgetEvent(int event_type, Widget *widget) {
     }
     else if (widget == this->widgets[2]) { // Exit
       this->state["name"] = "menu-exit-selected";
+    }
+    else if (widget == this->muteButton) { // Toggle Mute
+      mute = !mute;
+      if (mute)
+        this->muteButton->SetTexture(ResourceCache::GetTexture("unmute"));
+      else
+        this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
     }
 
     break;

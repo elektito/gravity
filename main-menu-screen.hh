@@ -2,10 +2,12 @@
 #define _GRAVITY_MAIN_MENU_SCREEN_HH_
 
 #include "screen.hh"
+#include "image-button-widget.hh"
 
 class MainMenuScreen : public Screen {
 protected:
   Background background;
+  ImageButtonWidget *muteButton;
 
 public:
   MainMenuScreen(SDL_Window *window);

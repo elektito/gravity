@@ -14,6 +14,8 @@ using namespace std;
 #define WRITE(DATA, STREAM) (STREAM).write((const char*) &DATA, sizeof(DATA))
 #define READ(DATA, STREAM) (STREAM).read((char*) &DATA, sizeof(DATA));
 
+extern bool mute;
+
 extern void SaveVec2(const b2Vec2 &v, ostream &s);
 extern void LoadVec2(b2Vec2 &v, istream &s);
 extern void SaveString(const string &str, ostream &s);
@@ -32,5 +34,7 @@ extern void GetRelativeCoords(int x, int y,
                               SDL_Window *window,
                               TextAnchor xanchor, TextAnchor yanchor,
                               float &xp, float &yp);
+
+extern void PlaySound(const string &name);
 
 #endif /* _GRAVITY_STREAMS_HH_ */

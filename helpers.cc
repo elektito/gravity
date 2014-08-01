@@ -10,6 +10,8 @@
 
 using namespace std;
 
+bool mute = false;
+
 void SaveVec2(const b2Vec2 &v, ostream &s) {
   WRITE(v.x, s);
   WRITE(v.y, s);
@@ -109,4 +111,9 @@ void GetRelativeCoords(int x, int y,
     yp = (float) (winh - y) / winh;
   else if (yanchor == TextAnchor::CENTER)
     yp = (float) (winh / 2 - y) / winh;
+}
+
+void PlaySound(const string &name) {
+  if (!mute)
+    Mix_PlayChannel(-1, ResourceCache::GetSound(name), 0);
 }

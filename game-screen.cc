@@ -56,7 +56,7 @@ void ContactListener::BeginContact(b2Contact *contact) {
 }
 
 void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
-  Mix_PlayChannel(-1, ResourceCache::GetSound("enemy-collision"), 0);
+  PlaySound("enemy-collision");
 
   this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
   if (this->screen->timeRemaining < 0)
@@ -66,7 +66,7 @@ void ContactListener::EnemySunContact(Entity *enemy, Entity *sun) {
 }
 
 void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
-  Mix_PlayChannel(-1, ResourceCache::GetSound("enemy-collision"), 0);
+  PlaySound("enemy-collision");
 
   this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
   if (this->screen->timeRemaining < 0)
@@ -76,7 +76,7 @@ void ContactListener::EnemyPlanetContact(Entity *enemy, Entity *sun) {
 }
 
 void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
-  Mix_PlayChannel(-1, ResourceCache::GetSound("planet-sun-collision"), 0);
+  PlaySound("planet-sun-collision");
 
   if (!this->inContact)
     this->screen->SetTimeRemaining(this->screen->timeRemaining - 10);
@@ -87,7 +87,7 @@ void ContactListener::PlanetSunContact(Entity *planet, Entity *sun) {
 }
 
 void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
-  Mix_PlayChannel(-1, ResourceCache::GetSound("sun-powerup"), 0);
+  PlaySound("sun-powerup");
 
   if (collectible->hasScore)
     this->screen->SetScore(this->screen->score + collectible->score);
@@ -102,7 +102,7 @@ void ContactListener::CollectibleSunContact(Entity *collectible, Entity *sun) {
 }
 
 void ContactListener::CollectiblePlanetContact(Entity *collectible, Entity *planet) {
-  Mix_PlayChannel(-1, ResourceCache::GetSound("planet-powerup"), 0);
+  PlaySound("planet-powerup");
 
   if (collectible->hasScore)
     this->screen->SetScore(this->screen->score + 10 * collectible->score);
@@ -159,7 +159,8 @@ GameScreen::GameScreen(SDL_Window *window) :
   frameCount(0),
   fps(0),
   spawnPlanet(false),
-  background(window, ResourceCache::GetTexture("background"))
+  background(window, ResourceCache::GetTexture("background")),
+  discardLeftButtonUp(false)
 {
   this->timer.Set(1.0, true);
 
@@ -201,6 +202,12 @@ GameScreen::GameScreen(SDL_Window *window) :
                                               TextAnchor::RIGHT, TextAnchor::BOTTOM,
                                               {255, 0, 0, 128},
                                               {255, 255, 255, 128});
+  this->muteButton = new ImageButtonWidget(this,
+                                           ResourceCache::GetTexture("mute"),
+                                           0.05, 0.05, 0.08,
+                                           TextAnchor::LEFT, TextAnchor::BOTTOM,
+                                           {255, 128, 128, 255},
+                                           {255, 255, 255, 128});
   this->gameOverLabel = new ImageWidget(this,
                                         ResourceCache::GetTexture("game-over"),
                                         0.0, 0.0, 0.1,
@@ -214,6 +221,7 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->widgets.push_back(this->continueLabel);
   this->widgets.push_back(this->pauseSign);
   this->widgets.push_back(this->endGameButton);
+  this->widgets.push_back(this->muteButton);
   this->widgets.push_back(this->gameOverLabel);
 
   // Create the "trail point" mesh.
@@ -255,6 +263,7 @@ void GameScreen::TogglePause() {
   this->continueLabel->SetVisible(this->paused);
   this->pauseSign->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
+  this->muteButton->SetVisible(this->paused);
 
   for (auto e : this->entities)
     if (e->isPlanet)
@@ -344,7 +353,10 @@ void GameScreen::SpawnPlanet() {
 }
 
 void GameScreen::SwitchScreen(const map<string, string> &lastState) {
-
+  if (mute)
+    this->muteButton->SetTexture(ResourceCache::GetTexture("unmute"));
+  else
+    this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
 }
 
 void GameScreen::HandleEvent(const SDL_Event &e) {
@@ -390,8 +402,9 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
 
       SDL_GetMouseState(&x, &y);
       if (mouseDown && abs(mouseDownX - x) <= 2 && abs(mouseDownY - y) <= 2) { // It's a click.
-        if (this->paused)
+        if (!this->discardLeftButtonUp && this->paused)
           TogglePause();
+        this->discardLeftButtonUp = false;
         this->mouseDown = false;
       }
     }
@@ -424,6 +437,14 @@ void GameScreen::HandleWidgetEvent(int event_type, Widget *widget) {
       this->state["name"] = "game-over";
       this->state["score"] = to_string(this->score);
     }
+    else if (widget == this->muteButton) { // Toggle Mute
+      mute = !mute;
+      if (mute)
+        this->muteButton->SetTexture(ResourceCache::GetTexture("unmute"));
+      else
+        this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
+    }
+    this->discardLeftButtonUp = true;
 
     break;
   } // switch (event_type)
@@ -491,6 +512,7 @@ void GameScreen::Reset() {
   this->continueLabel->SetVisible(this->paused);
   this->pauseSign->SetVisible(this->paused);
   this->endGameButton->SetVisible(this->paused);
+  this->muteButton->SetVisible(this->paused);
   this->gameOverLabel->SetVisible(false);
 }
 
@@ -585,7 +607,10 @@ void GameScreen::Advance(float dt) {
       else
         vol = vol * ((MIN_DISTANCE - distance) / MIN_DISTANCE);
 
-      Mix_Volume(e->planetWhooshChannel, vol);
+      if (!mute)
+        Mix_Volume(e->planetWhooshChannel, vol);
+      else
+        Mix_Volume(e->planetWhooshChannel, 0);
     }
 
   // Spawn new planet if needed.
@@ -608,7 +633,7 @@ void GameScreen::Advance(float dt) {
         if (this->scoreAccumulator >= 100) {
           this->SetScore(this->score + 100);
           this->scoreAccumulator -= 100;
-          Mix_PlayChannel(-1, ResourceCache::GetSound("score-tik"), 0);
+          PlaySound("score-tik");
         }
       }
 

@@ -52,6 +52,10 @@ void ImageWidget::SetColor(float r, float g, float b, float a) {
   this->color.a = a;
 }
 
+void ImageWidget::SetTexture(GLuint texture) {
+  this->texture = texture;
+}
+
 void ImageWidget::HandleEvent(const SDL_Event &e) {
 
 }
