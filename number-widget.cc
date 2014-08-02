@@ -43,45 +43,46 @@ void NumberWidget::SetNumber(uint32_t n) {
   GLfloat *vertexData = new GLfloat[4 * 6 * this->ndigits];
   float step = 1.0f / this->ndigits;
   float dstep = 0.1;
+  float D = 0.01; // Inter-digit space
 
   for (int i = 0; i < this->ndigits; ++i) {
     int d = std::stoi(str.substr(i, 1));
 
     // triangle 1, vertex 1
-    vertexData[i * 6 * 4 + 0] = i * step; // coord.x
-    vertexData[i * 6 * 4 + 1] = 0.0f;     // coord.y
-    vertexData[i * 6 * 4 + 2] = d * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 3] = 0.0f;     // tex_coord.y;
+    vertexData[i * 6 * 4 + 0] = i * step + D; // coord.x
+    vertexData[i * 6 * 4 + 1] = 0.0f;         // coord.y
+    vertexData[i * 6 * 4 + 2] = d * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 3] = 0.0f;         // tex_coord.y
 
     // triangle 1, vertex 2
-    vertexData[i * 6 * 4 + 4] = i * step; // coord.x
-    vertexData[i * 6 * 4 + 5] = 1.0f;     // coord.y
-    vertexData[i * 6 * 4 + 6] = d * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 7] = 1.0f;     // tex_coord.y;
+    vertexData[i * 6 * 4 + 4] = i * step + D; // coord.x
+    vertexData[i * 6 * 4 + 5] = 1.0f;         // coord.y
+    vertexData[i * 6 * 4 + 6] = d * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 7] = 1.0f;         // tex_coord.y
 
     // triangle 1, vertex 3
-    vertexData[i * 6 * 4 + 8] = (i + 1) * step;  // coord.x
-    vertexData[i * 6 * 4 + 9] = 1.0f;            // coord.y
-    vertexData[i * 6 * 4 + 10] = (d + 1) * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 11] = 1.0f;           // tex_coord.y;
+    vertexData[i * 6 * 4 + 8] = (i + 1) * step - D;  // coord.x
+    vertexData[i * 6 * 4 + 9] = 1.0f;                // coord.y
+    vertexData[i * 6 * 4 + 10] = (d + 1) * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 11] = 1.0f;               // tex_coord.y
 
     // triangle 2, vertex 1
-    vertexData[i * 6 * 4 + 12] = (i + 1) * step; // coord.x
-    vertexData[i * 6 * 4 + 13] = 1.0f;           // coord.y
-    vertexData[i * 6 * 4 + 14] = (d + 1) * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 15] = 1.0f;           // tex_coord.y;
+    vertexData[i * 6 * 4 + 12] = (i + 1) * step - D; // coord.x
+    vertexData[i * 6 * 4 + 13] = 1.0f;               // coord.y
+    vertexData[i * 6 * 4 + 14] = (d + 1) * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 15] = 1.0f;               // tex_coord.y
 
     // triangle 2, vertex 2
-    vertexData[i * 6 * 4 + 16] = (i + 1) * step; // coord.x
-    vertexData[i * 6 * 4 + 17] = 0.0f;           // coord.y
-    vertexData[i * 6 * 4 + 18] = (d + 1) * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 19] = 0.0f;           // tex_coord.y;
+    vertexData[i * 6 * 4 + 16] = (i + 1) * step - D; // coord.x
+    vertexData[i * 6 * 4 + 17] = 0.0f;               // coord.y
+    vertexData[i * 6 * 4 + 18] = (d + 1) * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 19] = 0.0f;               // tex_coord.y
 
     // triangle 2, vertex 3
-    vertexData[i * 6 * 4 + 20] = i * step; // coord.x
-    vertexData[i * 6 * 4 + 21] = 0.0f;     // coord.y
-    vertexData[i * 6 * 4 + 22] = d * dstep; // tex_coord.x
-    vertexData[i * 6 * 4 + 23] = 0.0f;     // tex_coord.y;
+    vertexData[i * 6 * 4 + 20] = i * step + D; // coord.x
+    vertexData[i * 6 * 4 + 21] = 0.0f;         // coord.y
+    vertexData[i * 6 * 4 + 22] = d * dstep;    // tex_coord.x
+    vertexData[i * 6 * 4 + 23] = 0.0f;         // tex_coord.y
   }
 
   glGenBuffers(1, &this->vbo);
