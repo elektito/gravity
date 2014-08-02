@@ -169,7 +169,7 @@ GameScreen::GameScreen(SDL_Window *window) :
 
   this->scoreLabel = new NumberWidget(this,
                                       0,
-                                      0.02, 0.02, 0.08,
+                                      0.02, 0.025, 0.0655,
                                       TextAnchor::RIGHT, TextAnchor::TOP,
                                       6,
                                       {255, 255, 255, 128});
