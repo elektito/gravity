@@ -20,6 +20,10 @@ This file lists the licenses and sources of third party assets.
    by Kenney, CC0
    http://kenney.itch.io/kenney-donation
 
+ - Mute/Unmute Icons
+   derived from the following Wikimedia Commons resource, CC-BY-SA
+   http://commons.wikimedia.org/wiki/File:Volume-icon.gif
+
 Also, the following fonts have been used:
 
  - "KenVector Future" by Kenney
