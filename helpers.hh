@@ -12,7 +12,7 @@
 using namespace std;
 
 #define WRITE(DATA, STREAM) (STREAM).write((const char*) &DATA, sizeof(DATA))
-#define READ(DATA, STREAM) (STREAM).read((char*) &DATA, sizeof(DATA));
+#define READ(DATA, STREAM) (STREAM).read((char*) &DATA, sizeof(DATA))
 
 extern bool mute;
 
