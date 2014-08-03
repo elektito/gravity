@@ -16,6 +16,10 @@ using namespace std;
 
 extern bool mute;
 
+inline float32 frand() {
+  return rand() / (float32) RAND_MAX;
+}
+
 extern void SaveVec2(const b2Vec2 &v, ostream &s);
 extern void LoadVec2(b2Vec2 &v, istream &s);
 extern void SaveString(const string &str, ostream &s);

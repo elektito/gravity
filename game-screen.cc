@@ -136,10 +136,6 @@ bool ContactFilter::ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
   return true;
 }
 
-float32 frand() {
-  return rand() / (float32) RAND_MAX;
-}
-
 b2Body *GetBodyFromPoint(b2Vec2 p, b2World *world) {
   for (b2Body *b = world->GetBodyList(); b; b = b->GetNext()) {
     for (b2Fixture *f = b->GetFixtureList(); f; f = f->GetNext()) {
