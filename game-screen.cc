@@ -659,6 +659,7 @@ void GameScreen::Advance(float dt) {
     // Remove and properly destroy entities marked to be removed.
     for (auto e : this->toBeRemoved) {
       this->world.DestroyBody(e->body);
+      delete e;
       this->entities.erase(find(this->entities.begin(),
                                 this->entities.end(),
                                 e));
