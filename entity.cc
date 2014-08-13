@@ -24,13 +24,15 @@ Entity::Entity() :
   time(0),
   spawnPlanet(false),
   isDrawable(false),
-  mesh(nullptr)
+  mesh(nullptr),
+  planetWhooshChannel(-1)
 {
 }
 
 Entity::~Entity() {
   delete this->mesh;
-  Mix_ExpireChannel(this->planetWhooshChannel, 0);
+  if (this->planetWhooshChannel != -1)
+    Mix_HaltChannel(this->planetWhooshChannel);
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
