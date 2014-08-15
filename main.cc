@@ -1,4 +1,5 @@
 #include "renderer.hh"
+#include "credits-screen.hh"
 #include "splash-screen.hh"
 #include "game-screen.hh"
 #include "high-scores-screen.hh"
@@ -159,6 +160,9 @@ int main(int argc, char *argv[]) {
   Screen *highScoresScreen = new HighScoresScreen(window);
   splashScreen->Render(renderer);
 
+  Screen *creditsScreen = new CreditsScreen(window);
+  splashScreen->Render(renderer);
+
   ifstream input("gravity.save", ifstream::in | ifstream::binary);
   if (input) {
     highScoresScreen->Load(input);
@@ -208,7 +212,15 @@ int main(int argc, char *argv[]) {
       SDL_PushEvent(&quitEvent);
       break;
     }
+    else if (currentScreen->state["name"] == "menu-credits-selected") {
+      creditsScreen->SwitchScreen(currentScreen->state);
+      currentScreen = creditsScreen;
+    }
     else if (currentScreen->state["name"] == "highscores-manu-selected") {
+      mainMenuScreen->SwitchScreen(currentScreen->state);
+      currentScreen = mainMenuScreen;
+    }
+    else if (currentScreen->state["name"] == "credits-manu-selected") {
       mainMenuScreen->SwitchScreen(currentScreen->state);
       currentScreen = mainMenuScreen;
     }

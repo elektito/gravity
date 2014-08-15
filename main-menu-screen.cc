@@ -33,7 +33,15 @@ MainMenuScreen::MainMenuScreen(SDL_Window *window) :
                                            TextAnchor::LEFT, TextAnchor::BOTTOM,
                                            {255, 128, 128, 255},
                                            {255, 255, 255, 128});
+  this->creditsButton = new ImageButtonWidget(this,
+                                              ResourceCache::GetTexture("credits-button"),
+                                              0.05, 0.15, 0.08,
+                                              TextAnchor::LEFT, TextAnchor::BOTTOM,
+                                              {255, 128, 128, 255},
+                                              {255, 255, 255, 128});
+
   this->widgets.push_back(this->muteButton);
+  this->widgets.push_back(this->creditsButton);
   this->widgets.push_back(new ImageWidget(this,
                                           ResourceCache::GetTexture("splash"),
                                           -0.15, 0.0, 0.6,
@@ -79,6 +87,9 @@ void MainMenuScreen::HandleWidgetEvent(int event_type, Widget *widget) {
         this->muteButton->SetTexture(ResourceCache::GetTexture("unmute"));
       else
         this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
+    }
+    else if (widget == this->creditsButton) { // Credits
+      this->state["name"] = "menu-credits-selected";
     }
 
     break;

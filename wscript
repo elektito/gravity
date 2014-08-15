@@ -41,6 +41,7 @@ def build(bld):
         'main.cc',
         'camera.cc',
         'timer.cc',
+        'credits-screen.cc',
         'splash-screen.cc',
         'game-screen.cc',
         'main-menu-screen.cc',

@@ -1,18 +1,17 @@
-#ifndef _GRAVITY_MAIN_MENU_SCREEN_HH_
-#define _GRAVITY_MAIN_MENU_SCREEN_HH_
+#ifndef _GRAVITY_CREDITS_SCREEN_HH_
+#define _GRAVITY_CREDITS_SCREEN_HH_
 
 #include "screen.hh"
 #include "image-button-widget.hh"
 
-class MainMenuScreen : public Screen {
+class CreditsScreen : public Screen {
 protected:
   Background background;
-  ImageButtonWidget *muteButton;
-  ImageButtonWidget *creditsButton;
+  ImageWidget *creditsImage;
 
 public:
-  MainMenuScreen(SDL_Window *window);
-  virtual ~MainMenuScreen();
+  CreditsScreen(SDL_Window *window);
+  virtual ~CreditsScreen();
 
   virtual void SwitchScreen(const map<string, string> &lastState);
   virtual void HandleEvent(const SDL_Event &e);
@@ -26,5 +25,4 @@ public:
   virtual void Render(Renderer *renderer);
 };
 
-
-#endif /* _GRAVITY_MAIN_MENU_SCREEN_HH_ */
+#endif /* _GRAVITY_CREDITS_SCREEN_HH_ */
