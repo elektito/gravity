@@ -209,6 +209,12 @@ GameScreen::GameScreen(SDL_Window *window) :
                                         0.0, 0.0, 0.1,
                                         TextAnchor::CENTER, TextAnchor::CENTER);
 
+  this->livesLabel = new ImageWidget(this,
+                                     ResourceCache::GetTexture("lives3"),
+                                     0.0, 0.0, 0.04,
+                                     TextAnchor::CENTER, TextAnchor::TOP,
+                                     {255, 255, 255, 255});
+
   this->widgets.push_back(this->scoreLabel);
   this->widgets.push_back(this->timeLabel);
 #ifndef RELEASE_BUILD
@@ -219,6 +225,7 @@ GameScreen::GameScreen(SDL_Window *window) :
   this->widgets.push_back(this->endGameButton);
   this->widgets.push_back(this->muteButton);
   this->widgets.push_back(this->gameOverLabel);
+  this->widgets.push_back(this->livesLabel);
 
   // Create the "trail point" mesh.
   GLfloat trailPointVertexData[] = {
@@ -249,6 +256,50 @@ GameScreen::~GameScreen() {
   this->entities.clear();
 
   delete this->trailPointMesh;
+}
+
+void GameScreen::DiscardPlanet(Entity *planet) {
+  int nplanets = 0;
+  for (auto e : this->entities)
+    if (e->isPlanet)
+      nplanets++;
+
+  if (nplanets == 1)
+    this->spawnPlanet = true;
+
+  this->toBeRemoved.push_back(planet);
+  this->DecreaseLives();
+}
+
+void GameScreen::DecreaseLives() {
+  int nplanets = 0;
+  for (auto e : this->entities)
+    if (e->isPlanet)
+      nplanets++;
+
+  if (nplanets > 1)
+    return;
+
+  if (this->lives == 0) {
+    this->gameOverLabel->SetVisible(true);
+    return;
+  }
+
+  this->lives--;
+  switch (this->lives) {
+  case 0:
+    this->livesLabel->SetTexture(ResourceCache::GetTexture("lives0"));
+    break;
+  case 1:
+    this->livesLabel->SetTexture(ResourceCache::GetTexture("lives1"));
+    break;
+  case 2:
+    this->livesLabel->SetTexture(ResourceCache::GetTexture("lives2"));
+    break;
+  case 3:
+    this->livesLabel->SetTexture(ResourceCache::GetTexture("lives3"));
+    break;
+  }
 }
 
 void GameScreen::TogglePause() {
@@ -462,6 +513,9 @@ void GameScreen::Reset() {
   this->stepOnce = false;
   this->physicsTimeAccumulator = 0.0;
   this->scoreAccumulator = 0;
+  this->lives = 3;
+  this->livesLabel->SetTexture(ResourceCache::GetTexture("lives3"));
+  this->spawnPlanet = false;
 
   // Remove existing entities.
   for (auto e : this->entities) {
@@ -524,6 +578,8 @@ void GameScreen::Save(ostream &s) const {
   WRITE(this->camera.ppm, s);
   WRITE(this->physicsTimeAccumulator, s);
   WRITE(this->scoreAccumulator, s);
+  WRITE(this->lives, s);
+  WRITE(this->spawnPlanet, s);
 
   size_t size = this->entities.size();
   WRITE(size, s);
@@ -545,6 +601,8 @@ void GameScreen::Load(istream &s) {
   READ(this->camera.ppm, s);
   READ(this->physicsTimeAccumulator, s);
   READ(this->scoreAccumulator, s);
+  READ(this->lives, s);
+  READ(this->spawnPlanet, s);
 
   this->entities.clear();
   this->world = b2World(b2Vec2(0.0, 0.0));
@@ -656,9 +714,49 @@ void GameScreen::Advance(float dt) {
 
     this->FixCamera();
 
+    // Remove out of bounds planets
+    int winw, winh;
+    SDL_GetWindowSize(this->window, &winw, &winh);
+    float width = winw / this->camera.ppm;
+    float height = winh / this->camera.ppm;
+    float minx = this->camera.pos.x;
+    float maxx = this->camera.pos.x + width;
+    float miny = this->camera.pos.y;
+    float maxy = this->camera.pos.y + height;
+
+    for (auto e : this->entities)
+      if (e->isPlanet) {
+        b2Vec2 pos = e->body->GetPosition();
+        float r = e->body->GetFixtureList()->GetShape()->m_radius;
+
+        //if (pos.x + r <= maxx && pos.x - r && minx && pos.y + r <= maxy && pos.y - r >= miny)
+        //  continue;
+
+        if ((pos.x + r >= minx && pos.x + r <= maxx && pos.y + r >= miny && pos.y + r <= maxy) ||
+            (pos.x - r >= minx && pos.x - r <= maxx && pos.y + r >= miny && pos.y + r <= maxy) ||
+            (pos.x - r >= minx && pos.x - r <= maxx && pos.y - r >= miny && pos.y - r <= maxy) ||
+            (pos.x + r >= minx && pos.x + r <= maxx && pos.y - r >= miny && pos.y - r <= maxy))
+          continue;
+
+        bool trailPointVisible = false;
+        for (auto &tp : e->trail.points) {
+          if ((tp.pos.x + r >= minx && tp.pos.x + r <= maxx && tp.pos.y + r >= miny && tp.pos.y + r <= maxy) ||
+              (tp.pos.x - r >= minx && tp.pos.x - r <= maxx && tp.pos.y + r >= miny && tp.pos.y + r <= maxy) ||
+              (tp.pos.x - r >= minx && tp.pos.x - r <= maxx && tp.pos.y - r >= miny && tp.pos.y - r <= maxy) ||
+              (tp.pos.x + r >= minx && tp.pos.x + r <= maxx && tp.pos.y - r >= miny && tp.pos.y - r <= maxy))
+            trailPointVisible = true;
+          break;
+        }
+        if (trailPointVisible || e->trail.points.size() == 0)
+          continue;
+
+        this->DiscardPlanet(e);
+      }
+
     // Remove and properly destroy entities marked to be removed.
     for (auto e : this->toBeRemoved) {
-      this->world.DestroyBody(e->body);
+      if (e->hasPhysics)
+        this->world.DestroyBody(e->body);
       delete e;
       this->entities.erase(find(this->entities.begin(),
                                 this->entities.end(),

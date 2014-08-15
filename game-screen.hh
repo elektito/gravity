@@ -49,6 +49,8 @@ protected:
   Camera camera;
   float32 physicsTimeAccumulator;
   float32 scoreAccumulator;
+  int lives;
+  bool spawnPlanet;
   vector<Entity*> entities;
 
   // non-state variables
@@ -64,7 +66,6 @@ protected:
   int fps;
   vector<Entity*> toBeRemoved;
   Mesh *trailPointMesh;
-  bool spawnPlanet;
   Background background;
   bool mouseDown;
   int mouseDownX;
@@ -81,6 +82,7 @@ protected:
   ImageButtonWidget *endGameButton;
   ImageButtonWidget *muteButton;
   ImageWidget *gameOverLabel;
+  ImageWidget *livesLabel;
 
   // methods
   void FixCamera();
@@ -94,6 +96,8 @@ protected:
   b2Vec2 GetRandomPosition();
   void SpawnPlanet();
   void TogglePause();
+  void DecreaseLives();
+  void DiscardPlanet(Entity *planet);
 
   void DrawGrid(Renderer *renderer) const;
   void DrawTrail(Renderer *renderer, const Entity *entity) const;
