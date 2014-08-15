@@ -58,6 +58,11 @@ void MainMenuScreen::SwitchScreen(const map<string, string> &lastState) {
   this->state.clear();
   this->state["name"] = "menu-ongoing";
 
+  if (mute)
+    this->muteButton->SetTexture(ResourceCache::GetTexture("unmute"));
+  else
+    this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
+
   for (auto w : this->widgets)
     w->Reset();
 }
