@@ -530,6 +530,7 @@ void GameScreen::Reset() {
     delete e;
   }
   this->entities.clear();
+  this->toBeRemoved.clear();
 
   this->sun = Entity::CreateSun(&this->world,
                                 b2Vec2(0.0, 0.0),
