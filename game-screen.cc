@@ -327,6 +327,8 @@ void GameScreen::TogglePause() {
 }
 
 void GameScreen::SetScore(int score) {
+  if (score < 0)
+    score = 0;
   this->score = score;
   this->scoreLabel->SetNumber(score);
 }
