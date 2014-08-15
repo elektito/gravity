@@ -3,6 +3,7 @@
 #include "image-button-widget.hh"
 #include "image-widget.hh"
 #include "resource-cache.hh"
+#include "helpers.hh"
 
 #include <iomanip>
 #include <sstream>
@@ -78,10 +79,16 @@ void HighScoresScreen::HandleEvent(const SDL_Event &e) {
 void HighScoresScreen::HandleWidgetEvent(int event_type, Widget *widget) {
   switch (event_type) {
   case BUTTON_CLICK:
+    PlaySound("button-click");
+
     if (widget == this->widgets[0]) { // Main Menu
       this->state["name"] = "highscores-manu-selected";
     }
 
+    break;
+
+  case BUTTON_MOUSE_ENTER:
+    PlaySound("mouse-over");
     break;
   }
 }

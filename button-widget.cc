@@ -36,11 +36,19 @@ void ButtonWidget::HandleEvent(const SDL_Event &e) {
     else
       yInRange = yp >= this->y && yp <= (this->y + this->height);
 
+    bool prevIsActive = this->isActive;
     this->isActive = xInRange && yInRange;
+
     if (this->isActive)
       this->SetColor(this->activeColor);
     else
       this->SetColor(this->inactiveColor);
+
+    if (!prevIsActive && this->isActive)
+      this->screen->HandleWidgetEvent(BUTTON_MOUSE_ENTER, this);
+    else if (prevIsActive && !this->isActive)
+      this->screen->HandleWidgetEvent(BUTTON_MOUSE_LEAVE, this);
+
     break;
   } // switch (e.type)
 

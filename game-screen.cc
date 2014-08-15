@@ -480,6 +480,8 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
 void GameScreen::HandleWidgetEvent(int event_type, Widget *widget) {
   switch (event_type) {
   case BUTTON_CLICK:
+    PlaySound("button-click");
+
     if (widget == this->endGameButton) { // End Game
       this->state["name"] = "game-over";
       this->state["score"] = to_string(this->score);
@@ -493,6 +495,10 @@ void GameScreen::HandleWidgetEvent(int event_type, Widget *widget) {
     }
     this->discardLeftButtonUp = true;
 
+    break;
+
+  case BUTTON_MOUSE_ENTER:
+    PlaySound("mouse-over");
     break;
   } // switch (event_type)
 }

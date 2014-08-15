@@ -4,6 +4,8 @@
 #include "image-widget.hh"
 
 #define BUTTON_CLICK 1000
+#define BUTTON_MOUSE_ENTER 1001
+#define BUTTON_MOUSE_LEAVE 1002
 
 class ImageButtonWidget : public ImageWidget {
 protected:

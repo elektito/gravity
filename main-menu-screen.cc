@@ -62,6 +62,8 @@ void MainMenuScreen::HandleEvent(const SDL_Event &e) {
 void MainMenuScreen::HandleWidgetEvent(int event_type, Widget *widget) {
   switch (event_type) {
   case BUTTON_CLICK:
+    PlaySound("button-click");
+
     if (widget == this->widgets[0]) { // New Game
       this->state["name"] = "menu-new-game-selected";
     }
@@ -79,6 +81,10 @@ void MainMenuScreen::HandleWidgetEvent(int event_type, Widget *widget) {
         this->muteButton->SetTexture(ResourceCache::GetTexture("mute"));
     }
 
+    break;
+
+  case BUTTON_MOUSE_ENTER:
+    PlaySound("mouse-over");
     break;
   }
 }

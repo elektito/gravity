@@ -20,6 +20,14 @@ This file lists the licenses and sources of third party assets.
    by Kenney, CC0
    http://kenney.itch.io/kenney-donation
 
+ - Button click sound (RPG Sounds/metalClick.ogg in the original pack)
+   by Kenney, CC0
+   http://kenney.itch.io/kenney-donation
+
+ - Mouse over sound (Casino Sounds/chipLay1.ogg in the original pack)
+   by Kenney, CC0
+   http://kenney.itch.io/kenney-donation
+
  - Mute/Unmute Icons
    derived from the following Wikimedia Commons resource, CC-BY-SA
    http://commons.wikimedia.org/wiki/File:Volume-icon.gif
