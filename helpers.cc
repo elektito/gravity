@@ -114,6 +114,10 @@ void GetRelativeCoords(int x, int y,
 }
 
 void PlaySound(const string &name) {
-  if (!mute)
-    Mix_PlayChannel(-1, ResourceCache::GetSound(name), 0);
+  if (!mute) {
+    int ch = Mix_PlayChannel(-1, ResourceCache::GetSound(name), 0);
+    if (ch == -1)
+      cout << "Warning: Error playing sound. SDL_mixer error: "
+           << Mix_GetError() << endl;
+  }
 }

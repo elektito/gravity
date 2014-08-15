@@ -31,8 +31,12 @@ Entity::Entity() :
 
 Entity::~Entity() {
   delete this->mesh;
-  if (this->planetWhooshChannel != -1)
+  if (this->planetWhooshChannel != -1) {
     Mix_HaltChannel(this->planetWhooshChannel);
+
+    // Reset channel volume.
+    Mix_Volume(this->planetWhooshChannel, MIX_MAX_VOLUME);
+  }
 }
 
 void Entity::SaveBody(const b2Body *b, ostream &s) const {
