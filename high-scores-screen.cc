@@ -49,19 +49,20 @@ void HighScoresScreen::SwitchScreen(const map<string, string> &lastState) {
 
   if (lastState.at("name") == "game-over") {
     int score = std::stoi(lastState.at("score"));
+    if (score != 0) {
+      this->scores.push_back(score);
+      std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
 
-    this->scores.push_back(score);
-    std::sort(this->scores.begin(), this->scores.end(), std::greater<int>());
+      auto it = find(this->scores.rbegin(), this->scores.rend(), score);
+      if (it != this->scores.rend())
+        this->currentScoreIndex = this->scores.rend() - it - 1;
 
-    auto it = find(this->scores.rbegin(), this->scores.rend(), score);
-    if (it != this->scores.rend())
-      this->currentScoreIndex = this->scores.rend() - it - 1;
+      if (this->scores.size() > Config::HighScores)
+        this->scores.resize(Config::HighScores);
 
-    if (this->scores.size() > Config::HighScores)
-      this->scores.resize(Config::HighScores);
-
-    if (this->currentScoreIndex >= this->scores.size())
-      this->currentScoreIndex = -1;
+      if (this->currentScoreIndex >= this->scores.size())
+        this->currentScoreIndex = -1;
+    }
   }
 
   for (auto w : this->widgets)
