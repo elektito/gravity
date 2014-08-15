@@ -163,6 +163,10 @@ int main(int argc, char *argv[]) {
   Screen *creditsScreen = new CreditsScreen(window);
   splashScreen->Render(renderer);
 
+#ifdef RELEASE_BUILD
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+#endif
+
   ifstream input("gravity.save", ifstream::in | ifstream::binary);
   if (input) {
     highScoresScreen->Load(input);
