@@ -306,7 +306,7 @@ void GameScreen::SetTimeRemaining(int time) {
 }
 
 b2Vec2 GameScreen::GetRandomPosition() {
-  const float32 MIN_DISTANCE = 5;
+  const float32 MIN_DISTANCE = 8;
 
   int wpixels, hpixels;
   SDL_GetWindowSize(this->window, &wpixels, &hpixels);
