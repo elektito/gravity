@@ -85,7 +85,8 @@ public:
   static Entity *CreatePlanet(b2World *world,
                               b2Vec2 pos,
                               float32 radius,
-                              float32 density);
+                              float32 density,
+                              b2Vec2 v0=b2Vec2(0, 0));
   static Entity *CreateSun(b2World *world,
                            b2Vec2 pos,
                            float32 radius,

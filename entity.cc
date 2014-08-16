@@ -181,13 +181,15 @@ void Entity::Load(istream &s, b2World *world) {
 Entity *Entity::CreatePlanet(b2World *world,
                              b2Vec2 pos,
                              float32 radius,
-                             float32 density)
+                             float32 density,
+                             b2Vec2 v0)
 {
   Entity *e = new Entity;
   e->hasPhysics = true;
   b2BodyDef bd;
   bd.type = b2_dynamicBody;
   bd.position = pos;
+  bd.linearVelocity = v0;
   bd.angularDamping = 0.4f;
   e->body = world->CreateBody(&bd);
 

@@ -394,10 +394,29 @@ b2Vec2 GameScreen::GetRandomPosition() {
 
 void GameScreen::SpawnPlanet() {
   b2Vec2 pos = this->GetRandomPosition();
+
+  // Set the initial velocity such that the new planet seems to be
+  // thrown to a point near the sun. (The following is perhaps not the
+  // best method, but the first thing that came to my mind!)
+  b2Vec2 v0 = this->sun->body->GetPosition() - pos; // a vector from
+                                                    // the planet to
+                                                    // the sun
+  v0.Set(v0.y, -v0.x); // make a vector perpendicular to it.
+  v0.Normalize(); // normalize it
+  v0 *= 15.0; // and then make it length
+  v0 += this->sun->body->GetPosition() - pos; // add it to the initial
+                                              // vector. we now have a
+                                              // vector towards a
+                                              // point in the vicinity
+                                              // of the sun.
+  v0.Normalize(); // normalize it
+  v0 *= 25; // and set the initial speed.
+
   Entity *planet = Entity::CreatePlanet(&this->world,
                                         pos,
                                         2.0,
-                                        1.0);
+                                        1.0,
+                                        v0);
   this->entities.push_back(planet);
 }
 
