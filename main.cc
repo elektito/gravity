@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Create window.
-  window = SDL_CreateWindow("polygons",
+  window = SDL_CreateWindow("gravity",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             Config::ScreenWidth,
