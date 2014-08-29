@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
   srand(time(0));
 
   // Initialize SDL.
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+  if(SDL_Init(SDL_INIT_VIDEO) < 0) {
     cout << "SDL could not be initialized! SDL_Error: "
          << SDL_GetError() << endl;
     return 1;
