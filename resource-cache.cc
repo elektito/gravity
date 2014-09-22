@@ -19,6 +19,8 @@ using namespace std;
 
 namespace ResourceCache {
 
+string RESOURCES_PATH = "./resources";
+
 GLuint texturedPolygonProgram = 0;
 GLuint hudTexturedPolygonProgram = 0;
 GLuint textProgram = 0;
@@ -141,17 +143,17 @@ void Init() {
   shaderTypeNames[GL_GEOMETRY_SHADER] = "geometry";
   shaderTypeNames[GL_FRAGMENT_SHADER] = "fragment";
 
-  texturedPolygonProgram = CreateProgram("resources/shaders/tex-poly-vertex-shader.glsl",
-                                         "resources/shaders/tex-poly-fragment-shader.glsl");
+  texturedPolygonProgram = CreateProgram(RESOURCES_PATH + "/shaders/tex-poly-vertex-shader.glsl",
+                                         RESOURCES_PATH + "/shaders/tex-poly-fragment-shader.glsl");
 
-  hudTexturedPolygonProgram = CreateProgram("resources/shaders/hud-tex-poly-vertex-shader.glsl",
-                                            "resources/shaders/tex-poly-fragment-shader.glsl");
+  hudTexturedPolygonProgram = CreateProgram(RESOURCES_PATH + "/shaders/hud-tex-poly-vertex-shader.glsl",
+                                            RESOURCES_PATH + "/shaders/tex-poly-fragment-shader.glsl");
 
-  textProgram = CreateProgram("resources/shaders/text-vertex-shader.glsl",
-                              "resources/shaders/text-fragment-shader.glsl");
+  textProgram = CreateProgram(RESOURCES_PATH + "/shaders/text-vertex-shader.glsl",
+                              RESOURCES_PATH + "/shaders/text-fragment-shader.glsl");
 
-  backgroundProgram = CreateProgram("resources/shaders/background-vertex-shader.glsl",
-                                    "resources/shaders/background-fragment-shader.glsl");
+  backgroundProgram = CreateProgram(RESOURCES_PATH + "/shaders/background-vertex-shader.glsl",
+                                    RESOURCES_PATH + "/shaders/background-fragment-shader.glsl");
 
   cout << "Resource cache initialized." << endl;
 }
@@ -174,7 +176,7 @@ TTF_Font *GetFont(int height_pixels) {
   if (it != font_cache.end())
     return it->second;
 
-  TTF_Font *font = TTF_OpenFont("resources/fonts/kenvector_future.ttf", height_pixels);
+  TTF_Font *font = TTF_OpenFont((RESOURCES_PATH + "/fonts/kenvector_future.ttf").data(), height_pixels);
   if (font == nullptr) {
     stringstream ss;
     ss << "Unable to load font. SDL_ttf error: " << TTF_GetError();
@@ -191,7 +193,7 @@ Mix_Chunk *GetSound(const string &name) {
   if (it != sound_cache.end())
     return it->second;
 
-  Mix_Chunk *chunk = Mix_LoadWAV(("resources/sound/" + name + ".wav").data());
+  Mix_Chunk *chunk = Mix_LoadWAV((RESOURCES_PATH + "/sound/" + name + ".wav").data());
   if (chunk == nullptr) {
     stringstream ss;
     ss << "Unable to load sound. SDL_mixer error: " << Mix_GetError();
@@ -274,7 +276,7 @@ GLuint GetTexture(const string &name, const string &type) {
     return it->second;
 
   int w, h, channels;
-  uint8_t *img = stbi_load(("resources/images/" + name + "." + type).data(), &w, &h, &channels, 0);
+  uint8_t *img = stbi_load((RESOURCES_PATH + "/images/" + name + "." + type).data(), &w, &h, &channels, 0);
   if (img == nullptr) {
     stringstream ss;
     ss << "Unable to load image. stb_image error: "

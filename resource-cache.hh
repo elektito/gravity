@@ -11,6 +11,8 @@ using namespace std;
 
 namespace ResourceCache {
 
+extern string RESOURCES_PATH;
+
 extern GLuint texturedPolygonProgram;
 extern GLuint hudTexturedPolygonProgram;
 extern GLuint textProgram;

@@ -99,6 +99,9 @@ int main(int argc, char *argv[]) {
   bool quit = false;
   SDL_Window *window = nullptr;
 
+  if (argc > 1)
+    ResourceCache::RESOURCES_PATH = argv[1];
+
   // Seed the pseudo-random number generator with time.
   srand(time(0));
 
