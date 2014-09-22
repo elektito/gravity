@@ -1,6 +1,20 @@
 APPNAME = 'gravity'
 VERSION = '0.1'
 
+from waflib.Task import Task
+
+class PythonScript(Task):
+    def __init__(self, env, args=''):
+        Task.__init__(self, env=env)
+        self.args = args
+
+    def run(self):
+        return self.exec_command("python {} {} {}".format(
+            self.inputs[0].abspath(),
+            self.outputs[0].abspath(),
+            self.args
+        ))
+
 def options(opt):
     opt.load('compiler_cxx')
 
@@ -60,6 +74,25 @@ def build(bld):
     ]
     bld.program(
         source=source,
-        target='gravity',
+        target='gravity-bin',
         use='SDL2 SDL2_TTF SDL2_MIXER GL GLEW BOX2D'
     )
+
+    launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')
+    launcher.set_inputs(bld.path.find_resource('create-launcher.py'))
+    launcher.set_outputs(bld.path.find_or_declare('launcher.sh'))
+    bld.add_to_group(launcher)
+
+    bld.install_as('${PREFIX}/bin/gravity', 'launcher.sh', chmod=0755)
+
+    images_dir = bld.path.find_dir('resources/images')
+    bld.install_files('${PREFIX}/share/gravity/images', images_dir.ant_glob('*.png'), cwd=images_dir, relative_trick=True)
+
+    fonts_dir = bld.path.find_dir('resources/fonts')
+    bld.install_files('${PREFIX}/share/gravity/fonts', fonts_dir.ant_glob('*.ttf'), cwd=fonts_dir, relative_trick=True)
+
+    sounds_dir = bld.path.find_dir('resources/sound')
+    bld.install_files('${PREFIX}/share/gravity/sound', sounds_dir.ant_glob('*.wav'), cwd=sounds_dir, relative_trick=True)
+
+    shaders_dir = bld.path.find_dir('resources/shaders')
+    bld.install_files('${PREFIX}/share/gravity/shaders', shaders_dir.ant_glob('*.glsl'), cwd=shaders_dir, relative_trick=True)
