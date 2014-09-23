@@ -11,6 +11,9 @@
 #include "stb_image_write.h"
 
 #include <SDL2/SDL.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include <iostream>
 #include <fstream>
@@ -170,7 +173,14 @@ int main(int argc, char *argv[]) {
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 #endif
 
-  ifstream input("gravity.save", ifstream::in | ifstream::binary);
+  string savefile_path = getenv("HOME");
+  if (savefile_path.empty()) {
+    struct passwd* pwd = getpwuid(getuid());
+    savefile_path = pwd->pw_dir;
+  }
+  string savefile = savefile_path + "/.gravity.save";
+
+  ifstream input(savefile, ifstream::in | ifstream::binary);
   if (input) {
     highScoresScreen->Load(input);
   }
@@ -233,7 +243,7 @@ int main(int argc, char *argv[]) {
     }
   } // while (!quit)
 
-  ofstream output("gravity.save", ofstream::out | ofstream::binary);
+  ofstream output(savefile, ofstream::out | ofstream::binary);
   if (output) {
     highScoresScreen->Save(output);
   }
