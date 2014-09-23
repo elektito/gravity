@@ -1,0 +1,6 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	./waf configure --release --destdir=$$(pwd)/debian/gravity build install --prefix=/usr
