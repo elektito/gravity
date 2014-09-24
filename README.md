@@ -14,7 +14,7 @@ In order to build _Gravity_ you need the following libraries:
  - Box2D
 
 In order to build run `./waf configure` and then `./waf build`. A
-C++11 compliant compiler is needed.
+C++11 compliant compiler and a Python interpreter is needed.
 
 Only tested on Linux so far, but building on other systems should be
 possible.
