@@ -35,9 +35,8 @@ def configure(cfg):
     cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
     cfg.check_cxx(lib='GL', uselib_store='GL')
-    cfg.check_cxx(lib='GLEW', uselib_store='GLEW')
 
-    cfg.env.append_value('CXXFLAGS', ['-std=c++11'])
+    cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-DGLEW_NO_GLU'])
 
     if cfg.options.release_build:
         cfg.env.append_value('CXXFLAGS', ['-O3'])
@@ -70,12 +69,13 @@ def build(bld):
         'label-widget.cc',
         'button-widget.cc',
         'mesh.cc',
-        'renderer.cc'
+        'renderer.cc',
+        'glew.c'
     ]
     bld.program(
         source=source,
         target='gravity-bin',
-        use='SDL2 SDL2_TTF SDL2_MIXER GL GLEW BOX2D'
+        use='SDL2 SDL2_TTF SDL2_MIXER GL BOX2D'
     )
 
     launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')

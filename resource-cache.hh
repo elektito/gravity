@@ -1,9 +1,10 @@
 #ifndef _GRAVITY_RESOURCE_CACHE_HH_
 #define _GRAVITY_RESOURCE_CACHE_HH_
 
+#include "glew.h"
+
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <GL/glew.h>
 
 #include <string>
 

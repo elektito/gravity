@@ -1,7 +1,7 @@
 #ifndef _GRAVITY_MESH_HH_
 #define _GRAVITY_MESH_HH_
 
-#include <GL/glew.h>
+#include "glew.h"
 #include <Box2D/Box2D.h>
 
 class Mesh {
