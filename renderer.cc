@@ -123,7 +123,8 @@ Renderer::Renderer(SDL_Window *window) :
   }
 
   if (!GLEW_VERSION_3_3) {
-    cout << "GLEW version 3.3 not found." << endl;
+    cout << "OpenGL version 3.3 not found." << endl;
+    cout << "Make sure your video card driver is up to date." << endl;
     exit(1);
   }
 
