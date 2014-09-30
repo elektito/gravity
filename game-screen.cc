@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <functional>
 
+#define M_PI 3.14159265358979323846
+
 using std::placeholders::_1;
 
 using namespace std;

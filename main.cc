@@ -12,8 +12,12 @@
 
 #include <SDL2/SDL.h>
 #include <unistd.h>
+#include <time.h>
+
+#if !(defined(_WIN32) || defined(_WIN64))
 #include <sys/types.h>
 #include <pwd.h>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -173,12 +177,16 @@ int main(int argc, char *argv[]) {
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 #endif
 
+#if (defined(_WIN32) || defined(_WIN64))
+  string savefile = ".gravity.save";
+#else
   string savefile_path = getenv("HOME");
   if (savefile_path.empty()) {
     struct passwd* pwd = getpwuid(getuid());
     savefile_path = pwd->pw_dir;
   }
   string savefile = savefile_path + "/.gravity.save";
+#endif
 
   ifstream input(savefile, ifstream::in | ifstream::binary);
   if (input) {

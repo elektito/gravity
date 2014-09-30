@@ -27,14 +27,26 @@ def options(opt):
         help='Enable collecting profiling information.'
     )
 
+    opt.add_option(
+        '--windows', action='store_true', default=False, dest='windows_build',
+        help='Configure the build for Windows.'
+    )
+
 def configure(cfg):
     cfg.load('compiler_cxx')
 
     cfg.check_cfg(package='sdl2', args='--cflags --libs', uselib_store='SDL2')
     cfg.check_cxx(lib='Box2D', uselib_store='BOX2D')
-    cfg.check_cxx(lib='SDL2_ttf', uselib_store='SDL2_TTF')
+    cfg.check_cfg(package='SDL2_ttf', args='--cflags --libs', uselib_store='SDL2_TTF')
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
-    cfg.check_cxx(lib='GL', uselib_store='GL')
+    if cfg.options.windows_build:
+        cfg.env['windows_build'] = True
+        cfg.check_cxx(lib='opengl32', uselib_store='GL')
+        cfg.check_cxx(lib='glu32', uselib_store='GLU')
+        cfg.env.append_value('CXXFLAGS', '-DGLEW_STATIC')
+        cfg.load('winres')
+    else:
+        cfg.check_cxx(lib='GL', uselib_store='GL')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-DGLEW_NO_GLU'])
 
@@ -72,6 +84,10 @@ def build(bld):
         'renderer.cc',
         'glew.c'
     ]
+
+    if bld.env.windows_build:
+        source.append('resources.rc')
+
     bld.program(
         source=source,
         target='gravity-bin',
