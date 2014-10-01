@@ -86,7 +86,10 @@ def build(bld):
     ]
 
     if bld.env.windows_build:
-        source.append('resources.rc')
+        source.append('windows/windows.cc')
+        source.append('windows/resources.rc')
+    else:
+        source.append('posix/posix.cc')
 
     bld.program(
         source=source,
