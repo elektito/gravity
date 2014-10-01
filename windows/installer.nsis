@@ -1,3 +1,7 @@
+!define APPNAME "Gravity"
+!define ARP "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
+!include "FileFunc.nsh"
+
 outfile "..\build\gravity-installer.exe"
 
 # default installation directory
@@ -9,16 +13,35 @@ section
   file gravity-bin.exe
   file /r /x *.svg /x sources.txt ..\resources
 
-  createShortCut "$SMPROGRAMS\Gravity.lnk" "$INSTDIR\gravity-bin.exe"
-  createShortCut "$SMPROGRAMS\Uninstall Gravity.lnk" "$INSTDIR\uninstall.exe"
+  createShortCut "$SMPROGRAMS\Gravity\Gravity.lnk" "$INSTDIR\gravity-bin.exe"
+  createShortCut "$SMPROGRAMS\Gravity\Uninstall Gravity.lnk" "$INSTDIR\uninstall.exe"
 
-  writeUninstaller $INSTDIR\uninstaller.exe
+  writeUninstaller $INSTDIR\uninstall.exe
+
+  # Add an entry to Add/Remove Programs (or Programs and Features in
+  # later editions of Windows)
+  WriteRegStr HKLM "${ARP}" "Publisher" "Gravitational Systems Corporation"
+  WriteRegStr HKLM "${ARP}" "DisplayName" "Gravity: Friend or Foe?"
+  WriteRegStr HKLM "${ARP}" "DisplayIcon" "$INSTDIR\gravity-bin.exe"
+  WriteRegStr HKLM "${ARP}" "DisplayVersion" "1.0.0"
+  WriteRegDWORD HKLM "${ARP}" "VersionMajor" "1"
+  WriteRegDWORD HKLM "${ARP}" "VersionMinor" "0"
+  WriteRegStr HKLM "${ARP}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+  WriteRegStr HKLM "${ARP}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+  ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+  IntFmt $0 "0x%08X" $0
+  WriteRegDWORD HKLM "${ARP}" "EstimatedSize" "$0"
+  WriteRegDWORD HKLM "${ARP}" "NoRepair" "1"
+  WriteRegDWORD HKLM "${ARP}" "NoModify" "1"
 sectionEnd
 
 section "Uninstall"
-  delete $INSTDIR\uninstaller.exe
+  delete $INSTDIR\uninstall.exe
   delete $INSTDIR\gravity-bin.exe
   rmdir /r $INSTDIR\resources
   delete "$SMPROGRAMS\Gravity.lnk"
   delete "$SMPROGRAMS\Uninstall Gravity.lnk"
+  rmdir $INSTDIR
+
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gravity"
 sectionEnd
