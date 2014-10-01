@@ -1,7 +1,7 @@
 outfile "..\build\gravity-installer.exe"
 
 # default installation directory
-installDir $PROGRAMFILES
+installDir $PROGRAMFILES\Gravity
 
 section
   setOutPath $INSTDIR

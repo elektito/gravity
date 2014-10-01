@@ -110,7 +110,7 @@ def build(bld):
     )
 
     if bld.env.create_installer:
-        bld(rule='${MAKENSIS} -NOCD ${SRC}', source='windows/installer.nsis')
+        bld(rule='${MAKENSIS} -NOCD ${SRC}', source='windows/installer.nsis', target='gravity-installer.exe')
 
     if not bld.env.windows_build:
         launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')
