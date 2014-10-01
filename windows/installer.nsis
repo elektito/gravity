@@ -1,0 +1,24 @@
+outfile "..\build\gravity-installer.exe"
+
+# default installation directory
+installDir $PROGRAMFILES
+
+section
+  setOutPath $INSTDIR
+
+  file gravity-bin.exe
+  file /r /x *.svg /x sources.txt ..\resources
+
+  createShortCut "$SMPROGRAMS\Gravity.lnk" "$INSTDIR\gravity-bin.exe"
+  createShortCut "$SMPROGRAMS\Uninstall Gravity.lnk" "$INSTDIR\uninstall.exe"
+
+  writeUninstaller $INSTDIR\uninstaller.exe
+sectionEnd
+
+section "Uninstall"
+  delete $INSTDIR\uninstaller.exe
+  delete $INSTDIR\gravity-bin.exe
+  rmdir /r $INSTDIR\resources
+  delete "$SMPROGRAMS\Gravity.lnk"
+  delete "$SMPROGRAMS\Uninstall Gravity.lnk"
+sectionEnd

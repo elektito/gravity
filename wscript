@@ -32,6 +32,11 @@ def options(opt):
         help='Configure the build for Windows.'
     )
 
+    opt.add_option(
+        '--installer', action='store_true', default=False, dest='create_installer',
+        help='Create a Windows installer using NSIS.'
+    )
+
 def configure(cfg):
     cfg.load('compiler_cxx')
 
@@ -45,7 +50,14 @@ def configure(cfg):
         cfg.check_cxx(lib='glu32', uselib_store='GLU')
         cfg.env.append_value('CXXFLAGS', '-DGLEW_STATIC')
         cfg.load('winres')
+
+        if cfg.options.create_installer:
+            cfg.env['create_installer'] = True
+            cfg.find_program('makensis', var='MAKENSIS')
     else:
+        if cfg.options.create_installer:
+            raise cfg.errors.ConfigurationError('--installer options only available when --windows is used.')
+
         cfg.check_cxx(lib='GL', uselib_store='GL')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-DGLEW_NO_GLU'])
@@ -97,12 +109,16 @@ def build(bld):
         use='SDL2 SDL2_TTF SDL2_MIXER GL BOX2D'
     )
 
-    launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')
-    launcher.set_inputs(bld.path.find_resource('create-launcher.py'))
-    launcher.set_outputs(bld.path.find_or_declare('launcher.sh'))
-    bld.add_to_group(launcher)
+    if bld.env.create_installer:
+        bld(rule='${MAKENSIS} -NOCD ${SRC}', source='windows/installer.nsis')
 
-    bld.install_as('${PREFIX}/bin/gravity', 'launcher.sh', chmod=0755)
+    if not bld.env.windows_build:
+        launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')
+        launcher.set_inputs(bld.path.find_resource('create-launcher.py'))
+        launcher.set_outputs(bld.path.find_or_declare('launcher.sh'))
+        bld.add_to_group(launcher)
+
+        bld.install_as('${PREFIX}/bin/gravity', 'launcher.sh', chmod=0755)
 
     images_dir = bld.path.find_dir('resources/images')
     bld.install_files('${PREFIX}/share/gravity/images', images_dir.ant_glob('*.png'), cwd=images_dir, relative_trick=True)
