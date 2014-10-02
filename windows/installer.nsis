@@ -2,10 +2,37 @@
 !define ARP "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 !include "FileFunc.nsh"
 
+name Gravity
 outfile "..\build\gravity-installer.exe"
 
 # default installation directory
 installDir $PROGRAMFILES\Gravity
+
+!include MUI2.nsh
+
+!insertmacro MUI_LANGUAGE English
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+LangString      MUI_TEXT_DIRECTORY_TITLE		${LANG_English}	"Choose installation directory"
+LangString      MUI_TEXT_DIRECTORY_SUBTITLE		${LANG_English}	"Please choose where you want to install $(^name)."
+LangString      MUI_TEXT_INSTALLING_TITLE		${LANG_English}	"Installing $(^name)..."
+LangString      MUI_TEXT_INSTALLING_SUBTITLE		${LANG_English}	"Please wait while the game is being installed."
+LangString      MUI_TEXT_FINISH_TITLE                   ${LANG_English}	"$(^name) installed"
+LangString      MUI_TEXT_FINISH_SUBTITLE		${LANG_English}	"Installation is complete."
+LangString      MUI_TEXT_ABORT_TITLE                    ${LANG_English}	"Installation aborted."
+LangString      MUI_TEXT_ABORT_SUBTITLE                 ${LANG_English}	"The installation of $(^name) was aborted."
+LangString      MUI_UNTEXT_CONFIRM_TITLE		${LANG_English}	"About to uninstall"
+LangString      MUI_UNTEXT_CONFIRM_SUBTITLE		${LANG_English}	"$(^name) is about to be uninstalled."
+LangString      MUI_UNTEXT_UNINSTALLING_TITLE		${LANG_English}	"Uninstalling Gravity..."
+LangString      MUI_UNTEXT_UNINSTALLING_SUBTITLE	${LANG_English}	"Please wait while the game is being uninstalled."
+LangString      MUI_UNTEXT_FINISH_TITLE                 ${LANG_English}	"Uninstallation complete"
+LangString      MUI_UNTEXT_FINISH_SUBTITLE		${LANG_English}	"$(^name) was removed from your computer."
+LangString      MUI_UNTEXT_ABORT_TITLE                  ${LANG_English}	"Uninstallation aborted"
+LangString      MUI_UNTEXT_ABORT_SUBTITLE               ${LANG_English}	"(^name) was not removed from your computer."
 
 section
   setOutPath $INSTDIR
