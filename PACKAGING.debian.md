@@ -23,14 +23,14 @@ Debian Packaging Guide
 4. Rename the source directory to gravity-X.Y in which X.Y is the
    version number.
 
-        mv gravity gravity-0.1
+        mv gravity gravity-1.0
 
 5. Create a source tarball.
 
-        tar -czf gravity_0.1.orig.tar.gz
+        tar -czf gravity_1.0.orig.tar.gz
 
 6. Build the Debian package. Make sure you have the proper tools
    (`sudo apt-get install devscripts`).
 
-        cd gravity-0.1/
+        cd gravity-1.0/
         debuild -us -uc

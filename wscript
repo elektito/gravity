@@ -1,5 +1,5 @@
 APPNAME = 'gravity'
-VERSION = '0.1'
+VERSION = '1.0'
 
 from waflib.Task import Task
 
