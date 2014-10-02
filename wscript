@@ -108,6 +108,8 @@ def build(bld):
 
         bld.install_as('${PREFIX}/bin/gravity', 'launcher.sh', chmod=0755)
 
+    bld.install_as('${PREFIX}/share/doc/gravity/copyright', 'debian/copyright')
+
     images_dir = bld.path.find_dir('resources/images')
     bld.install_files('${PREFIX}/share/gravity/images', images_dir.ant_glob('*.png'), cwd=images_dir, relative_trick=True)
 

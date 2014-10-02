@@ -2,7 +2,6 @@ Source: gravity
 Maintainer: Mostafa Razavi <mostafa@sepent.com>
 Section: misc
 Priority: optional
-Standards-Version: 0.1
 Build-Depends: debhelper (>= 9), python (>= 2.7), libsdl2-dev (>= 2.0), libsdl2-ttf-dev (>= 2.), libsdl2-mixer-dev (>= 2.0), libbox2d-dev (>= 2.3)
 
 Package: gravity
