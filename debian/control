@@ -7,6 +7,7 @@ Build-Depends: debhelper (>= 9), python (>= 2.7), libsdl2-dev (>= 2.0), libsdl2-
 
 Package: gravity
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libsdl2-2.0-0 (>= 2.0), libsdl2-ttf-2.0-0 (>= 2.0), libsdl2-mixer-2.0-0 (>= 2.0)
-Description: physics-based game
- Gravity is a cool game.
+Depends: ${shlibs:Depends}, ${misc:Depends}, libsdl2-2.0-0 (>= 2.0), libsdl2-ttf-2.0-0 (>= 2.0), libsdl2-mixer-2.0-0 (>= 2.0), libbox2d2.3.0 (>= 2.3)
+Description: physics-based puzzle game
+ Gravity is a game physics-based puzzle game in which you try to
+ control one or more planets indirectly by moving the sun.
