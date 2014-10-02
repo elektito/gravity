@@ -12,8 +12,17 @@ Now go to the `mxe` directory. Before proceeding, update `src/sdl2.mk`
 and `src/sdl2_mixer.mk` with the build options you want. At the time
 of this writing, updating `sdl2_mixer.mk` is necessary because there
 will be build failures when SDL2_mixer is built with SMPEG. You need
-to either disable mp3 playback or use libmad instead. After that,
-build the necessary packages:
+to either disable mp3 playback or use libmad instead.
+
+Suggested SDL2 configuration options:
+
+    --disable-atomic --disable-render --disable-joystick --disable-haptic --disable-power --disable-loadso --disable-cpuinfo --disable-dbus
+
+Suggested SDL2_mixer configuration options:
+
+    --disable-music-cmd --disable-music-mod --disable-music-midi --disable-music-ogg --disable-music-mp3 --disable-music-flac
+
+After that, build the packages:
 
     # make MXE_TARGETS='i686-w64-mingw32.static' gcc sdl2 sdl2_mixer sdl2_ttf
 
