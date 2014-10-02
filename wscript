@@ -3,18 +3,6 @@ VERSION = '0.1'
 
 from waflib.Task import Task
 
-class PythonScript(Task):
-    def __init__(self, env, args=''):
-        Task.__init__(self, env=env)
-        self.args = args
-
-    def run(self):
-        return self.exec_command("python {} {} {}".format(
-            self.inputs[0].abspath(),
-            self.outputs[0].abspath(),
-            self.args
-        ))
-
 def options(opt):
     opt.load('compiler_cxx')
 
@@ -113,10 +101,10 @@ def build(bld):
         bld(rule='${MAKENSIS} -NOCD ${SRC}', source='windows/installer.nsis', target='gravity-installer.exe')
 
     if not bld.env.windows_build:
-        launcher = PythonScript(env=bld.env, args=bld.env.PREFIX + ' /share/gravity')
-        launcher.set_inputs(bld.path.find_resource('create-launcher.py'))
-        launcher.set_outputs(bld.path.find_or_declare('launcher.sh'))
-        bld.add_to_group(launcher)
+        bld(
+            rule='echo "#!/bin/sh\\n{0}/bin/gravity-bin {0}/share/gravity"'.format(bld.env.PREFIX) + ' > ${TGT}',
+            target='launcher.sh'
+        )
 
         bld.install_as('${PREFIX}/bin/gravity', 'launcher.sh', chmod=0755)
 
