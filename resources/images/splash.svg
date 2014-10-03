@@ -14,7 +14,10 @@
    id="svg6114"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="splash.svg">
+   sodipodi:docname="splash.svg"
+   inkscape:export-filename="/home/mostafa/source/gravity/resources/images/splash.svg.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs6116" />
   <sodipodi:namedview
@@ -25,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="392.34441"
+     inkscape:cx="714.77866"
      inkscape:cy="445.99834"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -43,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -76,7 +79,7 @@
        sodipodi:cy="469.50504"
        sodipodi:rx="30"
        sodipodi:ry="37.142857"
-       d="m 467.14285,469.50504 a 30,37.142857 0 1 1 -60,0 30,37.142857 0 1 1 60,0 z"
+       d="m 467.14285,469.50504 c 0,20.51343 -13.43145,37.14285 -30,37.14285 -16.56854,0 -30,-16.62942 -30,-37.14285 0,-20.51344 13.43146,-37.14286 30,-37.14286 16.56855,0 30,16.62942 30,37.14286 z"
        transform="matrix(2.8071409,0,0,-2.2673062,105.42693,2009.227)"
        inkscape:export-filename="/home/mostafa/source/gravity/resources/images/sun.png"
        inkscape:export-xdpi="207.39241"
@@ -89,7 +92,7 @@
        sodipodi:cy="597.36218"
        sodipodi:rx="16.428572"
        sodipodi:ry="16.428572"
-       d="m 315.71428,597.36218 a 16.428572,16.428572 0 1 1 -32.85715,0 16.428572,16.428572 0 1 1 32.85715,0 z"
+       d="m 315.71428,597.36218 c 0,9.07325 -7.35532,16.42857 -16.42857,16.42857 -9.07325,0 -16.42858,-7.35532 -16.42858,-16.42857 0,-9.07325 7.35533,-16.42857 16.42858,-16.42857 9.07325,0 16.42857,7.35532 16.42857,16.42857 z"
        transform="matrix(2.2457127,0,0,-2.2457127,334.00839,1998.2868)"
        inkscape:export-filename="/home/mostafa/source/gravity/resources/images/sun.png"
        inkscape:export-xdpi="207.39241"
@@ -102,7 +105,7 @@
        sodipodi:cy="560.2193"
        sodipodi:rx="41.42857"
        sodipodi:ry="41.42857"
-       d="m 392.85713,560.2193 a 41.42857,41.42857 0 1 1 -82.85714,0 41.42857,41.42857 0 1 1 82.85714,0 z"
+       d="m 392.85713,560.2193 c 0,22.88037 -18.5482,41.42857 -41.42857,41.42857 -22.88037,0 -41.42857,-18.5482 -41.42857,-41.42857 0,-22.88037 18.5482,-41.42857 41.42857,-41.42857 22.88037,0 41.42857,18.5482 41.42857,41.42857 z"
        transform="matrix(3.2524116,0,0,-3.2524116,-269.57211,2974.8668)"
        inkscape:export-filename="/home/mostafa/source/gravity/resources/images/sun.png"
        inkscape:export-xdpi="207.39241"
@@ -130,5 +133,17 @@
      style="letter-spacing:0px;stroke:#ffffff;stroke-opacity:1;stroke-width:19.50000000000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:miter;stroke-linecap:butt;fill:#ffffff;fill-opacity:1"
      id="tspan3293"
      dy="19.249998">Y</tspan></tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:70px;font-style:normal;font-weight:500;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3.20000004999999987;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Ubuntu Medium"
+       x="939.44189"
+       y="321.01169"
+       id="text3760"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3762"
+         x="939.44189"
+         y="321.01169"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;letter-spacing:-8.12000274999999938px;stroke:#ffffff;stroke-width:3.20000004999999987;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium;fill:#ffffff;fill-opacity:1">Friend or Foe?</tspan></text>
   </g>
 </svg>
