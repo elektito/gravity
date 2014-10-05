@@ -16,7 +16,9 @@ Linux system.
 Building in a container
 =======================
 
-Create a container:
+Create a container (if you want to create a container with a different
+architecture than the host system, add something like ` --
+--arch=i386` to the end of this line):
 
     $ sudo lxc-create -t ubuntu -n build-container
 
@@ -27,7 +29,9 @@ container:
     $ sudo git clone ./gravity/ /var/lib/lxc/build-container/rootfs/home/ubuntu/gravity/
     $ sudo cp box2d-2.3.1.tar.xz freetype-2.5.3.tar.bz2 SDL2-2.0.3.tar.gz SDL2_mixer-2.0.0.tar.gz SDL2_ttf-2.0.12.tar.gz /var/lib/lxc/build-container/rootfs/home/ubuntu/
 
-Copy premake4 into the container
+Copy premake4 into the container (notice that if you are building a
+container with a different architecture than the host system, you need
+to make a premake4 binary of appropriate architecture):
 
     $ sudo cp /usr/bin/premake4 /var/lib/lxc/build-container/rootfs/usr/bin/
 
