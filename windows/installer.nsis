@@ -47,7 +47,7 @@ section
 
   # Add an entry to Add/Remove Programs (or Programs and Features in
   # later editions of Windows)
-  WriteRegStr HKLM "${ARP}" "Publisher" "Gravitational Systems Corporation"
+  WriteRegStr HKLM "${ARP}" "Publisher" "Mostafa Razavi"
   WriteRegStr HKLM "${ARP}" "DisplayName" "Gravity: Friend or Foe?"
   WriteRegStr HKLM "${ARP}" "DisplayIcon" "$INSTDIR\gravity-bin.exe"
   WriteRegStr HKLM "${ARP}" "DisplayVersion" "1.0.0"
@@ -66,8 +66,9 @@ section "Uninstall"
   delete $INSTDIR\uninstall.exe
   delete $INSTDIR\gravity-bin.exe
   rmdir /r $INSTDIR\resources
-  delete "$SMPROGRAMS\Gravity.lnk"
-  delete "$SMPROGRAMS\Uninstall Gravity.lnk"
+  delete "$SMPROGRAMS\Gravity\Gravity.lnk"
+  delete "$SMPROGRAMS\Gravity\Uninstall Gravity.lnk"
+  rmdir "$SMPROGRAMS\Gravity"
   rmdir $INSTDIR
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gravity"

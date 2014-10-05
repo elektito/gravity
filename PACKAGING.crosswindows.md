@@ -33,7 +33,7 @@ versions set MXE_TARGETS to `x86_646-w64-mingw32.static`.
 
 Box2D is not available in MXE so we need to build it separately.
 
-    $ cd ~/source/box2d-2.3.1/
+    $ cd ~/source/box2d-2.3.1/Box2D/
     $ premake4 gmake
     $ cd Build/gmake/
     $ rm -rf obj/ bin/
@@ -57,6 +57,6 @@ Then build and install Box2D like this:
     $ export PKGCONFIG=~/source/mxe/usr/bin/i686-w64-mingw32.static-pkg-config
     $ export WINRC=~/source/mxe/usr/bin/i686-w64-mingw32.static-windres
     $ cd ~/source/gravity/
-    $ ./waf distclean configure --release --windows build
+    $ ./waf distclean configure --release --windows --installer build
 
 `gravity-bin.exe` will be created in the `build` directory.
