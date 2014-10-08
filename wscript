@@ -42,6 +42,8 @@ def configure(cfg):
         if cfg.options.create_installer:
             cfg.env['create_installer'] = True
             cfg.find_program('makensis', var='MAKENSIS')
+
+        cfg.env.append_value('LINKFLAGS', '-Wl,-subsystem,windows')
     else:
         if cfg.options.create_installer:
             raise cfg.errors.ConfigurationError('--installer options only available when --windows is used.')
