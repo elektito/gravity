@@ -1,5 +1,6 @@
 #include "resource-cache.hh"
 #include "helpers.hh"
+#include "platform.hh"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -66,7 +67,7 @@ GLuint CreateShader(GLenum shaderType, const string &shaderSource) {
   GLint status;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
   if (status == GL_FALSE) {
-    cout << "Compile failure in " << shaderTypeName << " shader." << endl;
+    SHOW_MSG("Compile failure in " << shaderTypeName << " shader.");
     exit(1);
   }
 
@@ -90,7 +91,7 @@ GLuint CreateProgram(const vector<GLuint> &shaders) {
     GLchar *infoLog = new GLchar[infoLogLength];
     glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
 
-    cout << "Linker failure: " << infoLog << endl;
+    SHOW_MSG("Linker failure: " << infoLog);
     delete[] infoLog;
     exit(1);
   }

@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -14,4 +15,8 @@ string GetUserHomeDirectory() {
   }
 
   return dir;
+}
+
+void ShowMessage(string msg) {
+  cout << msg << endl;
 }

@@ -15,3 +15,7 @@ string GetUserHomeDirectory() {
   else
     return ".";
 }
+
+void ShowMessage(string msg) {
+  MessageBox(0, msg.data(), "Gravity", MB_OK);
+}

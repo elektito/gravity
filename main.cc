@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -98,7 +99,7 @@ void HandleEvents(SDL_Event &e, SDL_Window *window, bool &quit) {
   } // switch (e.type)
 }
 
-int main(int argc, char *argv[]) {
+int main_body(int argc, char *argv[]) {
   bool quit = false;
   SDL_Window *window = nullptr;
 
@@ -110,8 +111,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize SDL.
   if(SDL_Init(0) < 0) {
-    cout << "SDL could not be initialized! SDL_Error: "
-         << SDL_GetError() << endl;
+    SHOW_MSG("SDL could not be initialized! SDL_Error: " << SDL_GetError());
     return 1;
   }
 
@@ -123,8 +123,7 @@ int main(int argc, char *argv[]) {
                             Config::ScreenHeight,
                             SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (window == nullptr) {
-    cout << "Window could not be created. SDL_Error: "
-         << SDL_GetError() << endl;
+    SHOW_MSG("Window could not be created. SDL_Error: " << SDL_GetError());
     return 2;
   }
 
@@ -243,7 +242,9 @@ int main(int argc, char *argv[]) {
     highScoresScreen->Save(output);
   }
   else {
+#ifndef RELEASE_BUILD
     cout << "Could not write to save file." << endl;
+#endif
   }
 
   delete mainMenuScreen;
@@ -259,4 +260,13 @@ int main(int argc, char *argv[]) {
   SDL_Quit();
 
   return 0;
+}
+
+int main(int argc, char *argv[]) {
+  try {
+    main_body(argc, argv);
+  }
+  catch(runtime_error &e) {
+    SHOW_MSG("Run-time error: " << e.what());
+  }
 }

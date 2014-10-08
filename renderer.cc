@@ -1,5 +1,6 @@
 #include "renderer.hh"
 #include "resource-cache.hh"
+#include "platform.hh"
 
 #include <iostream>
 #include <sstream>
@@ -118,13 +119,12 @@ Renderer::Renderer(SDL_Window *window) :
   // initialize glew
   GLenum status = glewInit();
   if (status != GLEW_OK) {
-    cout << "Could not initialize GLEW." << endl;
+    SHOW_MSG("Could not initialize GLEW.");
     exit(1);
   }
 
   if (!GLEW_VERSION_3_3) {
-    cout << "OpenGL version 3.3 not found." << endl;
-    cout << "Make sure your video card driver is up to date." << endl;
+    SHOW_MSG("OpenGL version 3.3 not found. Make sure your video card driver is up to date.");
     exit(1);
   }
 
