@@ -34,4 +34,5 @@ if (($? == 0)); then
     cp build/gravity-bin.exe $DIR/
     cp -r resources/ $DIR/
     rm -f $DIR/resources/images/*.svg
+    rm $DIR/resources/sources.txt
 fi
