@@ -27,7 +27,7 @@ Debian Packaging Guide
 
 5. Create a source tarball.
 
-        tar -czf gravity_1.0.orig.tar.gz
+        tar -czf gravity_1.0.orig.tar.gz gravity-1.0/
 
 6. Build the Debian package. Make sure you have the proper tools
    (`sudo apt-get install devscripts`).
