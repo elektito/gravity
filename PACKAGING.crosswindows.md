@@ -27,7 +27,7 @@ After that, build the packages:
     $ make MXE_TARGETS='i686-w64-mingw32.static' gcc sdl2 sdl2_mixer sdl2_ttf
 
 This will build 32-bit versions of these packages. To build 64 bit
-versions set MXE_TARGETS to `x86_646-w64-mingw32.static`.
+versions set MXE_TARGETS to `x86_64-w64-mingw32.static`.
 
 # Build Box2D
 
