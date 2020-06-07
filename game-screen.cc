@@ -867,8 +867,8 @@ void GameScreen::FixCamera(Entity *e) {
     miny = max(pos.y - r - 2, lower.y);
   }
 
-  auto halfx = max(abs(maxx), abs(minx));
-  auto halfy = max(abs(maxy), abs(miny));
+  auto halfx = max(fabs(maxx), fabs(minx));
+  auto halfy = max(fabs(maxy), fabs(miny));
 
   auto width1 = 2 * halfx;
   auto height1 = width1 / ratio;
@@ -1082,8 +1082,8 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
       float32 leastDiff = FLT_MAX;
       TrailPoint closestPoint;
       for (; it != e->trail.points.rend(); ++it) {
-        if (abs(it->time - time) < leastDiff) {
-          leastDiff = abs(it->time - time);
+        if (fabs(it->time - time) < leastDiff) {
+          leastDiff = fabs(it->time - time);
           closestPoint = *it;
         }
 
