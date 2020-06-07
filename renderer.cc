@@ -114,6 +114,8 @@ void Background::Draw() {
 Renderer::Renderer(SDL_Window *window) :
   window(window)
 {
+  // Create an OpenGL context for the window and make it current. This
+  // is needed for the subsequent call to glewInit.
   this->context = SDL_GL_CreateContext(window);
 
   // initialize glew
