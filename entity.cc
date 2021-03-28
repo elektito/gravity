@@ -126,6 +126,8 @@ b2Body *Entity::LoadBody(istream &s, b2World *world) {
   }
 
   this->body->GetUserData().pointer = (uintptr_t) this;
+
+  return this->body;
 }
 
 Trail Entity::LoadTrail(istream &s) {
