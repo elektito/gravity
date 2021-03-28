@@ -16,40 +16,42 @@ to either disable mp3 playback or use libmad instead.
 
 Suggested SDL2 configuration options:
 
-    --disable-atomic --disable-render --disable-joystick --disable-haptic --disable-power --disable-loadso --disable-cpuinfo --disable-dbus
+    --disable-atomic --disable-render --disable-joystick --disable-haptic --disable-power --disable-loadso --disable-cpuinfo --disable-dbus --disable-vulkan
 
 Suggested SDL2_mixer configuration options:
 
-    --disable-music-cmd --disable-music-mod --disable-music-midi --disable-music-ogg --disable-music-mp3 --disable-music-flac
+    --disable-music-cmd --disable-music-mod --disable-music-midi --disable-music-ogg --disable-music-mp3 --disable-music-flac --disable-music-opus --disable-music-mp3-mpg123
+
+Check `src/box2d.mk`. If the version (like the time of this writing)
+is lower than 2.4.1, replace its contents with the following:
+
+    PKG             := box2d
+    $(PKG)_WEBSITE  := https://www.box2d.org/
+    $(PKG)_IGNORE   :=
+    $(PKG)_VERSION  := 2.4.1
+    $(PKG)_CHECKSUM := d6b4650ff897ee1ead27cf77a5933ea197cbeef6705638dd181adc2e816b23c2
+    $(PKG)_GH_CONF  := erincatto/box2d/tags, v
+    $(PKG)_DEPS     := cc
+
+    define $(PKG)_BUILD
+        cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+            -DBOX2D_INSTALL=ON \
+            -DBOX2D_BUILD_TESTBED=OFF \
+            -DBOX2D_BUILD_DOCS=OFF \
+            -DBOX2D_BUILD_UNIT_TESTS=OFF \
+            -DBOX2D_BUILD_STATIC=$(CMAKE_STATIC_BOOL) \
+            -DBOX2D_BUILD_SHARED=$(CMAKE_SHARED_BOOL) \
+            '$(SOURCE_DIR)'
+        $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' VERBOSE=1
+        $(MAKE) -C '$(BUILD_DIR)' -j 1 install VERBOSE=1
+    endef
 
 After that, build the packages:
 
-    $ make MXE_TARGETS='i686-w64-mingw32.static' gcc sdl2 sdl2_mixer sdl2_ttf
+    $ make MXE_TARGETS='i686-w64-mingw32.static' gcc sdl2 sdl2_mixer sdl2_ttf box2d
 
 This will build 32-bit versions of these packages. To build 64 bit
 versions set MXE_TARGETS to `x86_64-w64-mingw32.static`.
-
-# Build Box2D
-
-Box2D is not available in MXE so we need to build it separately.
-
-    $ cd ~/source/box2d-2.3.1/Box2D/
-    $ premake4 gmake
-    $ cd Build/gmake/
-    $ rm -rf obj/ bin/
-
-Edit Box2D.make and change the lines that set CC, CXX and CR to these:
-
-    CC = $(CROSS)gcc
-    CXX = $(CROSS)g++
-    AR = $(CROSS)ar
-
-Then build and install Box2D like this:
-
-    $ make -f Box2D.make config=release CROSS=~/source/mxe/usr/bin/i686-w64-mingw32.static-
-    $ cp bin/Release/libBox2D.a ~/source/mxe/usr/i686-w64-mingw32.static/lib/
-    $ cd ../..
-    $ cp -r Box2D/ ~/source/mxe/usr/i686-w64-mingw32.static/include/
 
 # Build Gravity
 
