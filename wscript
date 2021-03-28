@@ -25,11 +25,16 @@ def options(opt):
         help='Create a Windows installer using NSIS.'
     )
 
+    opt.add_option(
+        '--emscripten', action='store_true', default=False, dest='emscripten',
+        help='Build the emscripten version of the game.'
+    )
+
 def configure(cfg):
     cfg.load('compiler_cxx')
 
     cfg.check_cfg(package='sdl2', args='--cflags --libs', uselib_store='SDL2')
-    cfg.check_cxx(lib='Box2D', uselib_store='BOX2D')
+    cfg.check_cxx(lib='box2d', uselib_store='BOX2D')
     cfg.check_cfg(package='SDL2_ttf', args='--cflags --libs', uselib_store='SDL2_TTF')
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
     if cfg.options.windows_build:

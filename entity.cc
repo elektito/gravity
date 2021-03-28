@@ -125,7 +125,7 @@ b2Body *Entity::LoadBody(istream &s, b2World *world) {
     this->body->CreateFixture(&fd);
   }
 
-  this->body->SetUserData(this);
+  this->body->GetUserData().pointer = (uintptr_t) this;
 }
 
 Trail Entity::LoadTrail(istream &s) {
@@ -180,8 +180,8 @@ void Entity::Load(istream &s, b2World *world) {
 
 Entity *Entity::CreatePlanet(b2World *world,
                              b2Vec2 pos,
-                             float32 radius,
-                             float32 density,
+                             float radius,
+                             float density,
                              b2Vec2 v0)
 {
   Entity *e = new Entity;
@@ -232,16 +232,16 @@ Entity *Entity::CreatePlanet(b2World *world,
   e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("planet"));
   e->isDrawable = true;
 
-  e->body->SetUserData(e);
+  e->body->GetUserData().pointer = (uintptr_t) e;
 
   return e;
 }
 
 Entity *Entity::CreateSun(b2World *world,
                           b2Vec2 pos,
-                          float32 radius,
-                          float32 density,
-                          float32 gravityCoeff)
+                          float radius,
+                          float density,
+                          float gravityCoeff)
 {
   Entity *e = new Entity;
   e->hasPhysics = true;
@@ -283,7 +283,7 @@ Entity *Entity::CreateSun(b2World *world,
   e->mesh = new Mesh(vertexData, 6, ResourceCache::GetTexture("sun"));
   e->isDrawable = true;
 
-  e->body->SetUserData(e);
+  e->body->GetUserData().pointer = (uintptr_t) e;
 
   return e;
 }
@@ -358,12 +358,12 @@ Entity *Entity::CreateCollectible(b2World *world, b2Vec2 pos, CollectibleType ty
   e->mesh = new Mesh(vertexData, 6, texture);
   e->isDrawable = true;
 
-  e->body->SetUserData(e);
+  e->body->GetUserData().pointer = (uintptr_t) e;
 
   return e;
 }
 
-Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, float32 angle) {
+Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, float angle) {
   Entity *e = new Entity;
   e->hasPhysics = true;
   b2BodyDef bd;
@@ -415,7 +415,7 @@ Entity *Entity::CreateEnemyShip(b2World *world, b2Vec2 pos, b2Vec2 velocity, flo
   e->mesh = new Mesh(vertexData, 12, ResourceCache::GetTexture("enemy"));
   e->isDrawable = true;
 
-  e->body->SetUserData(e);
+  e->body->GetUserData().pointer = (uintptr_t) e;
 
   return e;
 }

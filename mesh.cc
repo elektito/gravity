@@ -23,7 +23,7 @@ void Mesh::SetColor(float r, float g, float b, float a) {
   this->color = {r, g, b, a};
 }
 
-void Mesh::Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor) const {
+void Mesh::Draw(const b2Vec2 &pos, float angle, float scale_factor) const {
   GLuint program = ResourceCache::texturedPolygonProgram;
   glUseProgram(program);
 

@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <functional>
+#include <algorithm>
 
 #define M_PI 3.14159265358979323846
 
@@ -14,7 +15,7 @@ using std::placeholders::_1;
 
 using namespace std;
 
-b2Vec2 RotatePoint(b2Vec2 point, float32 theta, b2Vec2 center) {
+b2Vec2 RotatePoint(b2Vec2 point, float theta, b2Vec2 center) {
   b2Vec2 np;
   point = point - center;
   np.x = point.x * cos(theta) - point.y * sin(theta);
@@ -28,8 +29,8 @@ ContactListener::ContactListener(GameScreen *screen) :
 {}
 
 void ContactListener::BeginContact(b2Contact *contact) {
-  Entity *e1 = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
-  Entity *e2 = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+  Entity *e1 = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+  Entity *e2 = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData().pointer;
 
   if (e1->isSun && e2->isPlanet)
     this->PlanetSunContact(e2, e1);
@@ -123,8 +124,8 @@ void ContactListener::EndContact(b2Contact *contact) {
 }
 
 bool ContactFilter::ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
-  Entity *e1 = (Entity*) fixtureA->GetBody()->GetUserData();
-  Entity *e2 = (Entity*) fixtureB->GetBody()->GetUserData();
+  Entity *e1 = (Entity*) fixtureA->GetBody()->GetUserData().pointer;
+  Entity *e2 = (Entity*) fixtureB->GetBody()->GetUserData().pointer;
 
   if (e1->isEnemy && e2->isEnemy)
     return false;
@@ -361,26 +362,26 @@ void GameScreen::SetTimeRemaining(int time) {
 }
 
 b2Vec2 GameScreen::GetRandomPosition() {
-  const float32 MIN_DISTANCE = 8;
+  const float MIN_DISTANCE = 8;
 
   int wpixels, hpixels;
   SDL_GetWindowSize(this->window, &wpixels, &hpixels);
 
   // Get window dimensions in meters.
-  float32 width = wpixels / this->camera.ppm;
-  float32 height = hpixels / this->camera.ppm;
+  float width = wpixels / this->camera.ppm;
+  float height = hpixels / this->camera.ppm;
 
   b2Vec2 pos;
   while (true) {
     // Choose a random position for the collectible.
-    pos.x = this->camera.pos.x + (float32) rand() / RAND_MAX * width;
-    pos.y = this->camera.pos.y + (float32) rand() / RAND_MAX * height;
+    pos.x = this->camera.pos.x + (float) rand() / RAND_MAX * width;
+    pos.y = this->camera.pos.y + (float) rand() / RAND_MAX * height;
 
     // Retry if the chosen position is to close to a sun or a planet.
     for (auto e : this->entities)
       if (e->isSun || e->isPlanet) {
         // Get sun/planet radius.
-        float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
+        float r = e->body->GetFixtureList()->GetShape()->m_radius;
 
         // If distance from the surface (indicated by the '+r') is
         // less than minimum distance, retry.
@@ -445,7 +446,7 @@ void GameScreen::HandleEvent(const SDL_Event &e) {
       b2Vec2 p = this->camera.PointToWorld(x, y, this->window);
       b2Body *b = GetBodyFromPoint(p, &this->world);
       if (b) {
-        Entity *e = (Entity*) b->GetUserData();
+        Entity *e = (Entity*) b->GetUserData().pointer;
         if (e->isSun && !this->paused) {
           this->draggingBody = b;
           this->draggingOffset = p - b->GetPosition();
@@ -709,9 +710,9 @@ void GameScreen::Advance(float dt) {
     // Update score.
     for (auto e : this->entities)
       if (e->isPlanet) {
-        float32 v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
-        float32 d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
-        float32 diff = v / d;
+        float v = e->body->GetLinearVelocityFromWorldPoint(e->body->GetPosition()).Length();
+        float d = (e->body->GetPosition() - this->sun->body->GetPosition()).Length();
+        float diff = v / d;
         if (d > 100) d = 0.0;
         this->scoreAccumulator += diff * 50 * Config::PhysicsTimeStep;
         if (this->scoreAccumulator >= 100) {
@@ -729,7 +730,7 @@ void GameScreen::Advance(float dt) {
         for (auto s : this->entities) {
           if (s->hasGravity) {
             b2Vec2 n = s->body->GetPosition() - e->body->GetPosition();
-            float32 r2 = n.LengthSquared();
+            float r2 = n.LengthSquared();
             n.Normalize();
             gravity += s->gravityCoeff / r2 * n;
           }
@@ -836,9 +837,9 @@ void GameScreen::FixCamera() {
 void GameScreen::FixCamera(Entity *e) {
   int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
-  float32 ratio = ((float32) winw) / winh;
+  float ratio = ((float) winw) / winh;
 
-  float32 width, height;
+  float width, height;
 
   b2Vec2 upper(this->camera.pos.x + winw / this->camera.ppm,
                this->camera.pos.y + winh / this->camera.ppm);
@@ -848,7 +849,7 @@ void GameScreen::FixCamera(Entity *e) {
 
   auto pos = e->body->GetPosition();
 
-  float32 maxx, maxy, minx, miny;
+  float maxx, maxy, minx, miny;
 
   if (pos.x + r + 2 > upper.x ||
       pos.y + r + 2 > upper.y ||
@@ -966,18 +967,18 @@ void GameScreen::AddRandomEnemy() {
   int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
 
-  float32 dx = frand() * 2.0;
-  float32 dy = frand() * 2.0;
+  float dx = frand() * 2.0;
+  float dy = frand() * 2.0;
 
-  float32 x1 = this->camera.pos.x;
-  float32 y1 = this->camera.pos.y;
-  float32 x2 = this->camera.pos.x + winw / this->camera.ppm;
-  float32 y2 = this->camera.pos.y + winh / this->camera.ppm;
-  float32 w = x2 - x1;
-  float32 h = y2 - y1;
+  float x1 = this->camera.pos.x;
+  float y1 = this->camera.pos.y;
+  float x2 = this->camera.pos.x + winw / this->camera.ppm;
+  float y2 = this->camera.pos.y + winh / this->camera.ppm;
+  float w = x2 - x1;
+  float h = y2 - y1;
 
-  float32 randomx = x1 + w * frand();
-  float32 randomy = y1 + h * frand();
+  float randomx = x1 + w * frand();
+  float randomy = y1 + h * frand();
 
   b2Vec2 pos;
   int r = rand() % 4;
@@ -994,7 +995,7 @@ void GameScreen::AddRandomEnemy() {
   v.Normalize();
   v *= 20.0;
 
-  float32 angle = atan2(v.y, v.x) - M_PI / 2.0;
+  float angle = atan2(v.y, v.x) - M_PI / 2.0;
   this->entities.push_back(Entity::CreateEnemyShip(&this->world,
                                                    pos,
                                                    v,
@@ -1050,10 +1051,10 @@ void GameScreen::DrawGrid(Renderer *renderer) const {
   /*int winw, winh;
   SDL_GetWindowSize(this->window, &winw, &winh);
 
-  float32 upperx = this->camera.pos.x + winw / this->camera.ppm;
-  float32 uppery = this->camera.pos.y + winh / this->camera.ppm;
-  float32 x = this->camera.pos.x + fmod(this->camera.pos.x + 10, 10);
-  float32 y = this->camera.pos.x + fmod(this->camera.pos.y + 10, 10);
+  float upperx = this->camera.pos.x + winw / this->camera.ppm;
+  float uppery = this->camera.pos.y + winh / this->camera.ppm;
+  float x = this->camera.pos.x + fmod(this->camera.pos.x + 10, 10);
+  float y = this->camera.pos.x + fmod(this->camera.pos.y + 10, 10);
   for (; x <= upperx; x += 10)
     renderer->DrawLine(b2Vec2(x, this->camera.pos.y), b2Vec2(x, uppery), 32, 32, 32, 255);
   for (; y <= uppery; y += 10)
@@ -1079,7 +1080,7 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
       // Go forward among previous locations until we reach one after
       // 'time'. Choose the point as close to the time we want as
       // possible.
-      float32 leastDiff = FLT_MAX;
+      float leastDiff = FLT_MAX;
       TrailPoint closestPoint;
       for (; it != e->trail.points.rend(); ++it) {
         if (fabs(it->time - time) < leastDiff) {
@@ -1104,16 +1105,16 @@ void GameScreen::DrawTrail(Renderer *renderer, const Entity *e) const {
   else
     points = e->trail.points;
 
-  float32 r = e->body->GetFixtureList()->GetShape()->m_radius;
+  float r = e->body->GetFixtureList()->GetShape()->m_radius;
   auto startr = r / 10.0;
   auto endr = r / 2.0;
   r = startr;
 
-  const float32 starta = 0.25;
-  const float32 enda = 0.5;
-  float32 a = starta;
+  const float starta = 0.25;
+  const float enda = 0.5;
+  float a = starta;
 
-  float32 dr, da;
+  float dr, da;
   if (points.size() > 0) {
     dr = (endr - startr) / points.size();
     da = (enda - starta) / points.size();

@@ -1,7 +1,7 @@
 #include "helpers.hh"
 #include "resource-cache.hh"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 #include <iostream>
 #include <map>
@@ -58,7 +58,7 @@ void LoadMap(map<string, string> &m, istream &s) {
   }
 }
 
-void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp) {
+void GetTextWidthP(string text, float hp, SDL_Window *window, float &wp) {
   int winw, winh;
   SDL_GetWindowSize(window, &winw, &winh);
 
@@ -67,7 +67,7 @@ void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp) {
 
   int w, h;
   TTF_SizeText(font, text.data(), &w, &h);
-  wp = (float32) w / winw;
+  wp = (float) w / winw;
 }
 
 string ReadFile(const string &filename) {

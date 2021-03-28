@@ -10,7 +10,7 @@
 #include "image-button-widget.hh"
 #include "mesh.hh"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 class GameScreen;
 
@@ -30,7 +30,6 @@ public:
   void PlanetSunContact(Entity *planet, Entity *sun);
   void CollectibleSunContact(Entity *collectible, Entity *sun);
   void CollectiblePlanetContact(Entity *collectible, Entity *planet);
-
 };
 
 class ContactFilter : public b2ContactFilter {
@@ -41,13 +40,13 @@ public:
 class GameScreen : public Screen {
 protected:
   // state variables
-  float32 time;
+  float time;
   int score;
   int timeRemaining;
   bool paused;
   Camera camera;
-  float32 physicsTimeAccumulator;
-  float32 scoreAccumulator;
+  float physicsTimeAccumulator;
+  float scoreAccumulator;
   int lives;
   bool spawnPlanet;
   vector<Entity*> entities;

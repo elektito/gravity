@@ -10,7 +10,7 @@ In order to build _Gravity_ you need the following libraries:
  - SDL2_ttf
  - SDL2_mixer
  - OpenGL
- - Box2D
+ - Box2D (v2.4.1)
 
 In order to build run `./waf configure` and then `./waf build`. A
 C++11 compliant compiler and a Python interpreter is needed.

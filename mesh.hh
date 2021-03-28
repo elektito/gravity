@@ -2,7 +2,7 @@
 #define _GRAVITY_MESH_HH_
 
 #include "glew.h"
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 class Mesh {
 protected:
@@ -22,7 +22,7 @@ public:
   ~Mesh();
 
   void SetColor(float r, float g, float b, float a);
-  void Draw(const b2Vec2 &pos, float32 angle, float32 scale_factor=1.0f) const;
+  void Draw(const b2Vec2 &pos, float angle, float scale_factor=1.0f) const;
 };
 
 #endif /* _GRAVITY_MESH_HH_ */

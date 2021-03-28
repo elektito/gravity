@@ -3,7 +3,7 @@
 
 #include "renderer.hh"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 #include <SDL2/SDL.h>
 
 #include <iostream>
@@ -16,8 +16,8 @@ using namespace std;
 
 extern bool mute;
 
-inline float32 frand() {
-  return rand() / (float32) RAND_MAX;
+inline float frand() {
+  return rand() / (float) RAND_MAX;
 }
 
 extern void SaveVec2(const b2Vec2 &v, ostream &s);
@@ -27,7 +27,7 @@ extern void LoadString(string &str, istream &s);
 extern void SaveMap(const map<string, string> &m, ostream &s);
 extern void LoadMap(map<string, string> &m, istream &s);
 
-extern void GetTextWidthP(string text, float32 hp, SDL_Window *window, float32 &wp);
+extern void GetTextWidthP(string text, float hp, SDL_Window *window, float &wp);
 
 extern string ReadFile(const string &filename);
 

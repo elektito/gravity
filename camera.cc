@@ -15,7 +15,7 @@ void Camera::PointToScreen(SDL_Window *window, b2Vec2 p, int &x, int &y) const {
   y = h - y;
 }
 
-float32 Camera::LengthToScreen(float32 length) const {
+float Camera::LengthToScreen(float length) const {
   return length * this->ppm;
 }
 
@@ -30,6 +30,6 @@ b2Vec2 Camera::PointToWorld(int x, int y, SDL_Window *window) const {
   return p;
 }
 
-float32 Camera::LengthToWorld(float32 length) const {
+float Camera::LengthToWorld(float length) const {
   return length / this->ppm;
 }

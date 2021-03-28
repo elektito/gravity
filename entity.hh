@@ -3,9 +3,10 @@
 
 #include "mesh.hh"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 #include <vector>
+#include <ostream>
 
 using namespace std;
 
@@ -14,13 +15,13 @@ struct TrailPoint {
     time(0.0)
   {}
 
-  TrailPoint(b2Vec2 pos, float32 time) :
+  TrailPoint(b2Vec2 pos, float time) :
     pos(pos),
     time(time)
   {}
 
   b2Vec2 pos;
-  float32 time;
+  float time;
 };
 
 struct Trail {
@@ -30,7 +31,7 @@ struct Trail {
   {}
 
   int size;
-  float32 time;
+  float time;
   vector<TrailPoint> points;
 };
 
@@ -57,7 +58,7 @@ public:
   b2Body *body;
 
   bool hasGravity;
-  float32 gravityCoeff;
+  float gravityCoeff;
 
   bool hasTrail;
   Trail trail;
@@ -84,21 +85,21 @@ public:
 
   static Entity *CreatePlanet(b2World *world,
                               b2Vec2 pos,
-                              float32 radius,
-                              float32 density,
+                              float radius,
+                              float density,
                               b2Vec2 v0=b2Vec2(0, 0));
   static Entity *CreateSun(b2World *world,
                            b2Vec2 pos,
-                           float32 radius,
-                           float32 density,
-                           float32 gravityCoeff);
+                           float radius,
+                           float density,
+                           float gravityCoeff);
   static Entity *CreateCollectible(b2World *world,
                                    b2Vec2 pos,
                                    CollectibleType type);
   static Entity *CreateEnemyShip(b2World *world,
                                  b2Vec2 pos,
                                  b2Vec2 velocity,
-                                 float32 angle);
+                                 float angle);
 };
 
 #endif /* _GRAVITY_ENTITY_HH_ */
