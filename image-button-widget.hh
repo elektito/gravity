@@ -2,6 +2,7 @@
 #define _GRAVITY_IMAGE_BUTTON_WIDGET_HH_
 
 #include "image-widget.hh"
+#include "resource-cache.hh"
 
 #define BUTTON_CLICK 1000
 #define BUTTON_MOUSE_ENTER 1001
@@ -23,7 +24,7 @@ protected:
 
 public:
   ImageButtonWidget(Screen *screen,
-                    GLuint texture,
+                    ResourceCache::Texture texture,
                     float x,
                     float y,
                     float height,

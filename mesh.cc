@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Mesh::Mesh(const GLfloat *vertexData, int n, GLuint texture) :
+Mesh::Mesh(const GLfloat *vertexData, int n, ResourceCache::Texture texture) :
   vertexCount(n),
   texture(texture),
   color({1.0f, 1.0f, 1.0f, 1.0f})
@@ -30,7 +30,7 @@ void Mesh::Draw(const b2Vec2 &pos, float angle, float scale_factor) const {
   GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, this->texture);
+  glBindTexture(GL_TEXTURE_2D, this->texture.id);
   glUniform1i(textureUniform, 0); // set it to 0  because the texture is bound to GL_TEXTURE0
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

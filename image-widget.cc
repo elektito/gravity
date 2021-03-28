@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color) :
+ImageWidget::ImageWidget(Screen *screen, ResourceCache::Texture texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color) :
     Widget(screen),
     x(x),
     y(y),
@@ -31,13 +31,7 @@ ImageWidget::ImageWidget(Screen *screen, GLuint texture, float x, float y, float
   glBufferData(GL_ARRAY_BUFFER, 6 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  int textureWidth, textureHeight;
-  glBindTexture(GL_TEXTURE_2D, this->texture);
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  float ratio = (float) textureWidth / textureHeight;
+  float ratio = (float) this->texture.width / this->texture.height;
   this->width = height * ratio;
 }
 
@@ -52,7 +46,7 @@ void ImageWidget::SetColor(float r, float g, float b, float a) {
   this->color.a = a;
 }
 
-void ImageWidget::SetTexture(GLuint texture) {
+void ImageWidget::SetTexture(ResourceCache::Texture texture) {
   this->texture = texture;
 }
 
@@ -75,7 +69,7 @@ void ImageWidget::Render(Renderer *renderer) {
   GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, this->texture);
+  glBindTexture(GL_TEXTURE_2D, this->texture.id);
   glUniform1i(textureUniform, 0); // set it to 0  because the texture is bound to GL_TEXTURE0
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

@@ -307,7 +307,7 @@ Entity *Entity::CreateCollectible(b2World *world, b2Vec2 pos, CollectibleType ty
 
   e->isCollectible = true;
 
-  GLuint texture = 0;
+  ResourceCache::Texture texture;
   switch (type) {
   case CollectibleType::PLUS_SCORE:
     e->hasScore = true;

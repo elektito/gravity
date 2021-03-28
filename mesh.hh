@@ -2,12 +2,13 @@
 #define _GRAVITY_MESH_HH_
 
 #include "glew.h"
+#include "resource-cache.hh"
 #include <box2d/box2d.h>
 
 class Mesh {
 protected:
   GLuint vbo;
-  GLuint texture;
+  ResourceCache::Texture texture;
   int vertexCount;
 
   struct {
@@ -18,7 +19,7 @@ protected:
   } color;
 
 public:
-  Mesh(const GLfloat *vertexData, int n, GLuint texture);
+  Mesh(const GLfloat *vertexData, int n, ResourceCache::Texture texture);
   ~Mesh();
 
   void SetColor(float r, float g, float b, float a);

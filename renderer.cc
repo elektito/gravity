@@ -7,25 +7,19 @@
 
 using namespace std;
 
-Background::Background(SDL_Window *window, GLuint texture) :
+Background::Background(SDL_Window *window, ResourceCache::Texture texture) :
   window(window),
   texture(texture),
   lastWindowWidth(0),
   lastWindowHeight(0)
 {
-  // Get texture size.
-  glBindTexture(GL_TEXTURE_2D, this->texture);
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &this->textureWidth);
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &this->textureHeight);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
   // Create background vertex buffer object.
   this->RebuildIfNecessary();
 }
 
 Background::~Background() {
   glDeleteBuffers(1, &this->vbo);
-  glDeleteTextures(1, &this->texture);
+  glDeleteTextures(1, &this->texture.id);
 }
 
 void Background::RebuildIfNecessary() {
@@ -40,18 +34,18 @@ void Background::RebuildIfNecessary() {
   float windowRatio = (float) winw / winh;
 
   GLfloat tex_x1, tex_y1, tex_x2, tex_y2;
-  float textureRatio = (float) this->textureWidth / this->textureHeight;
+  float textureRatio = (float) this->texture.width / this->texture.height;
   if (textureRatio < windowRatio) {
     tex_x1 = 0.0f;
     tex_x2 = 1.0f;
-    tex_y1 = 0.5f * ((float) winw / this->textureWidth - (float) winh / this->textureHeight);
-    tex_y2 = 1.0 - 0.5f * ((float) winw / this->textureWidth - (float) winh / this->textureHeight);
+    tex_y1 = 0.5f * ((float) winw / this->texture.width - (float) winh / this->texture.height);
+    tex_y2 = 1.0 - 0.5f * ((float) winw / this->texture.width - (float) winh / this->texture.height);
   }
   else {
     tex_y1 = 0.0f;
     tex_y2 = 1.0f;
-    tex_x1 = 0.5f * ((float) winh / this->textureHeight - (float) winw / this->textureWidth);
-    tex_x2 = 1.0 - 0.5f * ((float) winh / this->textureHeight - (float) winw / this->textureWidth);
+    tex_x1 = 0.5f * ((float) winh / this->texture.height - (float) winw / this->texture.width);
+    tex_x2 = 1.0 - 0.5f * ((float) winh / this->texture.height - (float) winw / this->texture.width);
   }
 
   const GLfloat vertexData[] = {
@@ -83,7 +77,7 @@ void Background::Draw() {
   GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, this->texture);
+  glBindTexture(GL_TEXTURE_2D, this->texture.id);
   glUniform1i(textureUniform, 0); // set it to 0  because the texture is bound to GL_TEXTURE0
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

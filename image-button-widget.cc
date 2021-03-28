@@ -3,7 +3,7 @@
 #include "helpers.hh"
 
 ImageButtonWidget::ImageButtonWidget(Screen *screen,
-                                     GLuint texture,
+                                     ResourceCache::Texture texture,
                                      float x,
                                      float y,
                                      float height,

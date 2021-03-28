@@ -12,6 +12,12 @@ using namespace std;
 
 namespace ResourceCache {
 
+struct Texture {
+  GLuint id;
+  int width;
+  int height;
+};
+
 extern string RESOURCES_PATH;
 
 extern GLuint texturedPolygonProgram;
@@ -24,7 +30,7 @@ extern void Finalize();
 
 extern TTF_Font *GetFont(int height_pixels);
 extern Mix_Chunk *GetSound(const string &name);
-extern GLuint GetTexture(const string &name, const string &type="png");
+extern Texture GetTexture(const string &name, const string &type="png");
 
 } // namespace ResourceCache
 

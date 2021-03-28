@@ -91,13 +91,8 @@ void NumberWidget::SetNumber(uint32_t n) {
   glBufferData(GL_ARRAY_BUFFER, this->ndigits * 6 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  int textureWidth, textureHeight;
-  glBindTexture(GL_TEXTURE_2D, ResourceCache::GetTexture("digits"));
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
-  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  float ratio = (float) (textureWidth / 10.0f * this->ndigits) / textureHeight;
+  ResourceCache::Texture texture = ResourceCache::GetTexture("digits");
+  float ratio = (float) (texture.width / 10.0f * this->ndigits) / texture.height;
   this->width = height * ratio;
 
   delete[] vertexData;
@@ -136,7 +131,7 @@ void NumberWidget::Render(Renderer *renderer) {
   GLuint textureUniform = glGetUniformLocation(program, "texture0");
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, ResourceCache::GetTexture("digits"));
+  glBindTexture(GL_TEXTURE_2D, ResourceCache::GetTexture("digits").id);
   glUniform1i(textureUniform, 0); // set it to 0  because the texture is bound to GL_TEXTURE0
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

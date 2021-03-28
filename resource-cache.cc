@@ -39,7 +39,7 @@ struct FontDescriptor {
 map<GLenum, string> shaderTypeNames;
 map<FontDescriptor, TTF_Font*> font_cache;
 map<string, Mix_Chunk*> sound_cache;
-map<string, GLuint> texture_cache;
+map<string, Texture> texture_cache;
 
 GLuint CreateShader(GLenum shaderType, const string &shaderSource) {
   string shaderTypeName = shaderTypeNames[shaderType];
@@ -271,7 +271,7 @@ int downscale_image(const unsigned char* const orig,
   return 1;
 }
 
-GLuint GetTexture(const string &name, const string &type) {
+Texture GetTexture(const string &name, const string &type) {
   auto it = texture_cache.find(name);
   if (it != texture_cache.end())
     return it->second;
@@ -318,9 +318,9 @@ GLuint GetTexture(const string &name, const string &type) {
   glGenerateMipmap(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  texture_cache[name] = texture;
+  texture_cache[name] = {texture, w, h};
 
-  return texture;
+  return {texture, w, h};
 }
 
 } // namespace ResourceCache

@@ -3,6 +3,7 @@
 
 #include "mesh.hh"
 #include "camera.hh"
+#include "resource-cache.hh"
 
 #include <SDL2/SDL.h>
 
@@ -21,9 +22,7 @@ enum class TextAnchor {
 class Background {
 protected:
   SDL_Window *window;
-  GLuint texture;
-  int textureWidth;
-  int textureHeight;
+  ResourceCache::Texture texture;
   GLuint vbo;
 
   int lastWindowWidth;
@@ -32,7 +31,7 @@ protected:
   void RebuildIfNecessary();
 
 public:
-  Background(SDL_Window *window, GLuint texture);
+  Background(SDL_Window *window, ResourceCache::Texture texture);
   virtual ~Background();
 
   void Draw();

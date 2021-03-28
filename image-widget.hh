@@ -2,6 +2,7 @@
 #define _GRAVITY_IMAGE_WIDGET_HH_
 
 #include "widget.hh"
+#include "resource-cache.hh"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ protected:
   float width;
   TextAnchor xanchor;
   TextAnchor yanchor;
-  GLuint texture;
+  ResourceCache::Texture texture;
   GLuint vbo;
   struct {
     float r;
@@ -23,11 +24,11 @@ protected:
   } color;
 
 public:
-  ImageWidget(Screen *screen, GLuint texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color={255, 255, 255, 255});
+  ImageWidget(Screen *screen, ResourceCache::Texture texture, float x, float y, float height, TextAnchor xanchor, TextAnchor yanchor, const SDL_Color &color={255, 255, 255, 255});
   virtual ~ImageWidget();
 
   void SetColor(float r, float g, float b, float a);
-  void SetTexture(GLuint texture);
+  void SetTexture(ResourceCache::Texture texture);
 
   virtual void HandleEvent(const SDL_Event &e);
   virtual void Advance(float dt);
