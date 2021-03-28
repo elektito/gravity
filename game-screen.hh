@@ -10,7 +10,6 @@
 #include "image-button-widget.hh"
 #include "mesh.hh"
 
-#include <SDL2/SDL_mixer.h>
 #include <Box2D/Box2D.h>
 
 class GameScreen;
