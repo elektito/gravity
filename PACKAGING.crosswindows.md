@@ -16,7 +16,7 @@ to either disable mp3 playback or use libmad instead.
 
 Suggested SDL2 configuration options:
 
-    --disable-atomic --disable-render --disable-joystick --disable-haptic --disable-power --disable-loadso --disable-cpuinfo --disable-dbus --disable-vulkan
+    --disable-atomic --disable-render --disable-joystick --disable-haptic --disable-power --disable-loadso --disable-cpuinfo --disable-dbus --disable-video-vulkan --disable-video-wayland
 
 Suggested SDL2_mixer configuration options:
 
