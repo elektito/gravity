@@ -18,7 +18,7 @@ NumberWidget::NumberWidget(Screen *screen, uint32_t n, float x, float y, float h
   color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f}),
   vbo(0)
 {
-  if (ndigits = 0)
+  if (ndigits == 0)
     throw runtime_error("Zero digits not acceptable for number widget.");
 
   this->SetNumber(n);
@@ -100,7 +100,7 @@ void NumberWidget::SetNumber(uint32_t n) {
   float ratio = (float) (textureWidth / 10.0f * this->ndigits) / textureHeight;
   this->width = height * ratio;
 
-  delete vertexData;
+  delete[] vertexData;
 }
 
 void NumberWidget::SetColor(float r, float g, float b, float a) {

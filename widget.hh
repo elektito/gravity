@@ -30,6 +30,8 @@ public:
   virtual void Advance(float dt) = 0;
   virtual void Render(Renderer *renderer) = 0;
   virtual void Reset() = 0;
+
+  virtual ~Widget() {}
 };
 
 #endif /* _GRAVITY_WIDGET_HH_ */
