@@ -12,7 +12,7 @@
 # setting the environment variable VERSION.
 
 VERSION=${VERSION:=1.0.0}
-ARCH=${ARCH:=i686}
+ARCH=${ARCH:=i686} # for 64 bit build, use x86_64
 MXE=${MXE:=~/source/mxe}
 
 export CXX=${MXE}/usr/bin/${ARCH}-w64-mingw32.static-g++
