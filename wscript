@@ -26,6 +26,11 @@ def options(opt):
     )
 
     opt.add_option(
+        '--static', action='store_true', default=False, dest='static_build',
+        help='Use static linking (for some of the SDL2 libraries and Box2D).'
+    )
+
+    opt.add_option(
         '--emscripten', action='store_true', default=False, dest='emscripten',
         help='Build the emscripten version of the game.'
     )
@@ -33,9 +38,11 @@ def options(opt):
 def configure(cfg):
     cfg.load('compiler_cxx')
 
-    cfg.check_cfg(package='sdl2', args='--cflags --libs', uselib_store='SDL2')
+    pkgconfig_static = ' --static' if cfg.options.static_build else ''
+
+    cfg.check_cfg(package='sdl2', args='--cflags --libs' + pkgconfig_static, uselib_store='SDL2')
     cfg.check_cxx(lib='box2d', uselib_store='BOX2D')
-    cfg.check_cfg(package='SDL2_ttf', args='--cflags --libs', uselib_store='SDL2_TTF')
+    cfg.check_cfg(package='SDL2_ttf', args='--cflags --libs' + pkgconfig_static, uselib_store='SDL2_TTF')
     cfg.check_cxx(lib='SDL2_mixer', uselib_store='SDL2_MIXER')
     if cfg.options.windows_build:
         cfg.env['windows_build'] = True
@@ -56,6 +63,8 @@ def configure(cfg):
         cfg.check_cxx(lib='GL', uselib_store='GL')
 
     cfg.env.append_value('CXXFLAGS', ['-std=c++11', '-DGLEW_NO_GLU'])
+    if cfg.options.static_build:
+        cfg.env.append_value('LINKFLAGS', ['-static'])
 
     if cfg.options.release_build:
         cfg.env.append_value('CXXFLAGS', ['-O3'])
